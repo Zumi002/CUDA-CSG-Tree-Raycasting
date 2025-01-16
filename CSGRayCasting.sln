@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35027.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CSGRayCasting", "CSGRayCasting\CSGRayCasting.vcxproj", "{FE9F0022-629C-4239-9DD3-E3A9C87AF95A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE9F0022-629C-4239-9DD3-E3A9C87AF95A}.Debug|x64.ActiveCfg = Debug|x64
+		{FE9F0022-629C-4239-9DD3-E3A9C87AF95A}.Debug|x64.Build.0 = Debug|x64
+		{FE9F0022-629C-4239-9DD3-E3A9C87AF95A}.Release|x64.ActiveCfg = Release|x64
+		{FE9F0022-629C-4239-9DD3-E3A9C87AF95A}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {779B0529-A399-44D8-944B-514410CDFA50}
+	EndGlobalSection
+EndGlobal

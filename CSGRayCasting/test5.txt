@@ -1,0 +1,17 @@
+Union
+	Union
+		Sphere 1 0 -5 FF2056 2
+		Union
+			Sphere 1 2 -5 00FF00 1
+			Sphere 1 -2 -5 00FF00 1
+	Union
+		Difference
+			Sphere 1 0 0 FF2056 2
+			Union
+				Sphere 1 2 0 00FF00 1
+				Sphere 1 -2 0 00FF00 1
+		Intersection
+			Sphere 1 0 5 FF2056 2
+			Union
+				Sphere 1 2 5 00FF00 1
+				Sphere 1 -2 5 00FF00 1

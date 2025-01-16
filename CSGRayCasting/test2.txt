@@ -1,0 +1,3 @@
+Intersection
+	Sphere 1 0 0 FF2056 2
+	Sphere 0 0 0 FFFF56 2
