@@ -21,5 +21,5 @@ class Raycaster
 	public:
 		
 		void ChangeSize(int newWidth, int newHeight, CSGTree tree);
-		void Raycast(float4* devPBO, Camera cam);
+		void Raycast(float4* devPBO, Camera cam, DirectionalLight light);
 };

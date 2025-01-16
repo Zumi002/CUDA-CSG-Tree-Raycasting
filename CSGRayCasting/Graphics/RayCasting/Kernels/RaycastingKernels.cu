@@ -42,7 +42,7 @@ __global__ void RaycastKernel(Camera cam, CudaCSGTree tree, RayHit* hits, float 
 	hits[pixelIdx] = detailedHitInfo;
 }
 
-__global__ void LightningKernel(Camera cam, RayHit* hits, Primitive* primitives, float4* output, float width, float height)
+__global__ void LightningKernel(Camera cam, RayHit* hits, Primitive* primitives, float4* output, float3 lightDir ,float width, float height)
 {
 	int x = blockIdx.x * blockDim.x + threadIdx.x;
 	int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -60,18 +60,18 @@ __global__ void LightningKernel(Camera cam, RayHit* hits, Primitive* primitives,
 		float3 color = make_float3(primitives[hitInfo.primitiveIdx].r,
 			primitives[hitInfo.primitiveIdx].g,
 			primitives[hitInfo.primitiveIdx].b);
-		float3 lightPos = make_float3(-3.0f, 5.0f, 0);  // Light position
-		float3 lightColor = make_float3(1.0f, 1.0f, 1.0f); // White light
 
-		// Material properties
-		float ka = 0.2f;    // Ambient intensity
-		float kd = 0.8f;    // Diffuse intensity
-		float ks = 0.7f;    // Specular intensity
-		float shininess = 30.0f; // Specular shininess
+		float3 lightColor = make_float3(1.0f, 1.0f, 1.0f); 
+
+		
+		float ka = 0.2f;   
+		float kd = 0.8f;    
+		float ks = 0.7f;    
+		float shininess = 30.0f; 
 
 		// Calculate lighting vectors
 
-		float3 lightDir = normalize(lightPos - hitInfo.position);
+		lightDir = normalize(lightDir);
 		float3 viewDir = normalize(make_float3(cam.x, cam.y, cam.z) - hitInfo.position);
 		float3 reflectDir = reflect(-lightDir, hitInfo.normal);
 

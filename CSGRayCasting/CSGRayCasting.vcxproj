@@ -40,6 +40,7 @@
     <ClInclude Include="Graphics\RayCasting\Utils\Ray.cuh" />
     <ClInclude Include="Graphics\RenderManager\Camera\Camera.h" />
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Graphics\RenderManager\DirectionalLight.h" />
     <ClInclude Include="Graphics\RenderManager\RenderManager.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imfilebrowser.h">

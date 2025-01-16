@@ -13,6 +13,7 @@
 #include "../Utils/CudaStack.cuh"
 #include "../Utils/CSGUtils.cuh"
 #include "../Utils/Float3Utils.cuh"
+#include "../../RenderManager/DirectionalLight.h"
 
 #define MAXSTACKSIZE 32
 
@@ -30,7 +31,7 @@ inline void gpuAssert(cudaError_t code, const char* file, int line, bool abort =
 
 __global__ void RaycastKernel(Camera cam, CudaCSGTree tree, RayHit* hits, float width, float height);
 
-__global__ void LightningKernel(Camera cam, RayHit* hits, Primitive* primitives, float4* output, float width, float height);
+__global__ void LightningKernel(Camera cam, RayHit* hits, Primitive* primitives, float4* output, float3 lightDir, float width, float height);
 
 __device__ bool sphereHit(const Ray& ray, const Primitive& sphere, RayHitMinimal& hitInfo, float& tmin);
 

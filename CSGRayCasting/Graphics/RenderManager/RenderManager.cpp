@@ -1,6 +1,6 @@
 #include "RenderManager.h"
 
-RenderManager::RenderManager(SDL_Window* window, ImGui::FileBrowser* FileDialog)
+RenderManager::RenderManager(SDL_Window* window, ImGui::FileBrowser* FileDialog, DirectionalLight* Light)
 {
 	this->window = window;
 	context = SDL_GL_CreateContext(window);
@@ -51,6 +51,8 @@ RenderManager::RenderManager(SDL_Window* window, ImGui::FileBrowser* FileDialog)
 	cam = Camera();
 
 	raycaster = Raycaster();
+
+	light = Light;
 }
 
 void RenderManager::CalculateRays()
@@ -59,7 +61,7 @@ void RenderManager::CalculateRays()
 	float4* d_ptr;
 	cudaGraphicsResourceGetMappedPointer((void**)&d_ptr, nullptr, cudaRaycastingPBOResource);
 
-	raycaster.Raycast(d_ptr, cam);
+	raycaster.Raycast(d_ptr, cam, *light);
 
 	cudaGraphicsUnmapResources(1, &cudaRaycastingPBOResource);
 }
@@ -87,15 +89,20 @@ void RenderManager::RenderImGui()
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
 
-	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::SetNextWindowPos(ImVec2(5, 5));
 
-	ImGui::Begin("CSG RayCasting");
+	ImGui::Begin("CSG RayCasting",0,ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize);
 
 	ImGui::Text("FPS: %.1f", fps);
 	if (ImGui::Button("Load CSGTree..."))
 	{
 		fileDialog->Open();
 	}
+
+	ImGui::Separator();
+	ImGui::LabelText("","Light direction:");
+	ImGui::SliderAngle("Polar", &light->polar, -180, 180);
+	ImGui::SliderAngle("Azimuth", &light->azimuth, -180, 180);
 
 	fileDialog->Display();
 

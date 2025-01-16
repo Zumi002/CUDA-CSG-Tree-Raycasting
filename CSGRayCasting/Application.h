@@ -30,6 +30,7 @@ class Application
 
 	Uint32 oldTime;
 
+	DirectionalLight light;
 
 
 	void Input();

@@ -9,7 +9,7 @@
 #include <cuda_gl_interop.h>
 
 #include "../RayCasting/Raycaster.cuh"
-
+#include "DirectionalLight.h"
 
 #include "../../imgui/imgui.h"
 #include "../../imgui/imgui_impl_opengl3.h"
@@ -33,6 +33,7 @@ class RenderManager
 	CSGTree tree;
 
 	ImGui::FileBrowser* fileDialog;
+	DirectionalLight* light;
 
 	void ChangeSize();
 	void CalculateRays();
@@ -42,7 +43,7 @@ class RenderManager
 	public:
 		float fps = 0;
 		Camera cam;
-		RenderManager(SDL_Window* window, ImGui::FileBrowser* FileDialog);
+		RenderManager(SDL_Window* window, ImGui::FileBrowser* FileDialog, DirectionalLight* Light);
 		void Render();
 		void SetTreeToRender(CSGTree tree);
 };

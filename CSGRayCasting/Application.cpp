@@ -25,7 +25,7 @@ void Application::CreateAppWindow(const std::string windowName)
 		screenWidth, screenHeight,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
-	renderer = new RenderManager(window, &fileDialog);
+	renderer = new RenderManager(window, &fileDialog, &light);
 	inputManager = new InputManager();
 
 	fileDialog.SetTitle("Load CSG Tree");
@@ -33,9 +33,7 @@ void Application::CreateAppWindow(const std::string windowName)
 
 	oldTime = SDL_GetTicks();
 
-
-
-	SDL_GL_SetSwapInterval(1);
+	SDL_GL_SetSwapInterval(0);
 }
 
 void Application::Run()

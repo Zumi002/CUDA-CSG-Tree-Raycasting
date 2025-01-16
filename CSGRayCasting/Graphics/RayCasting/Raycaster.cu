@@ -25,13 +25,15 @@ void Raycaster::ChangeSize(int newWidth, int newHeight, CSGTree tree)
 	alloced = true;
 }
 
-void Raycaster::Raycast(float4* devPBO, Camera cam)
+void Raycaster::Raycast(float4* devPBO, Camera cam, DirectionalLight light)
 {
 
 	RaycastKernel<<<gridDim, blockDim>>>(cam, cudaTree, devHits, width, height);
 	cudaDeviceSynchronize();
 
-	LightningKernel<<<gridDim, blockDim>>>(cam, devHits, cudaTree.primitives, devPBO, width, height);
+	
+
+	LightningKernel<<<gridDim, blockDim>>>(cam, devHits, cudaTree.primitives, devPBO, light.getLightDir(), width, height);
 	cudaDeviceSynchronize();
 	
 }
