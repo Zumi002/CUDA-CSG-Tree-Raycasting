@@ -1,3 +1,12 @@
-Union	
-	Sphere 4 4 0 0056D4 1.5
-	Cylinder 0 0 0 FF0056 2 5 30 30 0
+Union
+	Union
+		Union	
+			Sphere 0 0 0 0056D4 1.5
+			Cylinder 0 0 0 FF0056 1 5 30 30 0
+		Difference
+		Sphere 6 0 0 0056D4 1.5
+		Cylinder 6 0 0 FF0056 1 5 30 30 0
+	Difference
+		Cylinder -6 0 0 FF0056 1 5 30 30 0
+		Sphere -6 0 0 0056D4 1.5
+	

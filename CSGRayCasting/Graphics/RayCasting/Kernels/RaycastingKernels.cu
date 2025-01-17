@@ -375,10 +375,8 @@ __device__ bool cubeHit(const Ray& ray, const Primitive& cube, RayHitMinimal& hi
 	hitInfo.hit = CSG::CSGRayHit::Miss;
 	hitInfo.primitiveIdx = cube.id;
 
-	float3 dirfrac = make_float3(0, 0, 0);
-	dirfrac.x = 1.0f / ray.direction.x;
-	dirfrac.y = 1.0f / ray.direction.y;
-	dirfrac.z = 1.0f / ray.direction.z;
+
+
 	// lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
 	// r.org is origin of ray
 
@@ -386,12 +384,12 @@ __device__ bool cubeHit(const Ray& ray, const Primitive& cube, RayHitMinimal& hi
 	float3 C = make_float3(cube.x, cube.y, cube.z);
 	float3 lb = C - cube.params.cubeParameters.size / 2 * axis;
 	float3 rt = C + cube.params.cubeParameters.size / 2 * axis;
-	float t1 = (lb.x - ray.origin.x) * dirfrac.x;
-	float t2 = (rt.x - ray.origin.x) * dirfrac.x;
-	float t3 = (lb.y - ray.origin.y) * dirfrac.y;
-	float t4 = (rt.y - ray.origin.y) * dirfrac.y;
-	float t5 = (lb.z - ray.origin.z) * dirfrac.z;
-	float t6 = (rt.z - ray.origin.z) * dirfrac.z;
+	float t1 = (lb.x - ray.origin.x) / ray.direction.x;
+	float t2 = (rt.x - ray.origin.x) / ray.direction.x;
+	float t3 = (lb.y - ray.origin.y) / ray.direction.y;
+	float t4 = (rt.y - ray.origin.y) / ray.direction.y;
+	float t5 = (lb.z - ray.origin.z) / ray.direction.z;
+	float t6 = (rt.z - ray.origin.z) / ray.direction.z;
 
 	float tempmin = fmax(fmax(fmin(t1, t2), fmin(t3, t4)), fmin(t5, t6));
 	float tempmax = fmin(fmin(fmax(t1, t2), fmax(t3, t4)), fmax(t5, t6));
@@ -419,7 +417,7 @@ __device__ bool cubeHit(const Ray& ray, const Primitive& cube, RayHitMinimal& hi
 
 	hitInfo.t = tempmin;
 	float3 PC = ray.computePosition(tempmin) - C;
-	float bias = 1.00001;
+	float bias = 1.00001f;
 	float halfSize = cube.params.cubeParameters.size / 2;
 	float3 normal = make_float3((float)(int)(PC.x / halfSize * bias), (float)(int)(PC.y / halfSize * bias), (float)(int)(PC.z / halfSize * bias));
 
