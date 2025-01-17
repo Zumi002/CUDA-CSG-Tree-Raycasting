@@ -33,11 +33,19 @@ __global__ void RaycastKernel(Camera cam, CudaCSGTree tree, RayHit* hits, float 
 
 __global__ void LightningKernel(Camera cam, RayHit* hits, Primitive* primitives, float4* output, float3 lightDir, float width, float height);
 
+__device__ void hitPrimitive(const Ray& ray, const CudaCSGTree& tree, const CSGNode& node, RayHitMinimal& hitInfo, float& tmin);
+
 __device__ bool sphereHit(const Ray& ray, const Primitive& sphere, RayHitMinimal& hitInfo, float& tmin);
 
 __device__ void sphereHitDetails(const Ray& ray, const Primitive& sphere, const RayHitMinimal& hitInfo, RayHit& detailedHitInfo);
 
+__device__ bool cylinderHit(const Ray& ray, const Primitive& cylinder, RayHitMinimal& hitInfo, float& tmin);
 
+__device__ void cylinderHitDetails(const Ray& ray, const Primitive& cylinder, const RayHitMinimal& hitInfo, RayHit& detailedHitInfo);
+
+__device__ bool cubeHit(const Ray& ray, const Primitive& sphere, RayHitMinimal& hitInfo, float& tmin);
+
+__device__ void cubeHitDetails(const Ray& ray, const Primitive& sphere, const RayHitMinimal& hitInfo, RayHit& detailedHitInfo);
 
 //CSG functions from paper [https://ceur-ws.org/Vol-1576/090.pdf]
 

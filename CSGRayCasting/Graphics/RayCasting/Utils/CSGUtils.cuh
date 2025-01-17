@@ -31,7 +31,9 @@ namespace CSG
 		Enter = 1<<1,
 		Exit = 1<<2,
 		Miss = 1<<3,
-		Flip = 1<<4
+		Flip = 1<<4,
+		Flag1 = 1<<5,
+		Flag2 = 1<<6
 	};
 
 

@@ -1,0 +1,25 @@
+Difference
+	Cube 0 0 0 FF0000 4
+	Union
+		Union
+			Union
+				Union
+					Cylinder 2 2 0 00FF00 0.5 4 90 0 0
+					Cylinder -2 2 0 00FF00 0.5 4 90 0 0
+				Union
+					Cylinder 2 -2 0 00FF00 0.5 4 90 0 0
+					Cylinder -2 -2 0 00FF00 0.5 4 90 0 0
+			Union
+				Union
+					Cylinder 0 2 2 00FF00 0.5 4 0 0 90
+					Cylinder 0 2 -2 00FF00 0.5 4 0 0 90
+				Union
+					Cylinder 0 -2 2 00FF00 0.5 4 0 0 90
+					Cylinder 0 -2 -2 00FF00 0.5 4 0 0 90
+		Union
+				Union
+					Cylinder 2 0 2 00FFF0 0.5 4 0 0 0
+					Cylinder 2 0 -2 00FFF0 0.5 4 0 0 0
+				Union
+					Cylinder -2 0 2 00FFF0 0.5 4 0 0 0
+					Cylinder -2 0 -2 00FFF0 0.5 4 0 0 0

@@ -38,6 +38,10 @@ __global__ void RaycastKernel(Camera cam, CudaCSGTree tree, RayHit* hits, float 
 	{
 		if(hitInfo.primitiveType == CSGTree::NodeType::Sphere)
 			sphereHitDetails(ray, tree.primitives[hitInfo.primitiveIdx], hitInfo, detailedHitInfo);
+		if (hitInfo.primitiveType == CSGTree::NodeType::Cylinder)
+			cylinderHitDetails(ray, tree.primitives[hitInfo.primitiveIdx], hitInfo, detailedHitInfo);
+		if (hitInfo.primitiveType == CSGTree::NodeType::Cube)
+			cubeHitDetails(ray, tree.primitives[hitInfo.primitiveIdx], hitInfo, detailedHitInfo);
 	}
 	hits[pixelIdx] = detailedHitInfo;
 }
@@ -79,11 +83,11 @@ __global__ void LightningKernel(Camera cam, RayHit* hits, Primitive* primitives,
 		float3 ambient = ka * lightColor;
 
 		// Diffuse component
-		float diff = max(dot(hitInfo.normal, lightDir), 0.0f);
+		float diff = fmax(dot(hitInfo.normal, lightDir), 0.0f);
 		float3 diffuse = kd * diff * lightColor;
 
 		// Specular component
-		float spec = pow(max(dot(viewDir, reflectDir), 0.0f), shininess);
+		float spec = pow(fmax(dot(viewDir, reflectDir), 0.0f), shininess);
 		float3 specular = ks * spec * lightColor;
 
 		// Combine all components
@@ -106,6 +110,27 @@ __global__ void LightningKernel(Camera cam, RayHit* hits, Primitive* primitives,
 	}
 }
 
+__device__ void hitPrimitive(const Ray& ray, const CudaCSGTree& tree, const CSGNode& node, RayHitMinimal& hitInfo, float& tmin)
+{
+	if (node.type == CSGTree::NodeType::Sphere)
+	{
+		sphereHit(ray, tree.primitives[node.primitiveIdx], hitInfo, tmin);
+	}
+	else if (node.type == CSGTree::NodeType::Cylinder)
+	{
+		cylinderHit(ray, tree.primitives[node.primitiveIdx], hitInfo, tmin);
+	}
+	else if (node.type == CSGTree::NodeType::Cube)
+	{
+		cubeHit(ray, tree.primitives[node.primitiveIdx], hitInfo, tmin);
+	}
+	else
+	{
+		hitInfo = RayHitMinimal();
+	}
+
+
+}
 
 __device__ bool sphereHit(const Ray& ray, const Primitive& sphere, RayHitMinimal& hitInfo, float& tmin)
 {
@@ -117,16 +142,15 @@ __device__ bool sphereHit(const Ray& ray, const Primitive& sphere, RayHitMinimal
 		ray.origin.z - sphere.z
 	);
 
-	float a = dot(ray.direction, ray.direction);
 	float b = dot(oc, ray.direction);
 	float c = dot(oc, oc) - sphere.params.sphereParameters.radius * sphere.params.sphereParameters.radius;
-	float discriminant = b * b - a * c;
+	float discriminant = b * b - c;
 
 	if (discriminant < 0) return false;
 
-	float temp = (-b - sqrtf(discriminant)) / (a);
+	float temp = (-b - sqrtf(discriminant));
 	if (temp <= tmin) {
-		temp = (-b + sqrtf(discriminant)) / (a);
+		temp = (-b + sqrtf(discriminant));
 		if (temp <= tmin)
 		{
 			hitInfo.t = -1;
@@ -169,6 +193,263 @@ __device__ void sphereHitDetails(const Ray& ray, const Primitive& sphere, const 
 			detailedHitInfo.position.z - sphere.z
 		)
 	);
+	if (hitInfo.hit & CSG::CSGRayHit::Flip)
+		detailedHitInfo.normal = -detailedHitInfo.normal;
+	if (hitInfo.hit & CSG::CSGRayHit::Exit)
+		detailedHitInfo.normal = -detailedHitInfo.normal;
+}
+
+__device__ bool cylinderHit(const Ray& ray, const Primitive& cylinder, RayHitMinimal& hitInfo, float& tmin)
+{
+	hitInfo.hit = CSG::CSGRayHit::Miss;
+	hitInfo.primitiveIdx = cylinder.id;
+	CylinderParameters params = cylinder.params.cylinderParameters;
+	float3 V = make_float3(params.axisX, params.axisY, params.axisZ);
+	float3 C = make_float3(cylinder.x, cylinder.y, cylinder.z) - (cylinder.params.cylinderParameters.height / 2) * V;
+	float3 OC = ray.origin - C;
+
+	float aHelp = dot(ray.direction, V);
+	float a = fmax(1 - aHelp*aHelp, 0.00001f);
+
+	float cHelp = dot(OC, V);
+	float c = dot(OC, OC) - cHelp * cHelp - params.radius * params.radius;
+
+	float b =  (dot(ray.direction, OC) - dot(ray.direction, V) * dot(OC, V));
+	float discriminant = b * b -  a * c;
+
+	if (discriminant < 0)
+		return false;
+
+
+	float t1 = (-b - sqrtf(discriminant)) / (a), t2 = (-b + sqrtf(discriminant)) / (a);
+	float m1 = t1 * dot(ray.direction, V) + dot(OC, V), m2 = t2 * dot(ray.direction, V) + dot(OC, V);
+	
+
+
+	if ((m1 < 0 && m2 < 0) || (m1 > params.height && m2 > params.height))
+		return false;
+
+	float temp = t1;
+	float m = m1;
+
+	bool skip = false;
+	float3 surfNormal;
+	int useSurfNormal = 0;
+	if (m < 0)
+	{
+		float den = dot(ray.direction, -V);
+		if (fabsf(den) < 0.0001f)
+		{
+			skip = true;
+		}
+		else
+		{
+			temp = dot(-OC, -V) / den;
+			surfNormal = -V;
+			useSurfNormal = 1;
+		}
+	}
+	if (m > params.height)
+	{
+		float den = dot(ray.direction, V);
+		if (fabsf(den) < 0.0001f)
+		{
+			skip = true;
+		}
+		else
+		{
+			temp = dot(-OC+params.height* V, V) / den;
+			surfNormal = V;
+			useSurfNormal = 2;
+		}
+	}
+	if (temp <= tmin||skip)
+	{
+		temp = t2;
+		m = m2;
+		skip = false;
+		useSurfNormal = false;
+		if (m < 0)
+		{
+			float den = dot(ray.direction, -V);
+			if (fabsf(den) < 0.0001f)
+			{
+				skip = true;
+			}
+			else
+			{
+				temp = dot(-OC, -V) / den;
+				surfNormal = -V;
+				useSurfNormal = 1;
+			}
+		}
+		if (m > params.height)
+		{
+			float den = dot(ray.direction, V);
+			if (fabsf(den) < 0.0001f)
+			{
+				skip = true;
+			}
+			else
+			{
+				temp = dot(-OC + params.height * V, V) / den;
+				surfNormal =  V;
+				useSurfNormal = 2;
+			}
+		}
+		if (temp <= tmin || skip)
+		{
+			return false;
+		}
+	}
+
+	
+
+	hitInfo.t = temp;
+	float3 normal;
+	if (useSurfNormal)
+	{
+		normal = surfNormal;
+		
+	}
+	else
+	{
+		normal = ray.computePosition(temp) - C - m * V;
+	}
+
+	if (dot(normal, ray.direction) <= 0)
+		hitInfo.hit = CSG::CSGRayHit::Enter;
+	else
+		hitInfo.hit = CSG::CSGRayHit::Exit;
+		
+	if (useSurfNormal == 1)
+	{
+		hitInfo.hit |= CSG::CSGRayHit::Flag1;
+	}
+	else if (useSurfNormal == 2)
+	{
+		hitInfo.hit |= CSG::CSGRayHit::Flag2;
+	}
+	hitInfo.primitiveType = CSGTree::NodeType::Cylinder;
+}
+
+__device__ void cylinderHitDetails(const Ray& ray, const Primitive& cylinder, const RayHitMinimal& hitInfo, RayHit& detailedHitInfo)
+{
+	detailedHitInfo.hit = true;
+	detailedHitInfo.t = hitInfo.t;
+	detailedHitInfo.position = ray.computePosition(detailedHitInfo.t);
+	detailedHitInfo.primitiveIdx = hitInfo.primitiveIdx;
+
+	CylinderParameters params = cylinder.params.cylinderParameters;
+	float3 V = make_float3(params.axisX, params.axisY, params.axisZ);
+	float3 C = make_float3(cylinder.x, cylinder.y, cylinder.z) - (cylinder.params.cylinderParameters.height / 2) * V;
+	float3 OC = ray.origin - C;
+
+	
+	if (hitInfo.hit & CSG::CSGRayHit::Flag1)
+	{
+		float den = dot(ray.direction, -V);
+		detailedHitInfo.normal = -V;
+	}
+	else if (hitInfo.hit & CSG::CSGRayHit::Flag2)
+	{
+		float den = dot(ray.direction, V);
+		detailedHitInfo.normal = V;
+	}
+	else
+	{
+		float m = dot(ray.direction, V) * hitInfo.t + dot(OC, V);
+		detailedHitInfo.normal = normalize(detailedHitInfo.position - C - m * V);
+	}
+	
+
+	if (hitInfo.hit & CSG::CSGRayHit::Flip)
+		detailedHitInfo.normal = -detailedHitInfo.normal;
+	if (hitInfo.hit & CSG::CSGRayHit::Exit)
+		detailedHitInfo.normal = -detailedHitInfo.normal;
+}
+
+//with help [https://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms]
+__device__ bool cubeHit(const Ray& ray, const Primitive& cube, RayHitMinimal& hitInfo, float& tmin)
+{
+	hitInfo.hit = CSG::CSGRayHit::Miss;
+	hitInfo.primitiveIdx = cube.id;
+
+	float3 dirfrac = make_float3(0, 0, 0);
+	dirfrac.x = 1.0f / ray.direction.x;
+	dirfrac.y = 1.0f / ray.direction.y;
+	dirfrac.z = 1.0f / ray.direction.z;
+	// lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
+	// r.org is origin of ray
+
+	float3 axis = make_float3(1, 1, 1);
+	float3 C = make_float3(cube.x, cube.y, cube.z);
+	float3 lb = C - cube.params.cubeParameters.size / 2 * axis;
+	float3 rt = C + cube.params.cubeParameters.size / 2 * axis;
+	float t1 = (lb.x - ray.origin.x) * dirfrac.x;
+	float t2 = (rt.x - ray.origin.x) * dirfrac.x;
+	float t3 = (lb.y - ray.origin.y) * dirfrac.y;
+	float t4 = (rt.y - ray.origin.y) * dirfrac.y;
+	float t5 = (lb.z - ray.origin.z) * dirfrac.z;
+	float t6 = (rt.z - ray.origin.z) * dirfrac.z;
+
+	float tempmin = fmax(fmax(fmin(t1, t2), fmin(t3, t4)), fmin(t5, t6));
+	float tempmax = fmin(fmin(fmax(t1, t2), fmax(t3, t4)), fmax(t5, t6));
+
+
+	// if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
+	if (tempmax < 0)
+	{
+		return false;
+	}
+
+	// if tmin > tmax, ray doesn't intersect AABB
+	if (tempmin > tempmax)
+	{
+		return false;
+	}
+	if (tempmin <= tmin)
+	{
+		tempmin = tempmax;
+		if (tempmin <= tmin)
+		{
+			return false;
+		}
+	}
+
+	hitInfo.t = tempmin;
+	float3 PC = ray.computePosition(tempmin) - C;
+	float bias = 1.00001;
+	float halfSize = cube.params.cubeParameters.size / 2;
+	float3 normal = make_float3((float)(int)(PC.x / halfSize * bias), (float)(int)(PC.y / halfSize * bias), (float)(int)(PC.z / halfSize * bias));
+
+
+	if (dot(normal, ray.direction) <= 0)
+		hitInfo.hit = CSG::CSGRayHit::Enter;
+	else
+		hitInfo.hit = CSG::CSGRayHit::Exit;
+
+	hitInfo.primitiveType = CSGTree::NodeType::Cube;
+	return true;
+}
+
+__device__ void cubeHitDetails(const Ray& ray, const Primitive& cube, const RayHitMinimal& hitInfo, RayHit& detailedHitInfo)
+{
+	detailedHitInfo.hit = true;
+	detailedHitInfo.t = hitInfo.t;
+	detailedHitInfo.position = ray.computePosition(detailedHitInfo.t);
+	detailedHitInfo.primitiveIdx = hitInfo.primitiveIdx;
+
+	float3 C = make_float3(cube.x, cube.y, cube.z);
+
+
+	float3 PC = detailedHitInfo.position - C;
+	float bias = 1.00001;
+	float halfSize = cube.params.cubeParameters.size / 2;
+	float3 normal = make_float3((float)(int)(PC.x / halfSize * bias), (float)(int)(PC.y / halfSize * bias), (float)(int)(PC.z / halfSize * bias));
+
+	detailedHitInfo.normal = normalize(normal);
+
 	if (hitInfo.hit & CSG::CSGRayHit::Flip)
 		detailedHitInfo.normal = -detailedHitInfo.normal;
 	if (hitInfo.hit & CSG::CSGRayHit::Exit)
@@ -258,14 +539,16 @@ __device__ void GoTo(
 	{
 		bool gotoL = true;
 		bool gotoR = true;
-		if (gotoL && (tree.nodes[node.left].primitiveIdx != -1))
+		CSGNode tmpNode = tree.nodes[node.left];
+		if (gotoL && (tmpNode.primitiveIdx != -1))
 		{
-			sphereHit(ray, tree.primitives[tree.nodes[node.left].primitiveIdx], leftRay, tmin);
+			hitPrimitive(ray, tree, tmpNode, leftRay, tmin);
 			gotoL = false;
 		}
+		tmpNode = tree.nodes[node.right];
 		if (gotoR && (tree.nodes[node.right].primitiveIdx != -1))
 		{
-			sphereHit(ray, tree.primitives[tree.nodes[node.right].primitiveIdx], rightRay, tmin);
+			hitPrimitive(ray, tree, tmpNode, rightRay, tmin);
 			gotoR = false;
 		}
 		if (gotoL || gotoR)
@@ -300,11 +583,11 @@ __device__ void GoTo(
 	{
 		if (action & CSG::CSGActions::GotoLft)
 		{
-			sphereHit(ray, tree.primitives[node.primitiveIdx], leftRay, tmin);
+			hitPrimitive(ray, tree, node, leftRay, tmin);
 		}
 		else
 		{
-			sphereHit(ray, tree.primitives[node.primitiveIdx], rightRay, tmin);
+			hitPrimitive(ray, tree, node, rightRay, tmin);
 		}
 		action = actionStack.pop();
 		node = GetParent(tree, node, run);
@@ -335,7 +618,7 @@ __device__ void Compute(
 		}
 	}
 	int actions = LookUpActions(leftRay.hit, rightRay.hit, node.type);
-	if ((actions & CSG::HitActions::RetL) || ((actions & CSG::HitActions::RetLIfCloser) && (leftRay.t <= rightRay.t)))
+	if ((actions & CSG::HitActions::RetL) || ((actions & CSG::HitActions::RetLIfCloser) && (leftRay.t < rightRay.t)))
 	{
 		rightRay = leftRay;
 		action = actionStack.pop();
@@ -354,7 +637,7 @@ __device__ void Compute(
 		action = actionStack.pop();
 		node = GetParent(tree, node, run);
 	}
-	else if ((actions & CSG::HitActions::LoopL) || ((actions & CSG::HitActions::LoopLIfCloser) && (leftRay.t <= rightRay.t)))
+	else if ((actions & CSG::HitActions::LoopL) || ((actions & CSG::HitActions::LoopLIfCloser) && (leftRay.t < rightRay.t)))
 	{
 		tmin = leftRay.t;
 		primitiveStack.push(rightRay);

@@ -33,7 +33,7 @@ void Application::CreateAppWindow(const std::string windowName)
 
 	oldTime = SDL_GetTicks();
 
-	SDL_GL_SetSwapInterval(0);
+	SDL_GL_SetSwapInterval(1);
 }
 
 void Application::Run()
@@ -71,7 +71,8 @@ bool Application::LoadCSGTree(const std::string& fileName)
 		buffer << inputStream.rdbuf();
 		inputStream.close();
 
-		tree = CSGTree::Parse(buffer.str());
+		CSGTree tmpTree = CSGTree::Parse(buffer.str());
+		tree = tmpTree;
 
 		renderer->SetTreeToRender(tree);
 	}

@@ -11,10 +11,11 @@ class CudaStack
 
 	__device__ void push(const T& element)
 	{
-		if (size() == N)
+		if (size() >= N)
 		{
 			int stackFull = 0;
-			assert(stackFull);
+//			assert(stackFull);
+			return;
 		}
 		stack[count] = element;
 		count++;
@@ -25,7 +26,8 @@ class CudaStack
 		if (empty())
 		{
 			int stackEmpty = 0;
-			assert(stackEmpty);
+	//		assert(stackEmpty);
+			return stack[count];
 		}
 		count--;
 		return stack[count];

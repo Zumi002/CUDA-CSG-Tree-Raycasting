@@ -36,7 +36,8 @@ struct CSGTree
 		Difference,
 		Intersection,
 		Sphere,
-		Cylinder
+		Cylinder,
+		Cube
 	};
 
 	//node 0 is root of tree

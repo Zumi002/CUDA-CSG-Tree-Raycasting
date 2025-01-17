@@ -1,0 +1,7 @@
+Difference
+	Sphere 0 0 0 0000FF 2
+	Union
+		Cylinder 0 0 0 00FF00 1 4 0 0 0
+		Union
+			Cube 0 0 -1 FF0000 2
+			Cube 0 0 1 FF0000 2

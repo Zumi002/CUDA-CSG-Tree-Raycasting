@@ -77,6 +77,64 @@ CSGTree CSGTree::Parse(const std::string& text)
 			i += 5;
 			primitivesCount++;
 		}
+		else if (splited[i] == "Cylinder")
+		{
+			tree.nodes[nodesCount].type = CSGTree::NodeType::Cylinder;
+			tree.nodes[nodesCount].primitiveIdx = primitivesCount;
+
+			float x = std::stof(splited[i + 1]);
+			float y = std::stof(splited[i + 2]);
+			float z = std::stof(splited[i + 3]);
+
+			if (splited[i + 4].size() != 6)
+			{
+				throw std::invalid_argument("Cannot parse color " + splited[i + 4]);
+			}
+			float r = color(splited[i + 4].substr(0, 2));
+			float g = color(splited[i + 4].substr(2, 2));
+			float b = color(splited[i + 4].substr(4, 2));
+
+			float radius = std::stof(splited[i + 5]);
+			float height = std::stof(splited[i + 6]);
+			float rotX = std::stof(splited[i + 7]);
+			float rotY = std::stof(splited[i + 8]);
+			float rotZ = std::stof(splited[i + 9]);
+
+			if (rotX > 360 || rotX < 0)
+				throw std::invalid_argument("Invalid roation rotX should be in range [0, 360] deg");
+			if (rotY > 360 || rotY < 0)
+				throw std::invalid_argument("Invalid roation rotY should be in range [0, 360] deg");
+			if (rotZ > 360 || rotZ < 0)
+				throw std::invalid_argument("Invalid roation rotZ should be in range [0, 360] deg");
+
+
+			tree.primitives.addCylinder(primitivesCount, x, y, z, r, g, b, radius, height, rotX, rotY, rotZ);
+			i += 9;
+			primitivesCount++;
+		}
+		else if (splited[i] == "Cube")
+		{
+			tree.nodes[nodesCount].type = CSGTree::NodeType::Cube;
+			tree.nodes[nodesCount].primitiveIdx = primitivesCount;
+
+			float x = std::stof(splited[i + 1]);
+			float y = std::stof(splited[i + 2]);
+			float z = std::stof(splited[i + 3]);
+
+			if (splited[i + 4].size() != 6)
+			{
+				throw std::invalid_argument("Cannot parse color " + splited[i + 4]);
+			}
+			float r = color(splited[i + 4].substr(0, 2));
+			float g = color(splited[i + 4].substr(2, 2));
+			float b = color(splited[i + 4].substr(4, 2));
+
+			float size = std::stof(splited[i + 5]);
+
+			tree.primitives.addCube(primitivesCount, x, y, z, r, g, b, size);
+			i += 5;
+			primitivesCount++;
+		}
 		else
 		{
 			throw std::invalid_argument("Cannot parse - Unrecognized keyword: " + splited[i]);
