@@ -31,6 +31,7 @@ class RenderManager
 	cudaGraphicsResource* cudaRaycastingPBOResource;
 
 	CSGTree tree;
+	bool treeSet = false;
 
 	ImGui::FileBrowser* fileDialog;
 	DirectionalLight* light;
@@ -46,6 +47,7 @@ class RenderManager
 		RenderManager(SDL_Window* window, ImGui::FileBrowser* FileDialog, DirectionalLight* Light);
 		void Render();
 		void SetTreeToRender(CSGTree tree);
+		void CleanUp();
 };
 
 

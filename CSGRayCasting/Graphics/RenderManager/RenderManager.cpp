@@ -124,8 +124,11 @@ void RenderManager::Render()
 		ChangeSize();
 	}
 
-	CalculateRays();
-	RenderRaysData();
+	if (treeSet)
+	{
+		CalculateRays();
+		RenderRaysData();
+	}
 	RenderImGui();
 	
 }
@@ -138,7 +141,6 @@ void RenderManager::ChangeSize()
 
 	glDeleteTextures(1, &rayCastingTexture);
 	glDeleteBuffers(1, &rayCastingPBO);
-	//glDeleteFramebuffers(1, &framebuffer);
 
 	glGenBuffers(1, &rayCastingPBO);
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, rayCastingPBO);
@@ -159,5 +161,16 @@ void RenderManager::ChangeSize()
 void RenderManager::SetTreeToRender(CSGTree newTree)
 {
 	tree = newTree;
+	treeSet = true;
 	ChangeSize();
+}
+
+
+void RenderManager::CleanUp()
+{
+	raycaster.CleanUp();
+	cudaGraphicsUnregisterResource(cudaRaycastingPBOResource);
+
+	glDeleteTextures(1, &rayCastingTexture);
+	glDeleteBuffers(1, &rayCastingPBO);
 }

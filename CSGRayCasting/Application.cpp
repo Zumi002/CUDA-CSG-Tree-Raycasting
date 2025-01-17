@@ -132,3 +132,11 @@ void Application::checkGLError() {
 		std::cerr << "OpenGL error: " << err << std::endl;
 	}
 }
+
+void Application::CleanUp()
+{
+	renderer->CleanUp();
+	delete renderer;
+	delete inputManager;
+	SDL_DestroyWindow(window);
+}

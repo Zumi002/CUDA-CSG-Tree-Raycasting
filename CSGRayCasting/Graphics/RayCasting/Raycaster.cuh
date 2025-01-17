@@ -22,4 +22,5 @@ class Raycaster
 		
 		void ChangeSize(int newWidth, int newHeight, CSGTree tree);
 		void Raycast(float4* devPBO, Camera cam, DirectionalLight light);
+		void CleanUp();
 };

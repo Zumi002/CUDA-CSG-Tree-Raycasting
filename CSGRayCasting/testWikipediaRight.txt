@@ -1,5 +1,5 @@
 Union
 	Union
-		Cylinder 0 0 0 00FF00 0.5 3 90 0 0
-		Cylinder 0 0 0 00FF00 0.5 3 0 0 0
-	Cylinder 0 0 0 00FF00 0.5 3 0 0 90
+		Cylinder 0 0 0 00FF00 0.5 2 90 0 0
+		Cylinder 0 0 0 00FF00 0.5 2 0 0 0
+	Cylinder 0 0 0 00FF00 0.5 2 0 0 90

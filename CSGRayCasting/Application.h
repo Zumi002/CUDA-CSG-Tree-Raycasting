@@ -18,6 +18,7 @@ class Application
 
 	bool quit = false;
 
+
 	SDL_Window* window;
 	
 	CSGTree tree;
@@ -40,4 +41,5 @@ class Application
 		void CreateAppWindow(const std::string windowName);
 		void Run();
 		bool LoadCSGTree(const std::string& fileName);
+		void CleanUp();
 };

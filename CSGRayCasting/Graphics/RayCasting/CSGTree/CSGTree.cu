@@ -96,9 +96,9 @@ CSGTree CSGTree::Parse(const std::string& text)
 
 			float radius = std::stof(splited[i + 5]);
 			float height = std::stof(splited[i + 6]);
-			float rotX = std::stof(splited[i + 7]);
-			float rotY = std::stof(splited[i + 8]);
-			float rotZ = std::stof(splited[i + 9]);
+			double rotX = std::stod(splited[i + 7]);
+			double rotY = std::stod(splited[i + 8]);
+			double rotZ = std::stod(splited[i + 9]);
 
 			if (rotX > 360 || rotX < 0)
 				throw std::invalid_argument("Invalid roation rotX should be in range [0, 360] deg");

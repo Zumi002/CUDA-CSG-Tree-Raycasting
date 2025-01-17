@@ -258,7 +258,8 @@ __device__ bool cylinderHit(const Ray& ray, const Primitive& cylinder, RayHitMin
 		}
 		else
 		{
-			temp = dot(-OC+params.height* V, V) / den;
+			float3 OCmMax = ray.origin - make_float3(cylinder.x, cylinder.y, cylinder.z) - (cylinder.params.cylinderParameters.height / 2) * V;
+			temp = dot(-OCmMax, V) / den;
 			surfNormal = V;
 			useSurfNormal = 2;
 		}
@@ -292,7 +293,8 @@ __device__ bool cylinderHit(const Ray& ray, const Primitive& cylinder, RayHitMin
 			}
 			else
 			{
-				temp = dot(-OC + params.height * V, V) / den;
+				float3 OCmMax = ray.origin - make_float3(cylinder.x, cylinder.y, cylinder.z) - (cylinder.params.cylinderParameters.height / 2) * V;
+				temp = dot(-OCmMax, V) / den;
 				surfNormal =  V;
 				useSurfNormal = 2;
 			}

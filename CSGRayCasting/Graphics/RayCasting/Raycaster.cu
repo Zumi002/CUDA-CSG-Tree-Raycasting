@@ -2,12 +2,7 @@
 
 void Raycaster::ChangeSize(int newWidth, int newHeight, CSGTree tree)
 {
-	if (alloced)
-	{
-		gpuErrchk(cudaFree(devHits));
-		gpuErrchk(cudaFree(cudaTree.nodes));
-		gpuErrchk(cudaFree(cudaTree.primitives));
-	}
+	CleanUp();
 
 	width = newWidth;
 	height = newHeight;
@@ -38,3 +33,13 @@ void Raycaster::Raycast(float4* devPBO, Camera cam, DirectionalLight light)
 	
 }
 
+void Raycaster::CleanUp()
+{
+	if (alloced)
+	{
+		gpuErrchk(cudaFree(devHits));
+		gpuErrchk(cudaFree(cudaTree.nodes));
+		gpuErrchk(cudaFree(cudaTree.primitives));
+		alloced = false;
+	}
+}
