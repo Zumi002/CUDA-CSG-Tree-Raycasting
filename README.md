@@ -64,6 +64,7 @@ For clarity, **tabulation is recommended** to separate tree levels.
 <p align="center">
   <img src="Images/Csg_tree.png"/>
 </p>
+
 #### And it should look like:
 <p align="center">
   <img src="Images/AppImage3.png"/>
