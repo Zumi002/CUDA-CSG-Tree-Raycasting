@@ -8,8 +8,8 @@ __global__ void RaycastKernel(Camera cam, CudaCSGTree tree, RayHit* hits, float 
 	if (x >= width || y >= height) return;
 
 	// Calculate normalized device coordinates (NDC)
-	float u = (float)x / (width - 1);
-	float v = (float)y / (height - 1);
+	float u = ((float)x+0.5f) / (width - 1);
+	float v = ((float)y + 0.5f) / (height - 1);
 
 	// Convert to screen space coordinates (-1 to 1)
 	float nx = (2.0f * u - 1.0f) * (width / height) * tan(cam.fov / 2.0f);
