@@ -151,6 +151,9 @@
     <CudaLink>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </CudaLink>
+    <PostBuildEvent>
+      <Command>xcopy /Y /F "$(ProjectDir)/Libraries/SDL2.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
