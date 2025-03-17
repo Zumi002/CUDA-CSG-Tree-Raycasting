@@ -30,6 +30,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Controls\InputManager.h" />
+    <ClInclude Include="Graphics\RayCasting\CSGTree\BVH\BVHNode.cuh" />
     <ClInclude Include="Graphics\RayCasting\CSGTree\CSGTree.cuh" />
     <ClInclude Include="Graphics\RayCasting\CSGTree\Primitives\Primitives.h" />
     <ClInclude Include="Graphics\RayCasting\Kernels\RaycastingKernels.cuh" />

@@ -14,6 +14,7 @@
 #include "../Utils/CSGUtils.cuh"
 #include "../Utils/Float3Utils.cuh"
 #include "../../RenderManager/DirectionalLight.h"
+#include "../CSGTree/BVH/BVHNode.cuh"
 
 #define MAXSTACKSIZE 32
 
@@ -28,6 +29,10 @@ inline void gpuAssert(cudaError_t code, const char* file, int line, bool abort =
 			exit(code);
 	}
 }
+
+//BVH related kernels
+__device__ bool isBVHNodeHit(const Ray& ray, const BVHNode& node, RayHitMinimal& hitInfo, float& tmin);
+
 
 
 //kernel called once per pixel, returns ray intersection data in hits array

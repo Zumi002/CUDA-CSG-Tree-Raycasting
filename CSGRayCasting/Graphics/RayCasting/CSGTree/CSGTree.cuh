@@ -8,6 +8,8 @@
 #include <stack>
 #include <utility>
 
+#include "BVH/BVHNode.cuh"
+
 #include <cuda_runtime.h>
 
 struct CSGNode
@@ -18,6 +20,8 @@ struct CSGNode
 	int right;
 	int parent;
 
+	BVHNode bvhNode;
+
 	__host__ __device__ CSGNode(int Type, int PrimitiveIdx, int Left, int Right, int Parent)
 	{
 		type = Type;
@@ -25,6 +29,7 @@ struct CSGNode
 		left = Left;
 		right = Right;
 		parent = Parent;
+		bvhNode = BVHNode();
 	}
 };
 
@@ -46,6 +51,7 @@ struct CSGTree
 	Primitives primitives;
 
 	static CSGTree Parse(const std::string& text);
+	void ConstructBVH();
 };
 
 struct CudaCSGTree

@@ -537,8 +537,8 @@ __device__ void GoTo(
 		node.type == CSGTree::NodeType::Difference ||
 		node.type == CSGTree::NodeType::Intersection)
 	{
-		bool gotoL = true;
-		bool gotoR = true;
+		bool gotoL = isBVHNodeHit(ray, tree.nodes[node.left].bvhNode, leftRay,tmin);
+		bool gotoR = isBVHNodeHit(ray, tree.nodes[node.right].bvhNode, rightRay,tmin);
 		CSGNode tmpNode = tree.nodes[node.left];
 		if (gotoL && (tmpNode.primitiveIdx != -1))
 		{
@@ -713,4 +713,45 @@ __device__ CSGNode GetParent(CudaCSGTree& tree, CSGNode& node, bool& run)
 	}
 	run = false;
 	return CSGNode(0, 0, 0, 0, 0);
+}
+
+__device__ bool isBVHNodeHit(const Ray& ray, const BVHNode& node, RayHitMinimal& hitInfo, float& tmin)
+{
+
+
+	float3 lb = make_float3(node.minX, node.minY, node.minZ);
+	float3 rt = make_float3(node.maxX, node.maxY, node.maxZ);
+	float t1 = (lb.x - ray.origin.x) / ray.direction.x;
+	float t2 = (rt.x - ray.origin.x) / ray.direction.x;
+	float t3 = (lb.y - ray.origin.y) / ray.direction.y;
+	float t4 = (rt.y - ray.origin.y) / ray.direction.y;
+	float t5 = (lb.z - ray.origin.z) / ray.direction.z;
+	float t6 = (rt.z - ray.origin.z) / ray.direction.z;
+
+	float tempmin = fmax(fmax(fmin(t1, t2), fmin(t3, t4)), fmin(t5, t6));
+	float tempmax = fmin(fmin(fmax(t1, t2), fmax(t3, t4)), fmax(t5, t6));
+
+	// if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
+	if (tempmax < 0)
+	{
+		hitInfo.hit = CSG::CSGRayHit::Miss;
+		return false;
+	}
+
+	// if tmin > tmax, ray doesn't intersect AABB
+	if (tempmin > tempmax)
+	{
+		hitInfo.hit = CSG::CSGRayHit::Miss;
+		return false;
+	}
+	if (tempmin <= tmin)
+	{
+		if (tempmax <= tmin)
+		{
+			hitInfo.hit = CSG::CSGRayHit::Miss;
+			return false;
+		}
+	}
+
+	return true;
 }

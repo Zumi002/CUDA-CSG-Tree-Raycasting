@@ -146,7 +146,36 @@ CSGTree CSGTree::Parse(const std::string& text)
 	if (nodesCount != 2*primitivesCount - 1)
 		throw std::invalid_argument("Cannot parse - number of primitives do not match number of nodes");
 
+	tree.ConstructBVH();
+
 	return tree;
+}
+
+void CSGTree::ConstructBVH()
+{
+	std::stack<int> nodesID;
+	nodesID.push(0);
+	std::vector<bool> visited(nodes.size(), false);
+	while (nodesID.size())
+	{
+		int id = nodesID.top();
+		if (visited[id])
+		{
+			nodesID.pop();
+			nodes[id].bvhNode = BVHNode(nodes[nodes[id].left].bvhNode, nodes[nodes[id].right].bvhNode);
+		}
+		else if (nodes[id].primitiveIdx != -1)
+		{
+			nodesID.pop();
+			nodes[id].bvhNode = BVHNode(primitives.primitives[nodes[id].primitiveIdx], nodes[id].type);
+		}
+		else
+		{
+			nodesID.push(nodes[id].left);
+			nodesID.push(nodes[id].right);
+			visited[id] = true;
+		}
+	}
 }
 
 std::vector<std::string> split(const std::string& text)

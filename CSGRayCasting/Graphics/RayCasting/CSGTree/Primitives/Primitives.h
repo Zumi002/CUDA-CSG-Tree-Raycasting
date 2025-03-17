@@ -98,6 +98,7 @@ struct Primitive
 		b = B;
 	}
 
+	
 };
 
 struct Primitives
