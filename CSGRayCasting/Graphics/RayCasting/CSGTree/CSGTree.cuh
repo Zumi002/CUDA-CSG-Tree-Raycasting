@@ -52,6 +52,7 @@ struct CSGTree
 
 	static CSGTree Parse(const std::string& text);
 	void ConstructBVH();
+	void TransformForClassical();
 };
 
 struct CudaCSGTree
@@ -63,3 +64,4 @@ struct CudaCSGTree
 
 std::vector<std::string> split(const std::string& text);
 float color(const std::string& hex);
+void CreateParts(CSGTree& tree, int* parts, int node);

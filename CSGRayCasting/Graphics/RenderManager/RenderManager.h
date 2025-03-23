@@ -30,8 +30,12 @@ class RenderManager
 	
 	cudaGraphicsResource* cudaRaycastingPBOResource;
 
-	CSGTree tree;
+	CSGTree tree, classicalTree;
 	bool treeSet = false;
+
+	int lastRenderingAlg = 0;
+	int renderingAlg = 0;
+	const char* algorithmListBoxItems[2] = {"Single hit", "Classical"};
 
 	ImGui::FileBrowser* fileDialog;
 	DirectionalLight* light;

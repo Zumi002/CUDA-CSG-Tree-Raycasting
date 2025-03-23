@@ -198,3 +198,73 @@ float color(const std::string& hex)
 	int value = std::stoi(hex, nullptr, 16);
 	return (float)value / 255;
 }
+
+void CreateParts(CSGTree &tree, int* parts, int node)
+{
+	
+		int ll, lr, rl, rr;
+		if (tree.nodes[tree.nodes[node].left].left == -1) // is leaf
+		{
+			ll = (tree.nodes[node].left - tree.primitives.primitives.size() + 1) * 2;
+			lr = (tree.nodes[node].left - tree.primitives.primitives.size() + 1) * 2 + 1;
+		}
+		else
+		{
+			CreateParts(tree, parts, tree.nodes[node].left);
+			ll = parts[tree.nodes[node].left * 4];
+			lr = parts[tree.nodes[node].left * 4 + 3];
+		}
+		if (tree.nodes[tree.nodes[node].right].left == -1) // is leaf
+		{
+			rl = (tree.nodes[node].right - tree.primitives.primitives.size() + 1) * 2;
+			rr = (tree.nodes[node].right - tree.primitives.primitives.size() + 1) * 2 + 1;
+		}
+		else
+		{
+			CreateParts(tree, parts, tree.nodes[node].right);
+			rl = parts[tree.nodes[node].right * 4];
+			rr = parts[tree.nodes[node].right * 4 + 3];
+		}
+		parts[node * 4] = ll;
+		parts[node * 4 + 1] = lr;
+		parts[node * 4 + 2] = rl;
+		parts[node * 4 + 3] = rr;
+	
+}
+
+void CSGTree::TransformForClassical()
+{
+	//left - false, right - true
+	std::vector<CSGNode> nodeCopy = nodes;
+	std::vector<int> newIdx(nodes.size());
+	int j = 0;
+	
+	for (int i = 0; i < nodes.size(); i++)
+	{
+		if (nodes[i].primitiveIdx != -1)
+			continue;
+		
+		nodes[j] = nodes[i];
+		newIdx[i] = j;
+		j++;
+	}
+	//add leaves at the end
+	for (int i = 0; i < nodes.size(); i++)
+	{
+		if (nodeCopy[i].primitiveIdx != -1)
+		{
+			nodes[j] = nodeCopy[i];
+			newIdx[i] = j;
+			j++;
+		}
+	}
+	//reapply connections
+	for (int i = 0; i < nodes.size(); i++)
+	{
+		if (nodes[i].primitiveIdx != -1)
+			continue;
+		nodes[i].left = newIdx[nodes[i].left];
+		nodes[i].right = newIdx[nodes[i].right];
+	}
+
+}

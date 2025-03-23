@@ -98,7 +98,8 @@ void RenderManager::RenderImGui()
 	{
 		fileDialog->Open();
 	}
-
+	ImGui::Separator();
+	ImGui::Combo("Algorithm", &renderingAlg, algorithmListBoxItems, 2);
 	ImGui::Separator();
 	ImGui::LabelText("","Light direction:");
 	ImGui::SliderAngle("Polar", &light->polar, -180, 180);
@@ -113,7 +114,14 @@ void RenderManager::RenderImGui()
 
 void RenderManager::Render()
 {
-
+	if (renderingAlg != lastRenderingAlg)
+	{
+		lastRenderingAlg = renderingAlg;
+		if (lastRenderingAlg == 0)
+			raycaster.ChangeAlg(tree, lastRenderingAlg);
+		if (lastRenderingAlg == 1)
+			raycaster.ChangeAlg(classicalTree, lastRenderingAlg);
+	}
 
 	int tmpWidth, tmpHeight;
 	SDL_GL_GetDrawableSize(window, &tmpWidth, &tmpHeight);
@@ -161,6 +169,8 @@ void RenderManager::ChangeSize()
 void RenderManager::SetTreeToRender(CSGTree newTree)
 {
 	tree = newTree;
+	classicalTree = newTree;
+	classicalTree.TransformForClassical();
 	treeSet = true;
 	ChangeSize();
 }

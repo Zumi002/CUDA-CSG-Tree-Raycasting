@@ -12,15 +12,27 @@ class Raycaster
 	int width, height;
 	dim3 blockDim;
 	dim3 gridDim;
-	
+
 	CudaCSGTree cudaTree;
 	RayHit* devHits;
+	int* devParts;
+	int* Parts;
+	int alg = 0;
+	int shapeCount = 0;
 
 	bool alloced = false;
+	bool allocedTree = false;
+	bool allocedClassicalAdds = false;
 
-	public:
-		
-		void ChangeSize(int newWidth, int newHeight, CSGTree tree);
-		void Raycast(float4* devPBO, Camera cam, DirectionalLight light);
-		void CleanUp();
+public:
+	void ChangeTree(CSGTree& tree);
+	void ChangeSize(int newWidth, int newHright);
+	void ChangeSize(int newWidth, int newHeight, CSGTree& tree);
+	void Raycast(float4* devPBO, Camera cam, DirectionalLight light);
+	void CleanUpTree();
+	void CleanUpTexture();
+	void CleanUp();
+	void ChangeAlg(CSGTree& tree, int alg);
+	void CleanUpClassical();
+	void SetupClassical(CSGTree& tree);
 };

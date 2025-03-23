@@ -96,3 +96,29 @@ __device__ void cubeHitDetails(const Ray& ray, const Primitive& sphere, const Ra
 //returns parent node, or if not possible creates virtual node. If virutal node is created, tells state machine to end computations 
  inline __device__ CSGNode GetParent(CudaCSGTree& tree, CSGNode& node, bool& run);
 
+ __global__ void CalculateInterscetion(int width, int height, int shape_count, CudaCSGTree dev_tree, int* parts, Camera cam,
+	 RayHit* hits);
+
+ __device__ float3 CalculateNormalVectorCylinder(const Primitive& cylinder, float3 pixelPosition);
+
+ __device__ bool IntersectionPointSphere(const float3& spherePosition, float radius, const float3& rayOrigin, const float3& rayDirection, float& t1, float& t2);
+
+ __device__ bool IntersectionPointCube(const Primitive& cube, const float3& rayOrigin, const float3& rayDirection, float& t1, float& t2, float3& N, float3& N2);
+
+ __device__ bool IntersectionPointCylinder(const Primitive& cylinder, const float3& rayOrigin, const float3& rayDirection, float& t1, float& t2, float3& N, float3& N2);
+
+ __device__ void AddIntervals(float* sphereIntersections, float* tempArray, int p1, int p2, int k1, int k2, bool print);
+
+ __host__ __device__ void AddIntervals2(float* sphereIntersections, float* tempArray, int p1, int p2, int k1, int k2, bool print);
+ __host__ __device__ void SubstractIntervals(float* sphereIntersections, float* tempArray, int p1, int p2, int k1, int k2, bool print);
+ __host__ __device__ void CommonPartIntervals(float* sphereIntersections, float* tempArray, int p1, int p2, int k1, int k2, bool print);
+
+ __host__ __device__ float4 NormalizeVector4(float4 vector);
+
+ __host__ __device__ float3 NormalizeVector3(float3 vector);
+
+ __host__ __device__ float3 cross(const float3& a, const float3& b);
+
+ __host__ __device__ float dot3(const float3& a, const float3& b);
+
+ __host__ __device__ void MultiplyVectorByMatrix4(float4& vector, const float* matrix);
