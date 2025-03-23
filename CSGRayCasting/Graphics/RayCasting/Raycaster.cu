@@ -11,21 +11,19 @@ void Raycaster::ChangeTree(CSGTree& tree)
 	allocedTree = true;
 }
 
-void Raycaster::ChangeSize(int newWidth, int newHright)
+void Raycaster::ChangeSize(int newWidth, int newHeight)
 {
 	CleanUpTexture();
+	width = newWidth;
+	height = newHeight;
+	blockDim = dim3(BLOCKXSIZE, BLOCKYSIZE);
+	gridDim = dim3((width + blockDim.x - 1) / blockDim.x, (height + blockDim.y - 1) / blockDim.y);
 	gpuErrchk(cudaMalloc(&devHits, width * height * sizeof(RayHit)));
 	alloced = true;
 }
 
 void Raycaster::ChangeSize(int newWidth, int newHeight, CSGTree& tree)
 {
-
-	width = newWidth;
-	height = newHeight;
-
-	blockDim = dim3(BLOCKXSIZE, BLOCKYSIZE);
-	gridDim = dim3((width + blockDim.x - 1) / blockDim.x, (height + blockDim.y - 1) / blockDim.y);
 	ChangeSize(newWidth, newHeight);
 	ChangeTree(tree);
 }
@@ -96,8 +94,6 @@ void Raycaster::CleanUp()
 
 void Raycaster::ChangeAlg(CSGTree& tree, int newAlg)
 {
-	if (newAlg == alg)
-		return;
 
 	if (alg == 1)
 		CleanUpClassical();

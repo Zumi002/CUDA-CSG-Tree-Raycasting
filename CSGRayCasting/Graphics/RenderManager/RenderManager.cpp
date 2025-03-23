@@ -117,10 +117,7 @@ void RenderManager::Render()
 	if (renderingAlg != lastRenderingAlg)
 	{
 		lastRenderingAlg = renderingAlg;
-		if (lastRenderingAlg == 0)
-			raycaster.ChangeAlg(tree, lastRenderingAlg);
-		if (lastRenderingAlg == 1)
-			raycaster.ChangeAlg(classicalTree, lastRenderingAlg);
+		ChangeAlgorithm();
 	}
 
 	int tmpWidth, tmpHeight;
@@ -141,9 +138,23 @@ void RenderManager::Render()
 	
 }
 
+void RenderManager::ChangeAlgorithm()
+{
+	if (lastRenderingAlg == 0)
+		raycaster.ChangeAlg(tree, lastRenderingAlg);
+	if (lastRenderingAlg == 1)
+		raycaster.ChangeAlg(classicalTree, lastRenderingAlg);
+}
+
+void RenderManager::ChangeTree()
+{
+	raycaster.ChangeTree(tree);
+	ChangeAlgorithm();
+}
+
 void RenderManager::ChangeSize()
 {
-	raycaster.ChangeSize(width, height, tree);
+	raycaster.ChangeSize(width, height);
 
 	cudaGraphicsUnregisterResource(cudaRaycastingPBOResource);
 
@@ -173,6 +184,7 @@ void RenderManager::SetTreeToRender(CSGTree newTree)
 	classicalTree.TransformForClassical();
 	treeSet = true;
 	ChangeSize();
+	ChangeTree();
 }
 
 

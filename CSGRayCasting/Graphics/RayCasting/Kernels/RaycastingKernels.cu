@@ -858,8 +858,8 @@ __device__ float3 CalculateNormalVectorCylinder(const Primitive& cylinder, float
 
 __device__ bool IntersectionPointCylinder(const Primitive& cylinder, const float3& rayOrigin, const float3& rayDirection, float& t1, float& t2, float3& N, float3& N2)
 {
-	float3 b = make_float3(cylinder.x - rayOrigin.x, cylinder.y - rayOrigin.y, cylinder.z - rayOrigin.z);
 	float3 axis = make_float3(cylinder.params.cylinderParameters.axisX, cylinder.params.cylinderParameters.axisY, cylinder.params.cylinderParameters.axisZ);
+	float3 b = make_float3(cylinder.x - rayOrigin.x, cylinder.y - rayOrigin.y, cylinder.z - rayOrigin.z) - (cylinder.params.cylinderParameters.height / 2) * axis;
 	float3 a = NormalizeVector3(axis);
 	float r = cylinder.params.cylinderParameters.radius;
 	float h = cylinder.params.cylinderParameters.height;

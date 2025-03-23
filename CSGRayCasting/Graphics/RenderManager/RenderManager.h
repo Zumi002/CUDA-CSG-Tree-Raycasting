@@ -41,6 +41,8 @@ class RenderManager
 	DirectionalLight* light;
 
 	void ChangeSize();
+	void ChangeTree();
+	void ChangeAlgorithm();
 	void CalculateRays();
 	void RenderRaysData();
 	void RenderImGui();
@@ -52,6 +54,7 @@ class RenderManager
 		void Render();
 		void SetTreeToRender(CSGTree tree);
 		void CleanUp();
+
 };
 
 
