@@ -756,11 +756,6 @@ __device__ bool isBVHNodeHit(const Ray& ray, const BVHNode& node, RayHitMinimal&
 	return true;
 }
 
-#define NOT_INTERSECTED 9999
-
-#define DEBUG_PIXEL_X 300
-#define DEBUG_PIXEL_Y 300
-#define DEBUG false
 
 
 
@@ -939,7 +934,7 @@ __device__ bool IntersectionPointCylinder(const Primitive& cylinder, const float
 }
 
 
-__host__ __device__ void AddIntervals2(float* sphereIntersections, float* tempArray, int p1, int p2, int k1, int k2, bool print)
+__host__ __device__ void AddIntervals(float* sphereIntersections, float* tempArray, int p1, int p2, int k1, int k2, bool print)
 {
 	bool first = false;
 	bool second = false;
@@ -1334,8 +1329,8 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 		int p2 = parts[4 * nodeIndex + 2];
 		int k2 = parts[4 * nodeIndex + 3];
 
-
-		if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y && DEBUG)
+#ifdef DEBUG
+		if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y)
 		{
 			printf("Node %d\n", nodeIndex);
 			if (dev_tree.nodes[nodeIndex].type == CSGTree::NodeType::Difference)
@@ -1360,6 +1355,9 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 			printf("\n");
 			printf("\n");
 		}
+#endif // DEBUG
+
+		
 
 
 		if (dev_tree.nodes[nodeIndex].type == CSGTree::NodeType::Difference)
@@ -1374,11 +1372,13 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 
 		else
 		{
-			AddIntervals2(sphereIntersections, tempArray, p1, p2, k1, k2, false);
+			AddIntervals(sphereIntersections, tempArray, p1, p2, k1, k2, false);
 		}
 
 	}
-	if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y && DEBUG)
+#ifdef DEBUG
+
+	if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y)
 	{
 		printf("Result\n");
 		for (int i = 0; i < 2 * shape_count - 1; i++)
@@ -1388,7 +1388,7 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 		printf("\n");
 		printf("\n");
 	}
-
+#endif // DEBUG
 
 
 	float t = NOT_INTERSECTED;
@@ -1405,7 +1405,10 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 		}
 	}
 
-	if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y && DEBUG)
+#ifdef DEBUG
+
+
+	if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y)
 	{
 		printf("t: %f\n", t);
 		printf("%f\n", (sphereIntersections[0] - sphereIntersections[1])*1000);
@@ -1415,27 +1418,7 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 		hits[pixelIdx] = detailedHitInfo;
 		return;
 	}
-
-	/*if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y)
-	{
-
-		int index2 = 3 * (y * width + x);
-		dev_texture_data[index2] = 255;
-		dev_texture_data[index2 + 1] = 255;
-		dev_texture_data[index2 + 2] = 0;
-		return;
-	}
-
-
-	if (t < 0 || sphereIntersections[0] == sphereIntersections[1])
-	{
-		int index2 = 3 * (y * width + x);
-		dev_texture_data[index2] = 0;
-		dev_texture_data[index2 + 1] = 0;
-		dev_texture_data[index2 + 2] = 0;
-
-		return;
-	}*/
+#endif // DEBUG
 
 	RayHitMinimal rayHitMinimal;
 	rayHitMinimal.hit = CSG::CSGRayHit::Miss;
