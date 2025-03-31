@@ -129,6 +129,9 @@
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
     </CudaCompile>
+    <PostBuildEvent>
+      <Command>copy "$(ProjectDir)Libraries\SDL2.dll" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -153,7 +156,7 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </CudaLink>
     <PostBuildEvent>
-      <Command>xcopy /Y /F "$(ProjectDir)/Libraries/SDL2.dll" "$(OutDir)"</Command>
+      <Command>copy "$(ProjectDir)Libraries\SDL2.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

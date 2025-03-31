@@ -756,10 +756,6 @@ __device__ bool isBVHNodeHit(const Ray& ray, const BVHNode& node, RayHitMinimal&
 	return true;
 }
 
-#define NOT_INTERSECTED 1000
-
-#define DEBUG_PIXEL_X 300
-#define DEBUG_PIXEL_Y 300
 
 
 
@@ -893,9 +889,9 @@ __device__ bool IntersectionPointCylinder(const Primitive& cylinder, const float
 	d3 = dot3(a, c2) / dot3(a, n);
 	d4 = dot3(a, c1) / dot3(a, n);
 
-	if (dot3(make_float3(n.x * d3 - c2.x, n.y * d3 - c2.y, n.z * d3 - c2.z), make_float3(n.x * d3 - c2.x, n.y * d3 - c2.y, n.z * d3 - c2.z)) > r * r || d3 < 0)
+	if (dot3(make_float3(n.x * d3 - c2.x, n.y * d3 - c2.y, n.z * d3 - c2.z), make_float3(n.x * d3 - c2.x, n.y * d3 - c2.y, n.z * d3 - c2.z)) > r * r )
 		d3 = NOT_INTERSECTED;
-	if (dot3(make_float3(n.x * d4 - c1.x, n.y * d4 - c1.y, n.z * d4 - c1.z), make_float3(n.x * d4 - c1.x, n.y * d4 - c1.y, n.z * d4 - c1.z)) > r * r || d4 < 0)
+	if (dot3(make_float3(n.x * d4 - c1.x, n.y * d4 - c1.y, n.z * d4 - c1.z), make_float3(n.x * d4 - c1.x, n.y * d4 - c1.y, n.z * d4 - c1.z)) > r * r )
 		d4 = NOT_INTERSECTED;
 
 	t1 = NOT_INTERSECTED;
@@ -937,87 +933,8 @@ __device__ bool IntersectionPointCylinder(const Primitive& cylinder, const float
 	return true;
 }
 
-__device__ void AddIntervals(float* sphereIntersections, float* tempArray, int p1, int p2, int k1, int k2, bool print)
-{
-	// merging two lists into tempArray sorted by start time
-	int list1Index = p1;
-	int list2Index = p2;
-	int tempIndex = p1;
-	while (list1Index < k1 && list2Index < k2)
-	{
-		if (sphereIntersections[list1Index] == -1 || sphereIntersections[list2Index] == -1) // one of the lists just ended
-		{
-			break;
-		}
 
-		if (sphereIntersections[list2Index] < sphereIntersections[list1Index])
-		{
-			tempArray[tempIndex] = sphereIntersections[list2Index];
-			tempArray[tempIndex + 1] = sphereIntersections[list2Index + 1];
-			list2Index += 2;
-		}
-		else
-		{
-			tempArray[tempIndex] = sphereIntersections[list1Index];
-			tempArray[tempIndex + 1] = sphereIntersections[list1Index + 1];
-			list1Index += 2;
-		}
-		tempIndex += 2;
-	}
-	while (list1Index < k1 && sphereIntersections[list1Index] != -1)
-	{
-		tempArray[tempIndex] = sphereIntersections[list1Index];
-		tempArray[tempIndex + 1] = sphereIntersections[list1Index + 1];
-		list1Index += 2;
-		tempIndex += 2;
-	}
-	while (list2Index < k2 && sphereIntersections[list2Index] != -1)
-	{
-		tempArray[tempIndex] = sphereIntersections[list2Index];
-		tempArray[tempIndex + 1] = sphereIntersections[list2Index + 1];
-		list2Index += 2;
-		tempIndex += 2;
-	}
-
-
-
-	// merging tempArray into sphereIntersections
-	if (tempIndex != p1) //if something changed
-	{
-		float start = tempArray[p1];
-		float end = tempArray[p1 + 1];
-		int addIndex = p1;
-		for (int i = p1 + 2; i <= tempIndex - 2; i += 2)
-		{
-			float currentStart = tempArray[i];
-			float currentEnd = tempArray[i + 1];
-			if (currentStart > end)
-			{
-				sphereIntersections[addIndex] = start;
-				sphereIntersections[addIndex + 1] = end;
-				addIndex += 2;
-				start = currentStart;
-				end = currentEnd;
-			}
-			else
-			{
-				if (currentEnd > end)
-					end = currentEnd;
-			}
-		}
-		sphereIntersections[addIndex] = start;
-		sphereIntersections[addIndex + 1] = end;
-		addIndex += 2;
-
-
-		for (int i = addIndex; i <= k2; i++)
-		{
-			sphereIntersections[i] = -1;
-		}
-	}
-}
-
-__host__ __device__ void AddIntervals2(float* sphereIntersections, float* tempArray, int p1, int p2, int k1, int k2, bool print)
+__host__ __device__ void AddIntervals(float* sphereIntersections, float* tempArray, int p1, int p2, int k1, int k2, bool print)
 {
 	bool first = false;
 	bool second = false;
@@ -1035,11 +952,11 @@ __host__ __device__ void AddIntervals2(float* sphereIntersections, float* tempAr
 		bool list1 = true;
 		bool list2 = true;
 
-		if (list1Index > k1 || sphereIntersections[list1Index] == -1)
+		if (list1Index > k1 || sphereIntersections[list1Index] == NOT_INTERSECTED)
 		{
 			list1 = false;
 		}
-		if (list2Index > k2 || sphereIntersections[list2Index] == -1)
+		if (list2Index > k2 || sphereIntersections[list2Index] == NOT_INTERSECTED)
 		{
 			list2 = false;
 		}
@@ -1115,7 +1032,7 @@ __host__ __device__ void AddIntervals2(float* sphereIntersections, float* tempAr
 		if (i < tempIndex)
 			sphereIntersections[i] = tempArray[i];
 		else
-			sphereIntersections[i] = -1;
+			sphereIntersections[i] = NOT_INTERSECTED;
 	}
 }
 
@@ -1133,7 +1050,7 @@ __host__ __device__ void SubstractIntervals(float* sphereIntersections, float* t
 	float end2 = sphereIntersections[list2Index + 1];
 	while (list1Index <= k1 && list2Index <= k2)
 	{
-		if (sphereIntersections[list1Index] == -1 || sphereIntersections[list2Index] == -1) // one of the lists just ended
+		if (sphereIntersections[list1Index] == NOT_INTERSECTED || sphereIntersections[list2Index] == NOT_INTERSECTED) // one of the lists just ended
 		{
 			break;
 		}
@@ -1208,7 +1125,7 @@ __host__ __device__ void SubstractIntervals(float* sphereIntersections, float* t
 
 
 
-	if (list2Index > k2 || sphereIntersections[list2Index] == -1)
+	if (list2Index > k2 || sphereIntersections[list2Index] == NOT_INTERSECTED)
 	{
 		if (start1 != end1)
 		{
@@ -1218,7 +1135,7 @@ __host__ __device__ void SubstractIntervals(float* sphereIntersections, float* t
 		}
 		list1Index += 2;
 
-		while (list1Index <= k1 && sphereIntersections[list1Index] != -1)
+		while (list1Index <= k1 && sphereIntersections[list1Index] != NOT_INTERSECTED)
 		{
 			tempArray[addIndex] = sphereIntersections[list1Index];
 			tempArray[addIndex + 1] = sphereIntersections[list1Index + 1];
@@ -1234,9 +1151,8 @@ __host__ __device__ void SubstractIntervals(float* sphereIntersections, float* t
 		if (i < addIndex)
 			sphereIntersections[i] = tempArray[i];
 		else
-			sphereIntersections[i] = -1;
+			sphereIntersections[i] = NOT_INTERSECTED;
 	}
-
 }
 __host__ __device__ void CommonPartIntervals(float* sphereIntersections, float* tempArray, int p1, int p2, int k1, int k2, bool print)
 {
@@ -1246,7 +1162,7 @@ __host__ __device__ void CommonPartIntervals(float* sphereIntersections, float* 
 
 	while (list1Index < k1 && list2Index < k2)
 	{
-		if (sphereIntersections[list1Index] == -1 || sphereIntersections[list2Index] == -1) // one of the lists just ended
+		if (sphereIntersections[list1Index] == NOT_INTERSECTED || sphereIntersections[list2Index] == NOT_INTERSECTED) // one of the lists just ended
 		{
 			break;
 		}
@@ -1311,9 +1227,8 @@ __host__ __device__ void CommonPartIntervals(float* sphereIntersections, float* 
 		if (i < addIndex)
 			sphereIntersections[i] = tempArray[i];
 		else
-			sphereIntersections[i] = -1;
+			sphereIntersections[i] = NOT_INTERSECTED;
 	}
-
 }
 
 
@@ -1329,7 +1244,7 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 		return;
 
 
-	float t1 = -1, t2 = -1;
+	float t1 = NOT_INTERSECTED, t2 = NOT_INTERSECTED;
 	const int sphereCount = 256;
 	float sphereIntersections[2 * sphereCount]; // 2 floats for each sphere
 	float sphereIntersectionsCopy[2 * sphereCount]; // 2 floats for each sphere
@@ -1355,7 +1270,7 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 
 	for (int k = shape_count - 1; k < 2 * shape_count - 1; k++)
 	{
-		float t1 = -1, t2 = -1;
+		float t1 = NOT_INTERSECTED, t2 = NOT_INTERSECTED;
 		float3 N1, N2;
 		if (dev_tree.nodes[k].type == CSGTree::NodeType::Sphere)
 		{
@@ -1374,8 +1289,8 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 			Primitive cube = dev_tree.primitives[dev_tree.nodes[k].primitiveIdx];
 			if (!IntersectionPointCube(cube, camera_pos, ray, t1, t2, N1, N2))
 			{
-				t1 = -1;
-				t2 = -1;
+				t1 = NOT_INTERSECTED;
+				t2 = NOT_INTERSECTED;
 			}
 
 		}
@@ -1385,8 +1300,8 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 
 			if (!IntersectionPointCylinder(cylinder, camera_pos, ray, t1, t2, N1, N2))
 			{
-				t1 = -1;
-				t2 = -1;
+				t1 = NOT_INTERSECTED;
+				t2 = NOT_INTERSECTED;
 			}
 		}
 
@@ -1414,18 +1329,35 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 		int p2 = parts[4 * nodeIndex + 2];
 		int k2 = parts[4 * nodeIndex + 3];
 
-
-		/*if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y)
+#ifdef DEBUG
+		if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y)
 		{
 			printf("Node %d\n", nodeIndex);
-			printf("Operation: %c, p1: %d k1: %d p2: %d k2: %d\n", dev_tree[nodeIndex].operation, p1, k1, p2, k2);
+			if (dev_tree.nodes[nodeIndex].type == CSGTree::NodeType::Difference)
+			{
+				printf("Difference\n");
+			}
+
+			else if (dev_tree.nodes[nodeIndex].type == CSGTree::NodeType::Intersection)
+			{
+				printf("Intersection\n");
+			}
+
+			else
+			{
+				printf("Union\n");
+			}
+			printf("Operation: %d, p1: %d k1: %d p2: %d k2: %d\n", dev_tree.nodes[nodeIndex].type, p1, k1, p2, k2);
 			for (int i = 0; i < 2 * shape_count - 1; i++)
 			{
 				printf("%f %f ", sphereIntersections[2 * i], sphereIntersections[2 * i + 1]);
 			}
 			printf("\n");
 			printf("\n");
-		}*/
+		}
+#endif // DEBUG
+
+		
 
 
 		if (dev_tree.nodes[nodeIndex].type == CSGTree::NodeType::Difference)
@@ -1440,40 +1372,58 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 
 		else
 		{
-			AddIntervals2(sphereIntersections, tempArray, p1, p2, k1, k2, false);
+			AddIntervals(sphereIntersections, tempArray, p1, p2, k1, k2, false);
 		}
 
 	}
+#ifdef DEBUG
 
-
-
-	float t = sphereIntersections[0];
-
-	/*if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y)
+	if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y)
 	{
+		printf("Result\n");
+		for (int i = 0; i < 2 * shape_count - 1; i++)
+		{
+			printf("%f %f ", sphereIntersections[2 * i], sphereIntersections[2 * i + 1]);
+		}
+		printf("\n");
+		printf("\n");
+	}
+#endif // DEBUG
 
-		int index2 = 3 * (y * width + x);
-		dev_texture_data[index2] = 255;
-		dev_texture_data[index2 + 1] = 255;
-		dev_texture_data[index2 + 2] = 0;
-		return;
+
+	float t = NOT_INTERSECTED;
+	for (int i = 0; i <= parts[3]; i++)
+	{
+		if (sphereIntersections[i] == NOT_INTERSECTED)
+			break;
+		if (sphereIntersections[i] > 0)
+		{
+			if (sphereIntersections[i] == sphereIntersections[i + 1])
+				continue;
+			t = sphereIntersections[i];
+			break;
+		}
 	}
 
+#ifdef DEBUG
 
-	if (t < 0 || sphereIntersections[0] == sphereIntersections[1])
+
+	if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y)
 	{
-		int index2 = 3 * (y * width + x);
-		dev_texture_data[index2] = 0;
-		dev_texture_data[index2 + 1] = 0;
-		dev_texture_data[index2 + 2] = 0;
-
+		printf("t: %f\n", t);
+		printf("%f\n", (sphereIntersections[0] - sphereIntersections[1])*1000);
+		int pixelIdx = (y * (int)width + x);
+		RayHit detailedHitInfo;
+		detailedHitInfo.hit = false;
+		hits[pixelIdx] = detailedHitInfo;
 		return;
-	}*/
+	}
+#endif // DEBUG
 
 	RayHitMinimal rayHitMinimal;
 	rayHitMinimal.hit = CSG::CSGRayHit::Miss;
 	rayHitMinimal.t = t;
-	if (t >0)
+	if (t >0 && t!=NOT_INTERSECTED && sphereIntersections[0] != sphereIntersections[1])
 	{
 		for (int k = shape_count - 1; k < 2 * shape_count - 1; k++)
 		{

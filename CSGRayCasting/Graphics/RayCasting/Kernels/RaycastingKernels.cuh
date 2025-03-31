@@ -17,6 +17,11 @@
 #include "../CSGTree/BVH/BVHNode.cuh"
 
 #define MAXSTACKSIZE 32
+#define NOT_INTERSECTED FLT_MAX
+#define DEBUG_PIXEL_X 300
+#define DEBUG_PIXEL_Y 300
+//#define DEBUG
+
 
 //macro from https://stackoverflow.com/questions/14038589/what-is-the-canonical-way-to-check-for-errors-using-the-cuda-runtime-api
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }
@@ -107,9 +112,8 @@ __device__ void cubeHitDetails(const Ray& ray, const Primitive& sphere, const Ra
 
  __device__ bool IntersectionPointCylinder(const Primitive& cylinder, const float3& rayOrigin, const float3& rayDirection, float& t1, float& t2, float3& N, float3& N2);
 
- __device__ void AddIntervals(float* sphereIntersections, float* tempArray, int p1, int p2, int k1, int k2, bool print);
 
- __host__ __device__ void AddIntervals2(float* sphereIntersections, float* tempArray, int p1, int p2, int k1, int k2, bool print);
+ __host__ __device__ void AddIntervals(float* sphereIntersections, float* tempArray, int p1, int p2, int k1, int k2, bool print);
  __host__ __device__ void SubstractIntervals(float* sphereIntersections, float* tempArray, int p1, int p2, int k1, int k2, bool print);
  __host__ __device__ void CommonPartIntervals(float* sphereIntersections, float* tempArray, int p1, int p2, int k1, int k2, bool print);
 
