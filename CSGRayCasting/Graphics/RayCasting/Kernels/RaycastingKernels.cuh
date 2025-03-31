@@ -17,7 +17,7 @@
 #include "../CSGTree/BVH/BVHNode.cuh"
 
 #define MAXSTACKSIZE 32
-#define NOT_INTERSECTED 9999
+#define NOT_INTERSECTED FLT_MAX
 #define DEBUG_PIXEL_X 300
 #define DEBUG_PIXEL_Y 300
 //#define DEBUG
