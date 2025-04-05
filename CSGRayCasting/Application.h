@@ -42,4 +42,6 @@ class Application
 		void Run();
 		bool LoadCSGTree(const std::string& fileName);
 		void CleanUp();
+		void SaveCameraPosition();
+		void LoadCameraPosition(const std::string& file_name = "camera.ini");
 };
