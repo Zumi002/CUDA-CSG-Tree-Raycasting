@@ -33,7 +33,6 @@ class Application
 
 	DirectionalLight light;
 
-
 	void Input();
 	void checkGLError();
 	public:
@@ -41,5 +40,7 @@ class Application
 		void CreateAppWindow(const std::string windowName);
 		void Run();
 		bool LoadCSGTree(const std::string& fileName);
+		void SaveSettings();
 		void CleanUp();
+		void LoadCameraSettings(const std::string& fileName);
 };

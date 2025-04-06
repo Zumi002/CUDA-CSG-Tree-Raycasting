@@ -56,6 +56,18 @@ void Application::Run()
 	//cleanup()
 }
 
+void Application::LoadCameraSettings(const std::string& fileName)
+{
+	try
+	{
+		renderer->cam.LoadCameraSetting(fileName);
+	}
+	catch (const std::exception& exc)
+	{
+		fprintf(stderr, "Cannot load camera settings: %s\n", exc.what());
+	}
+}
+
 bool Application::LoadCSGTree(const std::string& fileName)
 {
 	try
@@ -80,6 +92,11 @@ bool Application::LoadCSGTree(const std::string& fileName)
 	{
 		fprintf(stderr, "Cannot load tree: %s\n", exc.what());
 	}
+}
+
+void Application::SaveSettings()
+{
+	renderer->cam.SaveCameraSetting("camera.ini");
 }
 
 void Application::Input()
@@ -140,3 +157,5 @@ void Application::CleanUp()
 	delete inputManager;
 	SDL_DestroyWindow(window);
 }
+
+
