@@ -40,7 +40,7 @@ class Application
 		void CreateAppWindow(const std::string windowName);
 		void Run();
 		bool LoadCSGTree(const std::string& fileName);
-		void SaveInformation();
+		void SaveSettings();
 		void CleanUp();
 		void LoadCameraSettings(const std::string& fileName);
 };

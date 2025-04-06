@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
     HandleCommandLineArguments(app, argc, argv);
 	
     app.Run();
-	app.SaveInformation();
+	app.SaveSettings();
     app.CleanUp();
     return 0;
 }
