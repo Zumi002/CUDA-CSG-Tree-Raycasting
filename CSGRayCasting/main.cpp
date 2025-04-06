@@ -9,7 +9,7 @@ int main(int argc, char* argv[])
     HandleCommandLineArguments(app, argc, argv);
 	
     app.Run();
-    app.SaveCameraPosition();
+	app.SaveInformation();
     app.CleanUp();
     return 0;
 }
@@ -23,6 +23,6 @@ void HandleCommandLineArguments(Application& app, int argc, char* argv[])
 
     if (argc >= 3)
     {
-        app.LoadCameraPosition(argv[2]);
+        app.LoadCameraSettings(argv[2]);
     }
 }

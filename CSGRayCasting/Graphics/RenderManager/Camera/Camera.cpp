@@ -1,6 +1,8 @@
 #include "Camera.h"
 
 
+
+
 void Camera::updateVectors()
 {
     // end result of applying rotation matrix to vectors
@@ -34,4 +36,75 @@ void Camera::normalizeVector(float* vec)
         vec[1] /= length;
         vec[2] /= length;
     }
+}
+
+void Camera::LoadCameraPosition(const std::string& file_name)
+{
+	std::ifstream file(file_name);
+
+	if (!file.is_open()) {
+		std::cerr << "Failed to open camera.ini for reading!" << std::endl;
+		return;
+	}
+
+	std::string line;
+	while (std::getline(file, line)) {
+		// Skip comments and section headers
+		if (line.empty() || line[0] == '#' || line[0] == '[') continue;
+
+		std::istringstream iss(line);
+		std::string key;
+		if (std::getline(iss, key, '=')) {
+			std::string valueStr;
+			if (std::getline(iss, valueStr)) {
+				float value = std::stof(valueStr);
+
+				if (key == "fov") fov = value;
+				else if (key == "x") x = value;
+				else if (key == "y") y = value;
+				else if (key == "z") z = value;
+				else if (key == "rotX") rotX = value;
+				else if (key == "rotY") rotY = value;
+				else if (key == "overwriteFile") {
+					if (valueStr == "1") overwriteFile = true;
+					else if (valueStr == "0") overwriteFile = false;
+				}
+				
+			}
+		}
+	}
+	updateVectors();
+
+	file.close();
+
+	std::cout << "Camera position loaded from "<<file_name << "\n";
+}
+
+void Camera::SaveCameraPosition(const std::string& file_name) const
+{
+	if (std::filesystem::exists(file_name) && !overwriteFile) {
+		std::cerr << "File already exists and overwriteFile is set to false!" << std::endl;
+		return;
+	}
+	std::ofstream file(file_name);
+
+	if (!file.is_open()) {
+		std::cerr << "Failed to open camera.ini for writing!" << std::endl;
+		return;
+	}
+
+	file << std::fixed << std::setprecision(6); // consistent float formatting
+
+	file << "[Camera]" << "\n";
+	file << "fov=" << fov << "\n";
+	file << "x=" << x << "\n";
+	file << "y=" << y << "\n";
+	file << "z=" << z << "\n";
+	file << "rotX=" << rotX << "\n";
+	file << "rotY=" << rotY << "\n";
+	file << "overwriteFile=" << (overwriteFile ? "1" : "0") << "\n";
+
+	file.close();
+
+	std::cout << "Camera position saved to "<<file_name << "\n";
 }

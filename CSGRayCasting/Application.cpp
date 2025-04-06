@@ -56,6 +56,19 @@ void Application::Run()
 	//cleanup()
 }
 
+void Application::LoadCameraSettings(const std::string& fileName)
+{
+	renderer->cam.LoadCameraPosition(fileName);
+	try
+	{
+		
+	}
+	catch (const std::exception& exc)
+	{
+		fprintf(stderr, "Cannot load camera settings: %s\n", exc.what());
+	}
+}
+
 bool Application::LoadCSGTree(const std::string& fileName)
 {
 	try
@@ -80,6 +93,11 @@ bool Application::LoadCSGTree(const std::string& fileName)
 	{
 		fprintf(stderr, "Cannot load tree: %s\n", exc.what());
 	}
+}
+
+void Application::SaveInformation() 
+{
+	renderer->cam.SaveCameraPosition("camera.ini");
 }
 
 void Application::Input()
@@ -141,83 +159,4 @@ void Application::CleanUp()
 	SDL_DestroyWindow(window);
 }
 
-void Application::SaveCameraPosition()
-{
-	std::ofstream file("camera.ini");
-
-	if (!file.is_open()) {
-		std::cerr << "Failed to open camera.ini for writing!" << std::endl;
-		return;
-	}
-
-	file << std::fixed << std::setprecision(6); // consistent float formatting
-
-	file << "[Camera]" << std::endl;
-	file << "fov=" << renderer->cam.fov << std::endl;
-	file << "x=" << renderer->cam.x << std::endl;
-	file << "y=" << renderer->cam.y << std::endl;
-	file << "z=" << renderer->cam.z << std::endl;
-	file << "rotX=" << renderer->cam.rotX << std::endl;
-	file << "rotY=" << renderer->cam.rotY << std::endl;
-
-	file << "forward_x=" << renderer->cam.forward[0] << std::endl;
-	file << "forward_y=" << renderer->cam.forward[1] << std::endl;
-	file << "forward_z=" << renderer->cam.forward[2] << std::endl;
-
-	file << "right_x=" << renderer->cam.right[0] << std::endl;
-	file << "right_y=" << renderer->cam.right[1] << std::endl;
-	file << "right_z=" << renderer->cam.right[2] << std::endl;
-
-	file << "up_x=" << renderer->cam.up[0] << std::endl;
-	file << "up_y=" << renderer->cam.up[1] << std::endl;
-	file << "up_z=" << renderer->cam.up[2] << std::endl;
-
-	file.close();
-
-	std::cout << "Camera position saved to camera.ini" << std::endl;
-}
-
-
-void Application::LoadCameraPosition(const std::string& file_name)
-{
-	std::ifstream file(file_name);
-
-	if (!file.is_open()) {
-		std::cerr << "Failed to open camera.ini for reading!" << std::endl;
-		return;
-	}
-
-	std::string line;
-	while (std::getline(file, line)) {
-		// Skip comments and section headers
-		if (line.empty() || line[0] == '#' || line[0] == '[') continue;
-
-		std::istringstream iss(line);
-		std::string key;
-		if (std::getline(iss, key, '=')) {
-			std::string valueStr;
-			if (std::getline(iss, valueStr)) {
-				float value = std::stof(valueStr);
-
-				if (key == "fov") renderer->cam.fov = value;
-				else if (key == "x") renderer->cam.x = value;
-				else if (key == "y") renderer->cam.y = value;
-				else if (key == "z") renderer->cam.z = value;
-				else if (key == "rotX") renderer->cam.rotX = value;
-				else if (key == "rotY") renderer->cam.rotY = value;
-				else if (key == "forward_x") renderer->cam.forward[0] = value;
-				else if (key == "forward_y") renderer->cam.forward[1] = value;
-				else if (key == "forward_z") renderer->cam.forward[2] = value;
-				else if (key == "right_x") renderer->cam.right[0] = value;
-				else if (key == "right_y") renderer->cam.right[1] = value;
-				else if (key == "right_z") renderer->cam.right[2] = value;
-				else if (key == "up_x") renderer->cam.up[0] = value;
-				else if (key == "up_y") renderer->cam.up[1] = value;
-				else if (key == "up_z") renderer->cam.up[2] = value;
-			}
-		}
-	}
-
-	file.close();
-}
 

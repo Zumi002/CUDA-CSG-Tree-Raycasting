@@ -1,8 +1,13 @@
 #include <cmath>
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+#include <iomanip>
+#include <string>
+#include <sstream>
 
 class Camera 
 {
-
     void updateVectors();
     void normalizeVector(float* vec);
 public:
@@ -14,6 +19,8 @@ public:
     float forward[3];
     float right[3];
     float up[3];
+
+	bool overwriteFile = false; // Flag to overwrite the file with camera settings
 
     Camera() : x(0), y(0), z(5), rotX(0), rotY(0), fov(90.0f * 3.14159f / 180.0f) {
         updateVectors();
@@ -50,5 +57,8 @@ public:
     {
         fov = degrees * 3.14159f / 180.0f;
     }
+
+    void LoadCameraPosition(const std::string& file_name);
+	void SaveCameraPosition(const std::string& file_name) const;
   
 };
