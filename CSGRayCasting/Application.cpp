@@ -60,7 +60,7 @@ void Application::LoadCameraSettings(const std::string& fileName)
 {
 	try
 	{
-		renderer->cam.LoadCameraPosition(fileName);
+		renderer->cam.LoadCameraStatus(fileName);
 	}
 	catch (const std::exception& exc)
 	{
@@ -96,7 +96,7 @@ bool Application::LoadCSGTree(const std::string& fileName)
 
 void Application::SaveInformation() 
 {
-	renderer->cam.SaveCameraPosition("camera.ini");
+	renderer->cam.SaveCameraStatus("camera.ini");
 }
 
 void Application::Input()

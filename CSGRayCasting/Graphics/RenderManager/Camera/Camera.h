@@ -58,7 +58,7 @@ public:
         fov = degrees * 3.14159f / 180.0f;
     }
 
-    void LoadCameraPosition(const std::string& file_name);
-	void SaveCameraPosition(const std::string& file_name) const;
+    void LoadCameraStatus(const std::string& file_name);
+	void SaveCameraStatus(const std::string& file_name) const;
   
 };

@@ -38,7 +38,7 @@ void Camera::normalizeVector(float* vec)
     }
 }
 
-void Camera::LoadCameraPosition(const std::string& file_name)
+void Camera::LoadCameraStatus(const std::string& file_name)
 {
 	std::ifstream file(file_name);
 
@@ -80,7 +80,7 @@ void Camera::LoadCameraPosition(const std::string& file_name)
 	std::cout << "Camera position loaded from "<<file_name << "\n";
 }
 
-void Camera::SaveCameraPosition(const std::string& file_name) const
+void Camera::SaveCameraStatus(const std::string& file_name) const
 {
 	if (std::filesystem::exists(file_name) && !overwriteFile) {
 		std::cerr << "File already exists and overwriteFile is set to false!" << std::endl;
