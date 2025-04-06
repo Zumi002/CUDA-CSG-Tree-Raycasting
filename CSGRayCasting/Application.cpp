@@ -58,10 +58,9 @@ void Application::Run()
 
 void Application::LoadCameraSettings(const std::string& fileName)
 {
-	renderer->cam.LoadCameraPosition(fileName);
 	try
 	{
-		
+		renderer->cam.LoadCameraPosition(fileName);
 	}
 	catch (const std::exception& exc)
 	{
