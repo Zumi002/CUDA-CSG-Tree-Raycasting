@@ -2,7 +2,9 @@
 
 #include <cuda_runtime.h>
 #include "CSGTree/CSGTree.cuh"
-#include "Kernels/RaycastingKernels.cuh"
+#include "../RenderManager/DirectionalLight.h"
+#include "../RenderManager/Camera/Camera.h"
+#include "Utils/RayHit.cuh"
 
 #define BLOCKXSIZE 8
 #define BLOCKYSIZE 4

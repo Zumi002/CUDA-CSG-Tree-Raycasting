@@ -1,5 +1,7 @@
 #pragma once
 
+#define M_DEGTORAD 0.017453292519943295769236907684886;
+
 struct SphereParameters
 {
 	float radius;
@@ -63,9 +65,9 @@ struct Primitive
 		params.cylinderParameters.radius = Radius;
 		params.cylinderParameters.height = height;
 
-		rotX = rotX * 0.017453292519943295769236907684886;
-		rotY = rotY * 0.017453292519943295769236907684886;
-		rotZ = rotZ * 0.017453292519943295769236907684886;
+		rotX = rotX * M_DEGTORAD;
+		rotY = rotY * M_DEGTORAD;
+		rotZ = rotZ * M_DEGTORAD;
 
 		double axisX = -sin(rotZ) * cos(rotY) + sin(rotY) * sin(rotX) * cos(rotZ),
 			axisY = cos(rotX) * cos(rotZ),

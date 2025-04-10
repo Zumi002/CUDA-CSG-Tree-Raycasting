@@ -53,7 +53,7 @@ void Application::Run()
 		SDL_GL_SwapWindow(window);
 	}
 
-	//cleanup()
+	CleanUp();
 }
 
 void Application::LoadCameraSettings(const std::string& fileName)

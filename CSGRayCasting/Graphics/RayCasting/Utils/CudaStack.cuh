@@ -9,7 +9,7 @@ class CudaStack
 	public:
 	T stack[N];
 
-	__device__ void push(const T& element)
+	inline __device__ void push(const T& element)
 	{
 		if (size() >= N)
 		{
@@ -21,7 +21,7 @@ class CudaStack
 		count++;
 	}
 
-	__device__ T pop()
+	inline __device__ T pop()
 	{
 		if (empty())
 		{
@@ -33,12 +33,12 @@ class CudaStack
 		return stack[count];
 	}
 
-	__device__ bool empty()
+	inline __device__ bool empty()
 	{
 		return count == 0;
 	}
 
-	__device__ int size()
+	inline __device__ int size()
 	{
 		return count;
 	}

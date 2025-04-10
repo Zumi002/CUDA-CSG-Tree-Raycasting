@@ -33,12 +33,17 @@
     <ClInclude Include="Graphics\RayCasting\CSGTree\BVH\BVHNode.cuh" />
     <ClInclude Include="Graphics\RayCasting\CSGTree\CSGTree.cuh" />
     <ClInclude Include="Graphics\RayCasting\CSGTree\Primitives\Primitives.h" />
-    <ClInclude Include="Graphics\RayCasting\Kernels\RaycastingKernels.cuh" />
+    <ClInclude Include="Graphics\RayCasting\Kernels\ClassicRaycasting.cuh" />
+    <ClInclude Include="Graphics\RayCasting\Kernels\LightingKernels.cuh" />
+    <ClInclude Include="Graphics\RayCasting\Utils\PrimitiveRayIntersection.cuh" />
+    <ClInclude Include="Graphics\RayCasting\Kernels\SingleHitRaycasting.cuh" />
+    <ClInclude Include="Graphics\RayCasting\Kernels\Kernels.cuh" />
     <ClInclude Include="Graphics\RayCasting\Raycaster.cuh" />
     <ClInclude Include="Graphics\RayCasting\Utils\CSGUtils.cuh" />
     <ClInclude Include="Graphics\RayCasting\Utils\CudaStack.cuh" />
     <ClInclude Include="Graphics\RayCasting\Utils\Float3Utils.cuh" />
     <ClInclude Include="Graphics\RayCasting\Utils\Ray.cuh" />
+    <ClInclude Include="Graphics\RayCasting\Utils\RayHit.cuh" />
     <ClInclude Include="Graphics\RenderManager\Camera\Camera.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Graphics\RenderManager\DirectionalLight.h" />
@@ -59,7 +64,6 @@
     <ClInclude Include="Utils\CyclicBuffer.h" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="Graphics\RayCasting\Kernels\RaycastingKernels.cu" />
     <CudaCompile Include="Graphics\RayCasting\Raycaster.cu">
       <FileType>Document</FileType>
     </CudaCompile>

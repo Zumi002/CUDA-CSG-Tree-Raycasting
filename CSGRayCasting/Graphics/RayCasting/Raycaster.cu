@@ -1,4 +1,5 @@
 #include "Raycaster.cuh"
+#include "Kernels/Kernels.cuh"
 
 void Raycaster::ChangeTree(CSGTree& tree)
 {
