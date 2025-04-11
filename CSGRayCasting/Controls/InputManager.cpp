@@ -22,6 +22,8 @@ void InputManager::Input()
 		{
 			if (e.button.button == SDL_BUTTON_LEFT)
 			{
+				mouseControls.relativeX = 0;
+				mouseControls.relativeY = 0;
 				mouseControls.pressed = true;
 				SDL_SetRelativeMouseMode(SDL_TRUE);
 			}

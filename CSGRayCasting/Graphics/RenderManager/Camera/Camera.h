@@ -43,13 +43,6 @@ public:
         updateVectors();
     }
 
-    void move(float forward_amount, float right_amount, float up_amount) 
-    {
-        x += forward[0] * forward_amount + right[0] * right_amount;
-        y += forward[1] * forward_amount + right[1] * right_amount + up_amount;
-        z += forward[2] * forward_amount + right[2] * right_amount;
-    }
-
     void rotate(float deltaPitch, float deltaYaw) 
     {
         setRotation(rotX + deltaPitch, rotY + deltaYaw);

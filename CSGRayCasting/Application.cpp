@@ -26,6 +26,9 @@ void Application::CreateAppWindow(const std::string windowName)
 		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
 	renderer = new RenderManager(window, &fileDialog, &light);
+	camController = new OrbitalCameraController();
+	camController->cam = &renderer->cam;
+
 	inputManager = new InputManager();
 
 	fileDialog.SetTitle("Load CSG Tree");
@@ -52,8 +55,6 @@ void Application::Run()
 		checkGLError();
 		SDL_GL_SwapWindow(window);
 	}
-
-	CleanUp();
 }
 
 void Application::LoadCameraSettings(const std::string& fileName)
@@ -101,39 +102,9 @@ void Application::SaveSettings()
 
 void Application::Input()
 {
-	float moveForward = 0, 
-		  moveRight = 0,
-		  moveUp = 0;
 
 	inputManager->Input();
 	quit = inputManager->quit;
-
-	if (inputManager->camControls.forward)
-		moveForward += 0.1f;
-	if (inputManager->camControls.backward)
-		moveForward -= 0.1f;
-	if (inputManager->camControls.left)
-		moveRight -= 0.1f;
-	if (inputManager->camControls.right)
-		moveRight += 0.1f;
-	if (inputManager->camControls.up)
-		moveUp += 0.1f;
-	if (inputManager->camControls.down)
-		moveUp -= 0.1f;
-
-	
-	if (inputManager->mouseControls.pressed)
-	{
-		float yaw = -0.005f * (inputManager->mouseControls.relativeX),
-			  pitch = -0.005f * (inputManager->mouseControls.relativeY);
-
-		renderer->cam.rotate(pitch, yaw);
-
-		inputManager->mouseControls.relativeX = 0;
-		inputManager->mouseControls.relativeY = 0;
-	}
-
-	renderer->cam.move(moveForward, moveRight, moveUp);
 
 	if (fileDialog.HasSelected())
 	{
@@ -141,6 +112,9 @@ void Application::Input()
 		fileDialog.ClearSelected();
 	}
 
+	camController->HandleInput(inputManager->camControls, inputManager->mouseControls);
+	inputManager->mouseControls.relativeX = 0;
+	inputManager->mouseControls.relativeY = 0;
 }
 
 void Application::checkGLError() {

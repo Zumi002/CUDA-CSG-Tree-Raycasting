@@ -10,6 +10,7 @@
 #include "Graphics/RayCasting/CSGTree/CSGTree.cuh"
 #include "Controls/InputManager.h"
 #include "Utils/CyclicBuffer.h"
+#include "Graphics/RenderManager/Camera/CameraController.h"
 
 class Application
 {
@@ -24,6 +25,8 @@ class Application
 	CSGTree tree;
 
 	RenderManager* renderer;
+	CameraController* camController;
+
 	InputManager* inputManager;
 	ImGui::FileBrowser fileDialog;
 
