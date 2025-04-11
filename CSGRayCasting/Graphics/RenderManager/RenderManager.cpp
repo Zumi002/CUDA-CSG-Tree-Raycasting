@@ -107,7 +107,7 @@ void RenderManager::RenderImGui()
 	ImGui::Separator();
 	ImGui::LabelText("","Camera");
 	ImGui::Combo("Type", &cameraIdx, cameraListBoxItems, 2);
-	if (ImGui::TreeNode("Setting")&&activeCam!=nullptr)
+	if (ImGui::TreeNode("Settings")&&activeCam!=nullptr)
 	{
 		int fov = activeCam->fov/3.14f*180.f;
 		ImGui::SliderInt("FOV", &fov, 30, 120, "%d deg");
