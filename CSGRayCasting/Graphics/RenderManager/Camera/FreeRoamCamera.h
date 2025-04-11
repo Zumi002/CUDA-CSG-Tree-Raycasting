@@ -4,6 +4,7 @@
 
 class FreeRoamCamera : public Camera
 {
+public:
     float speed = 1,
         sensitivity = 1;
     virtual void HandleInput(const CameraControls& camControls, const MouseControls& mouseControls) override;

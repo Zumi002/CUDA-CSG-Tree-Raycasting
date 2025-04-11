@@ -64,7 +64,7 @@ void Application::LoadCameraSettings(const std::string& fileName)
 {
 	try
 	{
-		renderer->activeCam->LoadCameraSetting(fileName);
+		freeRoamCamera->LoadCameraSetting(fileName);
 	}
 	catch (const std::exception& exc)
 	{
@@ -100,7 +100,7 @@ bool Application::LoadCSGTree(const std::string& fileName)
 
 void Application::SaveSettings()
 {
-	renderer->activeCam->SaveCameraSetting("camera.ini");
+	freeRoamCamera->SaveCameraSetting("camera.ini");
 }
 
 void Application::Input()

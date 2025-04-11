@@ -4,7 +4,7 @@
 
 class OrbitalCamera : public Camera
 {
-
+public:
     float xCenter = 0,
         yCenter = 0,
         zCenter = 0;

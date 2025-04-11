@@ -105,7 +105,28 @@ void RenderManager::RenderImGui()
 	ImGui::Separator();
 	ImGui::Combo("Algorithm", &renderingAlg, algorithmListBoxItems, 2);
 	ImGui::Separator();
-	ImGui::Combo("Camera", &cameraIdx, cameraListBoxItems, 2);
+	ImGui::LabelText("","Camera");
+	ImGui::Combo("Type", &cameraIdx, cameraListBoxItems, 2);
+	if (ImGui::TreeNode("Setting")&&activeCam!=nullptr)
+	{
+		int fov = activeCam->fov/3.14f*180.f;
+		ImGui::SliderInt("FOV", &fov, 30, 120, "%d deg");
+		activeCam->setFOV((float)fov);
+
+		if (activeCam->GetType() == Camera::CameraType::FreeRoamCamera)
+		{
+			ImGui::SliderFloat("Speed", &(((FreeRoamCamera*)activeCam)->speed), 0.1f, 5.f, "%.2f");
+			ImGui::SliderFloat("Sensitivity", &(((FreeRoamCamera*)activeCam)->sensitivity), 0.1f, 5.f, "%.2f");
+		}
+		else if (activeCam->GetType() == Camera::CameraType::OrbitalCamera)
+		{
+			ImGui::SliderFloat("Speed", &(((OrbitalCamera*)activeCam)->speed), 0.1f, 5.f, "%.2f");
+			ImGui::SliderFloat("Sensitivity", &(((OrbitalCamera*)activeCam)->sensitivity), 0.1f, 5.f, "%.2f");
+			ImGui::SliderFloat("Zoom", &(((OrbitalCamera*)activeCam)->radius), 0.01f, 50.f, "%.2f");
+		}
+
+		ImGui::TreePop();
+	}
 	ImGui::Separator();
 	ImGui::LabelText("","Light direction:");
 	ImGui::SliderAngle("Polar", &light->polar, -180, 180);

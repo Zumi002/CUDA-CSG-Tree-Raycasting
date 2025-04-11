@@ -11,6 +11,8 @@
 
 #include "../RayCasting/Raycaster.cuh"
 #include "DirectionalLight.h"
+#include "Camera/FreeRoamCamera.h"
+#include "Camera/OrbitalCamera.h"
 
 #include "../../imgui/imgui.h"
 #include "../../imgui/imgui_impl_opengl3.h"
