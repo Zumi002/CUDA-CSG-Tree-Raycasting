@@ -6,7 +6,7 @@
 #include "../Utils/CudaStack.cuh"
 #include "../../RenderManager/Camera/Camera.h"
 #include "../CSGTree/CSGTree.cuh"
-
+#include "../Utils/CudaCamera.cuh"
 
 #define MAXSTACKSIZE 32
 
@@ -65,7 +65,7 @@ inline __device__ CSGNode GetParent(CudaCSGTree& tree, CSGNode& node, bool& run)
 // ---- code ----
 //
 
-__global__ void RaycastKernel(Camera cam, CudaCSGTree tree, RayHit* hits, float width, float height)
+__global__ void RaycastKernel(CudaCamera cam, CudaCSGTree tree, RayHit* hits, float width, float height)
 {
 	int x = blockIdx.x * blockDim.x + threadIdx.x;
 	int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -82,12 +82,8 @@ __global__ void RaycastKernel(Camera cam, CudaCSGTree tree, RayHit* hits, float 
 
 
 	// Create ray from camera
-	float3 rayOrigin = make_float3(cam.x, cam.y, cam.z);
-	float3 rayDirection = normalize(make_float3(
-		cam.right[0] * nx + cam.up[0] * ny + cam.forward[0],
-		cam.right[1] * nx + cam.up[1] * ny + cam.forward[1],
-		cam.right[2] * nx + cam.up[2] * ny + cam.forward[2]
-	));
+	float3 rayOrigin = cam.position;
+	float3 rayDirection = normalize(nx * cam.right + ny * cam.up + cam.forward);
 
 	Ray ray(rayOrigin, rayDirection);
 	RayHitMinimal hitInfo;

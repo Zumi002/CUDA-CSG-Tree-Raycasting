@@ -48,20 +48,24 @@ RenderManager::RenderManager(SDL_Window* window, ImGui::FileBrowser* FileDialog,
 
 	cudaGraphicsGLRegisterBuffer(&cudaRaycastingPBOResource, rayCastingPBO, cudaGraphicsMapFlagsWriteDiscard);
 
-	cam = Camera();
+	activeCam = nullptr;
 
 	raycaster = Raycaster();
 
 	light = Light;
 }
 
+
+
 void RenderManager::CalculateRays()
 {
+	if (activeCam == nullptr)
+		return;
 	cudaGraphicsMapResources(1, &cudaRaycastingPBOResource);
 	float4* d_ptr;
 	cudaGraphicsResourceGetMappedPointer((void**)&d_ptr, nullptr, cudaRaycastingPBOResource);
 
-	raycaster.Raycast(d_ptr, cam, *light);
+	raycaster.Raycast(d_ptr, *activeCam, *light);
 
 	cudaGraphicsUnmapResources(1, &cudaRaycastingPBOResource);
 }
@@ -101,6 +105,8 @@ void RenderManager::RenderImGui()
 	ImGui::Separator();
 	ImGui::Combo("Algorithm", &renderingAlg, algorithmListBoxItems, 2);
 	ImGui::Separator();
+	ImGui::Combo("Camera", &cameraIdx, cameraListBoxItems, 2);
+	ImGui::Separator();
 	ImGui::LabelText("","Light direction:");
 	ImGui::SliderAngle("Polar", &light->polar, -180, 180);
 	ImGui::SliderAngle("Azimuth", &light->azimuth, -180, 180);
@@ -119,9 +125,11 @@ void RenderManager::Render()
 		lastRenderingAlg = renderingAlg;
 		ChangeAlgorithm();
 	}
+	SetActiveCamera();
 
 	int tmpWidth, tmpHeight;
 	SDL_GL_GetDrawableSize(window, &tmpWidth, &tmpHeight);
+
 	if (tmpWidth != width || tmpHeight != height)
 	{
 		width = tmpWidth;
@@ -195,4 +203,9 @@ void RenderManager::CleanUp()
 
 	glDeleteTextures(1, &rayCastingTexture);
 	glDeleteBuffers(1, &rayCastingPBO);
+}
+
+void RenderManager::SetActiveCamera()
+{
+	activeCam = cameras[cameraIdx];
 }

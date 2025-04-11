@@ -19,11 +19,14 @@ void FreeRoamCameraController::HandleInput(const CameraControls& camControls, co
 	if (camControls.down)
 		moveUp -= 0.1f;
 
+	moveUp *= cam->speed;
+	moveRight *= cam->speed;
+	moveForward *= cam->speed;
 
 	if (mouseControls.pressed)
 	{
-		float yaw = -0.005f * (mouseControls.relativeX),
-			pitch = -0.005f * (mouseControls.relativeY);
+		float yaw = -0.005f * (mouseControls.relativeX) * cam->sensitivity,
+			pitch = -0.005f * (mouseControls.relativeY) * cam->sensitivity;
 
 		cam->rotate(pitch, yaw);
 	}
@@ -52,15 +55,17 @@ void OrbitalCameraController::HandleInput(const CameraControls& camControls, con
 	if (camControls.down)
 		deltaPitch += 0.5f;
 
+	deltaPitch *= cam->speed;
+	deltaYaw *= cam->speed;
 
 	if (mouseControls.pressed)
 	{
-		deltaYaw += -0.5f * (mouseControls.relativeX),
-	    deltaPitch += -0.5f * (mouseControls.relativeY);
+		deltaYaw += -0.5f * (mouseControls.relativeX) * cam->sensitivity,
+	    deltaPitch += -0.5f * (mouseControls.relativeY) * cam->sensitivity;
 	}
 
 	Rotate(deltaPitch, deltaYaw);
-	radius += deltaRadius;
+	radius += deltaRadius*cam->speed;
 
 	MoveCamera();
 }

@@ -26,8 +26,11 @@ void Application::CreateAppWindow(const std::string windowName)
 		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
 	renderer = new RenderManager(window, &fileDialog, &light);
-	camController = new OrbitalCameraController();
-	camController->cam = &renderer->cam;
+	orbitalCamera = new OrbitalCamera();
+	freeRoamCamera = new FreeRoamCamera();
+
+	renderer->cameras.push_back(freeRoamCamera);
+	renderer->cameras.push_back(orbitalCamera);
 
 	inputManager = new InputManager();
 
@@ -61,7 +64,7 @@ void Application::LoadCameraSettings(const std::string& fileName)
 {
 	try
 	{
-		renderer->cam.LoadCameraSetting(fileName);
+		renderer->activeCam->LoadCameraSetting(fileName);
 	}
 	catch (const std::exception& exc)
 	{
@@ -97,7 +100,7 @@ bool Application::LoadCSGTree(const std::string& fileName)
 
 void Application::SaveSettings()
 {
-	renderer->cam.SaveCameraSetting("camera.ini");
+	renderer->activeCam->SaveCameraSetting("camera.ini");
 }
 
 void Application::Input()
@@ -112,7 +115,11 @@ void Application::Input()
 		fileDialog.ClearSelected();
 	}
 
-	camController->HandleInput(inputManager->camControls, inputManager->mouseControls);
+	if (renderer->activeCam != nullptr)
+	{
+		renderer->activeCam->HandleInput(inputManager->camControls, inputManager->mouseControls);
+	}
+
 	inputManager->mouseControls.relativeX = 0;
 	inputManager->mouseControls.relativeY = 0;
 }

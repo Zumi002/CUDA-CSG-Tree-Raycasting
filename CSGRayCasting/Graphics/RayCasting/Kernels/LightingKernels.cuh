@@ -4,19 +4,20 @@
 #include "../Utils/Ray.cuh"
 #include "../../RenderManager/Camera/Camera.h"
 #include "../CSGTree/CSGTree.cuh"
+#include "../Utils/CudaCamera.cuh"
 
 //
 // ---- headers ----
 //
 
 //kernel called once per pixel, calculates output color based of ray intersecion data and lightnigng
-__global__ void LightningKernel(Camera cam, RayHit* hits, Primitive* primitives, float4* output, float3 lightDir, float width, float height);
+__global__ void LightningKernel(CudaCamera cam, RayHit* hits, Primitive* primitives, float4* output, float3 lightDir, float width, float height);
 
 //
 // ---- code ----
 //
 
-__global__ void LightningKernel(Camera cam, RayHit* hits, Primitive* primitives, float4* output, float3 lightDir, float width, float height)
+__global__ void LightningKernel(CudaCamera cam, RayHit* hits, Primitive* primitives, float4* output, float3 lightDir, float width, float height)
 {
 	int x = blockIdx.x * blockDim.x + threadIdx.x;
 	int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -46,7 +47,7 @@ __global__ void LightningKernel(Camera cam, RayHit* hits, Primitive* primitives,
 		// Calculate lighting vectors
 
 		lightDir = normalize(lightDir);
-		float3 viewDir = normalize(make_float3(cam.x, cam.y, cam.z) - hitInfo.position);
+		float3 viewDir = normalize(cam.position - hitInfo.position);
 		float3 reflectDir = reflect(-lightDir, hitInfo.normal);
 
 		// Ambient component

@@ -18,7 +18,8 @@
     </ClCompile>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Graphics\RenderManager\Camera\Camera.cpp" />
-    <ClCompile Include="Graphics\RenderManager\Camera\CameraController.cpp" />
+    <ClCompile Include="Graphics\RenderManager\Camera\FreeRoamCamera.cpp" />
+    <ClCompile Include="Graphics\RenderManager\Camera\OrbitalCamera.cpp" />
     <ClCompile Include="Graphics\RenderManager\RenderManager.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -36,6 +37,7 @@
     <ClInclude Include="Graphics\RayCasting\CSGTree\Primitives\Primitives.h" />
     <ClInclude Include="Graphics\RayCasting\Kernels\ClassicRaycasting.cuh" />
     <ClInclude Include="Graphics\RayCasting\Kernels\LightingKernels.cuh" />
+    <ClInclude Include="Graphics\RayCasting\Utils\CudaCamera.cuh" />
     <ClInclude Include="Graphics\RayCasting\Utils\PrimitiveRayIntersection.cuh" />
     <ClInclude Include="Graphics\RayCasting\Kernels\SingleHitRaycasting.cuh" />
     <ClInclude Include="Graphics\RayCasting\Kernels\Kernels.cuh" />
@@ -47,7 +49,8 @@
     <ClInclude Include="Graphics\RayCasting\Utils\RayHit.cuh" />
     <ClInclude Include="Graphics\RenderManager\Camera\Camera.h" />
     <ClInclude Include="Application.h" />
-    <ClInclude Include="Graphics\RenderManager\Camera\CameraController.h" />
+    <ClInclude Include="Graphics\RenderManager\Camera\FreeRoamCamera.h" />
+    <ClInclude Include="Graphics\RenderManager\Camera\OrbitalCamera.h" />
     <ClInclude Include="Graphics\RenderManager\DirectionalLight.h" />
     <ClInclude Include="Graphics\RenderManager\RenderManager.h" />
     <ClInclude Include="imgui\imconfig.h" />

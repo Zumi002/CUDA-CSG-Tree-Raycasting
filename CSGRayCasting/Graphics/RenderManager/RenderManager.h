@@ -7,6 +7,7 @@
 #include <glad/glad.h>
 #include <cuda_runtime.h>
 #include <cuda_gl_interop.h>
+#include <vector>
 
 #include "../RayCasting/Raycaster.cuh"
 #include "DirectionalLight.h"
@@ -37,6 +38,9 @@ class RenderManager
 	int renderingAlg = 0;
 	const char* algorithmListBoxItems[2] = {"Single hit", "Classical"};
 
+	int cameraIdx = 0;
+	const char* cameraListBoxItems[2] = { "FreeRoam", "Orbital" };
+
 	ImGui::FileBrowser* fileDialog;
 	DirectionalLight* light;
 
@@ -46,10 +50,11 @@ class RenderManager
 	void CalculateRays();
 	void RenderRaysData();
 	void RenderImGui();
-
+	void SetActiveCamera();
 	public:
 		float fps = 0;
-		Camera cam;
+		Camera* activeCam;
+		std::vector<Camera*> cameras;
 		RenderManager(SDL_Window* window, ImGui::FileBrowser* FileDialog, DirectionalLight* Light);
 		void Render();
 		void SetTreeToRender(CSGTree tree);

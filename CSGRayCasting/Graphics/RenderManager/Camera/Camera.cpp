@@ -108,3 +108,5 @@ void Camera::SaveCameraSetting(const std::string& file_name) const
 
 	std::cout << "Camera position saved to "<<file_name << "\n";
 }
+
+

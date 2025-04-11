@@ -4,8 +4,7 @@
 #include "../Utils/CSGUtils.cuh"
 #include "../Utils/Ray.cuh"
 #include "../Utils/PrimitiveRayIntersection.cuh"
-#include "../../RenderManager/Camera/Camera.h"
-
+#include "../Utils/CudaCamera.cuh"
 
 #define NOT_INTERSECTED FLT_MAX
 #define DEBUG_PIXEL_X 300
@@ -21,7 +20,7 @@ __global__ void CalculateInterscetion(
     int shape_count,
     CudaCSGTree dev_tree,
     int* parts,
-    Camera cam, 
+    CudaCamera cam, 
     RayHit* hits
 );
 
@@ -562,7 +561,7 @@ inline __device__ void CommonPartIntervals(float* sphereIntersections, float* te
 }
 
 
-__global__ void CalculateInterscetion(int width, int height, int shape_count, CudaCSGTree dev_tree, int* parts, Camera cam,
+__global__ void CalculateInterscetion(int width, int height, int shape_count, CudaCSGTree dev_tree, int* parts, CudaCamera cam,
 	RayHit* hits)
 {
 
@@ -581,7 +580,7 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 	float3 normalVectors[2 * sphereCount]; // 2 floats for each sphere
 	float tempArray[2 * sphereCount]; // 2 floats for each sphere
 
-	float3 camera_pos = make_float3(cam.x, cam.y, cam.z);
+	float3 camera_pos = cam.position;
 	//float3 light_pos = make_float3(light_pos_ptr[0], light_pos_ptr[1], light_pos_ptr[2]);
 
 	// Calculate normalized device coordinates (NDC)
@@ -592,11 +591,7 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 	float nx = (2.0f * u - 1.0f) * ((float)width / (float)height) * tan(cam.fov / 2.0f);
 	float ny = (1.0f - 2.0f * v) * tan(cam.fov / 2.0f);
 
-	float3 ray = normalize(make_float3(
-		cam.right[0] * nx + cam.up[0] * ny + cam.forward[0],
-		cam.right[1] * nx + cam.up[1] * ny + cam.forward[1],
-		cam.right[2] * nx + cam.up[2] * ny + cam.forward[2]
-	));
+	float3 ray = normalize(nx*cam.right + ny*cam.up + cam.forward);
 
 	for (int k = shape_count - 1; k < 2 * shape_count - 1; k++)
 	{

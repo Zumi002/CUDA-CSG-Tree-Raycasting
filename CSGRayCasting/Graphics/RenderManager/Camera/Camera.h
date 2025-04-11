@@ -7,15 +7,24 @@
 #include <iomanip>
 #include <string>
 #include <sstream>
+#include "../../Controls/InputManager.h"
 
 class Camera 
 {
+    
     void updateVectors();
     void normalizeVector(float* vec);
 public:
+    enum CameraType
+    {
+        BasicCamera,
+        FreeRoamCamera,
+        OrbitalCamera
+    };
     float x, y, z;        // Position
     float rotX, rotY;     // Pitch and Yaw in radians
     float fov;            // Field of view in radians
+    float speed, sensitivity;
 
     // Cached view vectors
     float forward[3];
@@ -24,7 +33,7 @@ public:
 
 	bool overwriteFile = false; // Flag to overwrite the file with camera settings
 
-    Camera() : x(0), y(0), z(5), rotX(0), rotY(0), fov(90.0f * 3.14159f / 180.0f) {
+    Camera() : x(0), y(0), z(5), rotX(0), rotY(0), fov(90.0f * 3.14159f / 180.0f), speed(1), sensitivity(1) {
         updateVectors();
     }
 
@@ -55,5 +64,7 @@ public:
 
     void LoadCameraSetting(const std::string& file_name);
 	void SaveCameraSetting(const std::string& file_name) const;
-  
+    virtual void HandleInput(const CameraControls& camControls, const MouseControls& mouseControls) {};
+    virtual CameraType GetType() { return CameraType::BasicCamera; }
 };
+
