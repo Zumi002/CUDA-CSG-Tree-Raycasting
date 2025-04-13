@@ -14,14 +14,14 @@ public:
 		maxY = 0,
 		maxZ = 0;
 
-	__host__ __device__ BVHNode(Primitive prim, unsigned int type)
+	__host__ __device__ BVHNode(CudaPrimitivePos pos, Parameters params, unsigned int type)
 	{
 		if (type == 3)
 		{
-			float r = prim.params.sphereParameters.radius;
-			float x = prim.x;
-			float y = prim.y;
-			float z = prim.z;
+			float r = params.sphereParameters.radius;
+			float x = pos.x;
+			float y = pos.y;
+			float z = pos.z;
 
 			minX = x - r- r;
 			minY = y - r - r;
@@ -34,10 +34,10 @@ public:
 		else if (type == 4)
 		{
 			//to do
-			float maxR = std::max(prim.params.cylinderParameters.height / 2, prim.params.cylinderParameters.radius);
-			float x = prim.x;
-			float y = prim.y;
-			float z = prim.z;
+			float maxR = std::max(params.cylinderParameters.height / 2, params.cylinderParameters.radius);
+			float x = pos.x;
+			float y = pos.y;
+			float z = pos.z;
 
 			minX = x - maxR;
 			minY = y - maxR;
@@ -49,10 +49,10 @@ public:
 		}
 		else if (type == 5)
 		{
-			float halfSize = prim.params.cubeParameters.size / 2;
-			float x = prim.x;
-			float y = prim.y;
-			float z = prim.z;
+			float halfSize = params.cubeParameters.size / 2;
+			float x = pos.x;
+			float y = pos.y;
+			float z = pos.z;
 
 			minX = x - halfSize;
 			minY = y - halfSize;

@@ -167,7 +167,7 @@ void CSGTree::ConstructBVH()
 		else if (nodes[id].primitiveIdx != -1)
 		{
 			nodesID.pop();
-			nodes[id].bvhNode = BVHNode(primitives.primitives[nodes[id].primitiveIdx], nodes[id].type);
+			nodes[id].bvhNode = BVHNode(primitives.primitivePos[nodes[id].primitiveIdx], primitives.primitiveParameters[nodes[id].primitiveIdx], nodes[id].type);
 		}
 		else
 		{
@@ -205,8 +205,8 @@ void CreateParts(CSGTree &tree, int* parts, int node)
 		int ll, lr, rl, rr;
 		if (tree.nodes[tree.nodes[node].left].left == -1) // is leaf
 		{
-			ll = (tree.nodes[node].left - tree.primitives.primitives.size() + 1) * 2;
-			lr = (tree.nodes[node].left - tree.primitives.primitives.size() + 1) * 2 + 1;
+			ll = (tree.nodes[node].left - tree.primitives.primitivePos.size() + 1) * 2;
+			lr = (tree.nodes[node].left - tree.primitives.primitivePos.size() + 1) * 2 + 1;
 		}
 		else
 		{
@@ -216,8 +216,8 @@ void CreateParts(CSGTree &tree, int* parts, int node)
 		}
 		if (tree.nodes[tree.nodes[node].right].left == -1) // is leaf
 		{
-			rl = (tree.nodes[node].right - tree.primitives.primitives.size() + 1) * 2;
-			rr = (tree.nodes[node].right - tree.primitives.primitives.size() + 1) * 2 + 1;
+			rl = (tree.nodes[node].right - tree.primitives.primitivePos.size() + 1) * 2;
+			rr = (tree.nodes[node].right - tree.primitives.primitivePos.size() + 1) * 2 + 1;
 		}
 		else
 		{

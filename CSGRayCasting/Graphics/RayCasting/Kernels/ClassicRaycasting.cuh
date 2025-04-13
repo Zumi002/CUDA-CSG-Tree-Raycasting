@@ -18,13 +18,13 @@
 __global__ void CalculateInterscetion(
     int width, int height,
     int shape_count,
-    CudaCSGTree dev_tree,
+	CSGNode* nodes,
+	CudaPrimitivePos* positions,
+	Parameters* primitiveParameters,
     int* parts,
     CudaCamera cam, 
     RayHit* hits
 );
-
-inline __device__ float3 CalculateNormalVectorCylinder(const Primitive& cylinder, float3 pixelPosition);
 
 inline __device__ bool IntersectionPointSphere(
     const float3& spherePosition,
@@ -35,19 +35,19 @@ inline __device__ bool IntersectionPointSphere(
 );
 
 inline __device__ bool IntersectionPointCube(
-    const Primitive& cube,
+	const CudaPrimitivePos& cubePosition,
+	const Parameters& cubeParams,
     const float3& rayOrigin,
     const float3& rayDirection,
-    float& t1, float& t2,
-    float3& N, float3& N2
+    float& t1, float& t2
 );
 
 inline __device__ bool IntersectionPointCylinder(
-    const Primitive& cylinder,
+	const CudaPrimitivePos& cylinderPosition,
+	const Parameters& cylinderParams,
     const float3& rayOrigin,
     const float3& rayDirection,
-    float& t1, float& t2,
-    float3& N, float3& N2
+    float& t1, float& t2
 );
 
 inline __device__ void AddIntervals(
@@ -88,12 +88,18 @@ inline __device__ void MultiplyVectorByMatrix4(float4& vector, const float* matr
 // ---- code ----
 //
 
-inline __device__ bool IntersectionPointCube(const Primitive& cube, const float3& rayOrigin, const float3& rayDirection, float& t1, float& t2, float3& N, float3& N2)
+inline __device__ bool IntersectionPointCube(
+	const CudaPrimitivePos& cubePosition,
+	const Parameters& cubeParams,
+	const float3& rayOrigin,
+	const float3& rayDirection,
+	float& t1, float& t2
+)
 {
 	float3 axis = make_float3(1, 1, 1);
-	float3 C = make_float3(cube.x, cube.y, cube.z);
-	float3 l = C - cube.params.cubeParameters.size / 2 * axis;
-	float3 h = C + cube.params.cubeParameters.size / 2 * axis;
+	float3 C = make_float3(cubePosition.x, cubePosition.y, cubePosition.z);
+	float3 l = C - cubeParams.cubeParameters.size / 2 * axis;
+	float3 h = C + cubeParams.cubeParameters.size / 2 * axis;
 	float3 o = rayOrigin;
 	float3 r = rayDirection;
 
@@ -121,73 +127,25 @@ inline __device__ bool IntersectionPointCube(const Primitive& cube, const float3
 	t_close = tx_close > ty_close ? (tx_close > tz_close ? tx_close : tz_close) : (ty_close > tz_close ? ty_close : tz_close);
 	t_far = tx_far < ty_far ? (tx_far < tz_far ? tx_far : tz_far) : (ty_far < tz_far ? ty_far : tz_far);
 
-	if (t_close == tx_close)
-	{
-		if (r.x > 0)
-			N = make_float3(-1, 0, 0);
-		else
-			N = make_float3(1, 0, 0);
-	}
-	if (t_close == ty_close)
-	{
-		if (r.y > 0)
-			N = make_float3(0, -1, 0);
-		else
-			N = make_float3(0, 1, 0);
-	}
-	if (t_close == tz_close)
-	{
-		if (r.z > 0)
-			N = make_float3(0, 0, -1);
-		else
-			N = make_float3(0, 0, 1);
-	}
-
-
-	if (t_far == tx_far)
-	{
-		if (r.x > 0)
-			N2 = make_float3(-1, 0, 0);
-		else
-			N2 = make_float3(1, 0, 0);
-	}
-	if (t_far == ty_far)
-	{
-		if (r.y > 0)
-			N2 = make_float3(0, -1, 0);
-		else
-			N2 = make_float3(0, 1, 0);
-	}
-	if (t_far == tz_far)
-	{
-		if (r.z > 0)
-			N2 = make_float3(0, 0, -1);
-		else
-			N2 = make_float3(0, 0, 1);
-	}
-
 	t1 = t_close;
 	t2 = t_far;
 
 	return t_close < t_far;
 }
 
-inline __device__ float3 CalculateNormalVectorCylinder(const Primitive& cylinder, float3 pixelPosition)
+inline __device__ bool IntersectionPointCylinder(
+	const CudaPrimitivePos& cylinderPosition,
+	const Parameters& cylinderParams,
+	const float3& rayOrigin,
+	const float3& rayDirection,
+	float& t1, float& t2
+)
 {
-	float3 axis = make_float3(cylinder.params.cylinderParameters.axisX, cylinder.params.cylinderParameters.axisY, cylinder.params.cylinderParameters.axisZ);
-	float t = dot3(make_float3(pixelPosition.x - cylinder.x, pixelPosition.y - cylinder.y, pixelPosition.z - cylinder.z), axis);
-	float3 Cp = make_float3(cylinder.x + t * cylinder.x, cylinder.y + t * cylinder.y, cylinder.z + t * cylinder.z);
-	float3 r = make_float3(pixelPosition.x - Cp.x, pixelPosition.y - Cp.y, pixelPosition.z - Cp.z);
-	return NormalizeVector3(r);
-}
-
-inline __device__ bool IntersectionPointCylinder(const Primitive& cylinder, const float3& rayOrigin, const float3& rayDirection, float& t1, float& t2, float3& N, float3& N2)
-{
-	float3 axis = make_float3(cylinder.params.cylinderParameters.axisX, cylinder.params.cylinderParameters.axisY, cylinder.params.cylinderParameters.axisZ);
-	float3 b = make_float3(cylinder.x - rayOrigin.x, cylinder.y - rayOrigin.y, cylinder.z - rayOrigin.z) - (cylinder.params.cylinderParameters.height / 2) * axis;
+	float3 axis = make_float3(cylinderParams.cylinderParameters.axisX, cylinderParams.cylinderParameters.axisY, cylinderParams.cylinderParameters.axisZ);
+	float3 b = make_float3(cylinderPosition.x - rayOrigin.x, cylinderPosition.y - rayOrigin.y, cylinderPosition.z - rayOrigin.z) - (cylinderParams.cylinderParameters.height / 2) * axis;
 	float3 a = NormalizeVector3(axis);
-	float r = cylinder.params.cylinderParameters.radius;
-	float h = cylinder.params.cylinderParameters.height;
+	float r = cylinderParams.cylinderParameters.radius;
+	float h = cylinderParams.cylinderParameters.height;
 	float3 n = rayDirection;
 
 	float d1 = NOT_INTERSECTED; // in line intersection with cylinder
@@ -228,35 +186,28 @@ inline __device__ bool IntersectionPointCylinder(const Primitive& cylinder, cons
 	if (d1 != NOT_INTERSECTED)
 	{
 		t1 = d1;
-		N = CalculateNormalVectorCylinder(cylinder, make_float3(rayOrigin.x + t1 * rayDirection.x, rayOrigin.y + t1 * rayDirection.y, rayOrigin.z + t1 * rayDirection.z));
 	}
 	if (d3 != NOT_INTERSECTED && d3 < t1)
 	{
 		t1 = d3;
-		N = axis;
 	}
 	if (d4 != NOT_INTERSECTED && d4 < t1)
 	{
 		t1 = d4;
-		N = make_float3(-axis.x, -axis.y, -axis.z);
 	}
 
 	// finding smallest t2
 	if (d2 != NOT_INTERSECTED)
 	{
 		t2 = d2;
-		N2 = CalculateNormalVectorCylinder(cylinder, make_float3(rayOrigin.x + t2 * rayDirection.x, rayOrigin.y + t2 * rayDirection.y, rayOrigin.z + t2 * rayDirection.z));
-		N2 = make_float3(-N2.x, -N2.y, -N2.z);
 	}
 	if (d3 != NOT_INTERSECTED && d3 < t2 && d3 != t1)
 	{
 		t2 = d3;
-		N2 = make_float3(-axis.x, -axis.y, -axis.z);
 	}
 	if (d4 != NOT_INTERSECTED && d4 < t2 && d4 != t1)
 	{
 		t2 = d4;
-		N2 = axis;
 	}
 
 	return true;
@@ -561,7 +512,7 @@ inline __device__ void CommonPartIntervals(float* sphereIntersections, float* te
 }
 
 
-__global__ void CalculateInterscetion(int width, int height, int shape_count, CudaCSGTree dev_tree, int* parts, CudaCamera cam,
+__global__ void CalculateInterscetion(int width, int height, int shape_count, CSGNode* nodes, CudaPrimitivePos* primitivePos, Parameters* primitiveParameters, int* parts, CudaCamera cam,
 	RayHit* hits)
 {
 
@@ -577,7 +528,6 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 	const int sphereCount = 300;
 	float sphereIntersections[2 * sphereCount]; // 2 floats for each sphere
 	float sphereIntersectionsCopy[2 * sphereCount]; // 2 floats for each sphere
-	float3 normalVectors[2 * sphereCount]; // 2 floats for each sphere
 	float tempArray[2 * sphereCount]; // 2 floats for each sphere
 
 	float3 camera_pos = cam.position;
@@ -596,34 +546,27 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 	for (int k = shape_count - 1; k < 2 * shape_count - 1; k++)
 	{
 		float t1 = NOT_INTERSECTED, t2 = NOT_INTERSECTED;
-		float3 N1, N2;
-		if (dev_tree.nodes[k].type == CSGTree::NodeType::Sphere)
+		if (nodes[k].type == CSGTree::NodeType::Sphere)
 		{
-			float3 spherePosition = make_float3(dev_tree.primitives[dev_tree.nodes[k].primitiveIdx].x, dev_tree.primitives[dev_tree.nodes[k].primitiveIdx].y, dev_tree.primitives[dev_tree.nodes[k].primitiveIdx].z);
-			float radius = dev_tree.primitives[dev_tree.nodes[k].primitiveIdx].params.sphereParameters.radius;
+			float3 spherePosition = make_float3(primitivePos[nodes[k].primitiveIdx].x, primitivePos[nodes[k].primitiveIdx].y, primitivePos[nodes[k].primitiveIdx].z);
+			float radius = primitiveParameters[nodes[k].primitiveIdx].sphereParameters.radius;
 			IntersectionPointSphere(spherePosition, radius, camera_pos, ray, t1, t2);
 
 			float3 pixelPosition1 = make_float3(camera_pos.x + t1 * ray.x, camera_pos.y + t1 * ray.y, camera_pos.z + t1 * ray.z);
 			float3 pixelPosition2 = make_float3(camera_pos.x + t2 * ray.x, camera_pos.y + t2 * ray.y, camera_pos.z + t2 * ray.z);
-
-			N1 = NormalizeVector3(make_float3(pixelPosition1.x - spherePosition.x, pixelPosition1.y - spherePosition.y, pixelPosition1.z - spherePosition.z));
-			N2 = NormalizeVector3(make_float3(-pixelPosition2.x + spherePosition.x, -pixelPosition2.y + spherePosition.y, -pixelPosition2.z + spherePosition.z));
 		}
-		else if (dev_tree.nodes[k].type == CSGTree::NodeType::Cube)
+		else if (nodes[k].type == CSGTree::NodeType::Cube)
 		{
-			Primitive cube = dev_tree.primitives[dev_tree.nodes[k].primitiveIdx];
-			if (!IntersectionPointCube(cube, camera_pos, ray, t1, t2, N1, N2))
+			if (!IntersectionPointCube(primitivePos[nodes[k].primitiveIdx], primitiveParameters[nodes[k].primitiveIdx], camera_pos, ray, t1, t2))
 			{
 				t1 = NOT_INTERSECTED;
 				t2 = NOT_INTERSECTED;
 			}
 
 		}
-		else if (dev_tree.nodes[k].type == CSGTree::NodeType::Cylinder)
+		else if (nodes[k].type == CSGTree::NodeType::Cylinder)
 		{
-			Primitive cylinder = dev_tree.primitives[dev_tree.nodes[k].primitiveIdx];
-
-			if (!IntersectionPointCylinder(cylinder, camera_pos, ray, t1, t2, N1, N2))
+			if (!IntersectionPointCylinder(primitivePos[nodes[k].primitiveIdx], primitiveParameters[nodes[k].primitiveIdx], camera_pos, ray, t1, t2))
 			{
 				t1 = NOT_INTERSECTED;
 				t2 = NOT_INTERSECTED;
@@ -685,12 +628,12 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 
 
 
-		if (dev_tree.nodes[nodeIndex].type == CSGTree::NodeType::Difference)
+		if (nodes[nodeIndex].type == CSGTree::NodeType::Difference)
 		{
 			SubstractIntervals(sphereIntersections, tempArray, p1, p2, k1, k2, false);
 		}
 
-		else if (dev_tree.nodes[nodeIndex].type == CSGTree::NodeType::Intersection)
+		else if (nodes[nodeIndex].type == CSGTree::NodeType::Intersection)
 		{
 			CommonPartIntervals(sphereIntersections, tempArray, p1, p2, k1, k2, false);
 		}
@@ -754,8 +697,8 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 			int m = k - shape_count + 1;
 			if (t != sphereIntersectionsCopy[2 * m] && t != sphereIntersectionsCopy[2 * m + 1]) continue;
 
-			rayHitMinimal.primitiveIdx = dev_tree.nodes[k].primitiveIdx;
-			rayHitMinimal.primitiveType = dev_tree.nodes[k].type;
+			rayHitMinimal.primitiveIdx = nodes[k].primitiveIdx;
+			rayHitMinimal.primitiveType = nodes[k].type;
 			rayHitMinimal.hit = (t == sphereIntersectionsCopy[2 * m]) ? CSG::CSGRayHit::Enter : CSG::CSGRayHit::Exit;
 			break;
 		}
@@ -769,11 +712,11 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, Cu
 	if (rayHitMinimal.hit != CSG::CSGRayHit::Miss)
 	{
 		if (rayHitMinimal.primitiveType == CSGTree::NodeType::Sphere)
-			sphereHitDetails(myRay, dev_tree.primitives[rayHitMinimal.primitiveIdx], rayHitMinimal, detailedHitInfo);
+			sphereHitDetails(myRay, primitivePos[rayHitMinimal.primitiveIdx], primitiveParameters[rayHitMinimal.primitiveIdx], rayHitMinimal, detailedHitInfo);
 		if (rayHitMinimal.primitiveType == CSGTree::NodeType::Cylinder)
-			cylinderHitDetails(myRay, dev_tree.primitives[rayHitMinimal.primitiveIdx], rayHitMinimal, detailedHitInfo);
+			cylinderHitDetails(myRay, primitivePos[rayHitMinimal.primitiveIdx], primitiveParameters[rayHitMinimal.primitiveIdx], rayHitMinimal, detailedHitInfo);
 		if (rayHitMinimal.primitiveType == CSGTree::NodeType::Cube)
-			cubeHitDetails(myRay, dev_tree.primitives[rayHitMinimal.primitiveIdx], rayHitMinimal, detailedHitInfo);
+			cubeHitDetails(myRay, primitivePos[rayHitMinimal.primitiveIdx], primitiveParameters[rayHitMinimal.primitiveIdx], rayHitMinimal, detailedHitInfo);
 	}
 	hits[pixelIdx] = detailedHitInfo;
 }

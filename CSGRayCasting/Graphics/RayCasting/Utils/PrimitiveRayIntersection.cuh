@@ -8,38 +8,75 @@
 //
 
 //functions which gets intersection data with given sphere
-inline __device__ bool sphereHit(const Ray& ray, const Primitive& sphere, RayHitMinimal& hitInfo, float& tmin);
+inline __device__ bool sphereHit(
+	const Ray& ray,
+	const CudaPrimitivePos& shperePos,
+	const Parameters& shpereParams,
+	RayHitMinimal& hitInfo, float& tmin
+);
 
 //functions which gets details about given intersection data  
-inline __device__ void sphereHitDetails(const Ray& ray, const Primitive& sphere, const RayHitMinimal& hitInfo, RayHit& detailedHitInfo);
+inline __device__ void sphereHitDetails(
+	const Ray& ray,
+	const CudaPrimitivePos& shperePos,
+	const Parameters& shpereParams,
+	const RayHitMinimal& hitInfo,
+	RayHit& detailedHitInfo
+);
 
 //same for cylinder
-inline __device__ bool cylinderHit(const Ray& ray, const Primitive& cylinder, RayHitMinimal& hitInfo, float& tmin);
+inline __device__ bool cylinderHit(
+	const Ray& ray,
+	const CudaPrimitivePos& cylinderPos,
+	const Parameters& cylinderParams,
+	RayHitMinimal& hitInfo, float& tmin
+);
 
-inline __device__ void cylinderHitDetails(const Ray& ray, const Primitive& cylinder, const RayHitMinimal& hitInfo, RayHit& detailedHitInfo);
+inline __device__ void cylinderHitDetails(
+	const Ray& ray,
+	const CudaPrimitivePos& cylinderPos,
+	const Parameters& cylinderParams,
+	const RayHitMinimal& hitInfo,
+	RayHit& detailedHitInfo
+);
 
 //same for cube
-inline __device__ bool cubeHit(const Ray& ray, const Primitive& sphere, RayHitMinimal& hitInfo, float& tmin);
+inline __device__ bool cubeHit(
+	const Ray& ray,
+	const CudaPrimitivePos& cubePos,
+	const Parameters& cubeParams,
+	RayHitMinimal& hitInfo, float& tmin
+);
 
-inline __device__ void cubeHitDetails(const Ray& ray, const Primitive& sphere, const RayHitMinimal& hitInfo, RayHit& detailedHitInfo);
+inline __device__ void cubeHitDetails(
+	const Ray& ray,
+	const CudaPrimitivePos& cubePos,
+	const Parameters& cubeParams,
+	const RayHitMinimal& hitInfo,
+	RayHit& detailedHitInfo
+);
 
 
 //
 // ---- code ----
 //
 
-inline __device__ bool sphereHit(const Ray& ray, const Primitive& sphere, RayHitMinimal& hitInfo, float& tmin)
+inline __device__ bool sphereHit(
+	const Ray& ray,
+	const CudaPrimitivePos& shperePos,
+	const Parameters& shpereParams,
+	RayHitMinimal& hitInfo, float& tmin
+)
 {
 	hitInfo.hit = CSG::CSGRayHit::Miss;
-	hitInfo.primitiveIdx = sphere.id;
 	float3 oc = make_float3(
-		ray.origin.x - sphere.x,
-		ray.origin.y - sphere.y,
-		ray.origin.z - sphere.z
+		ray.origin.x - shperePos.x,
+		ray.origin.y - shperePos.y,
+		ray.origin.z - shperePos.z
 	);
 
 	float b = dot(oc, ray.direction);
-	float c = dot(oc, oc) - sphere.params.sphereParameters.radius * sphere.params.sphereParameters.radius;
+	float c = dot(oc, oc) - shpereParams.sphereParameters.radius * shpereParams.sphereParameters.radius;
 	float discriminant = b * b - c;
 
 	if (discriminant < 0) return false;
@@ -62,9 +99,9 @@ inline __device__ bool sphereHit(const Ray& ray, const Primitive& sphere, RayHit
 
 	normal =
 		make_float3(
-			normal.x - sphere.x,
-			normal.y - sphere.y,
-			normal.z - sphere.z);
+			normal.x - shperePos.x,
+			normal.y - shperePos.y,
+			normal.z - shperePos.z);
 
 	if (dot(normal, ray.direction) <= 0)
 		hitInfo.hit = CSG::CSGRayHit::Enter;
@@ -76,7 +113,13 @@ inline __device__ bool sphereHit(const Ray& ray, const Primitive& sphere, RayHit
 	return true;
 }
 
-inline __device__  void sphereHitDetails(const Ray& ray, const Primitive& sphere, const RayHitMinimal& hitInfo, RayHit& detailedHitInfo)
+inline __device__  void sphereHitDetails(
+	const Ray& ray,
+	const CudaPrimitivePos& shperePos,
+	const Parameters& shpereParams,
+	const RayHitMinimal& hitInfo,
+	RayHit& detailedHitInfo
+)
 {
 	detailedHitInfo.hit = true;
 	detailedHitInfo.t = hitInfo.t;
@@ -84,9 +127,9 @@ inline __device__  void sphereHitDetails(const Ray& ray, const Primitive& sphere
 	detailedHitInfo.primitiveIdx = hitInfo.primitiveIdx;
 	detailedHitInfo.normal = normalize(
 		make_float3(
-			detailedHitInfo.position.x - sphere.x,
-			detailedHitInfo.position.y - sphere.y,
-			detailedHitInfo.position.z - sphere.z
+			detailedHitInfo.position.x - shperePos.x,
+			detailedHitInfo.position.y - shperePos.y,
+			detailedHitInfo.position.z - shperePos.z
 		)
 	);
 	if (hitInfo.hit & CSG::CSGRayHit::Flip)
@@ -95,13 +138,17 @@ inline __device__  void sphereHitDetails(const Ray& ray, const Primitive& sphere
 		detailedHitInfo.normal = -detailedHitInfo.normal;
 }
 
-inline __device__ bool cylinderHit(const Ray& ray, const Primitive& cylinder, RayHitMinimal& hitInfo, float& tmin)
+inline __device__ bool cylinderHit(
+	const Ray& ray,
+	const CudaPrimitivePos& cylinderPos,
+	const Parameters& cylinderParams,
+	RayHitMinimal& hitInfo, float& tmin
+)
 {
 	hitInfo.hit = CSG::CSGRayHit::Miss;
-	hitInfo.primitiveIdx = cylinder.id;
-	CylinderParameters params = cylinder.params.cylinderParameters;
+	CylinderParameters params = cylinderParams.cylinderParameters;
 	float3 V = make_float3(params.axisX, params.axisY, params.axisZ);
-	float3 C = make_float3(cylinder.x, cylinder.y, cylinder.z) - (cylinder.params.cylinderParameters.height / 2) * V;
+	float3 C = make_float3(cylinderPos.x, cylinderPos.y, cylinderPos.z) - (params.height / 2) * V;
 	float3 OC = ray.origin - C;
 
 	float aHelp = dot(ray.direction, V);
@@ -154,7 +201,7 @@ inline __device__ bool cylinderHit(const Ray& ray, const Primitive& cylinder, Ra
 		}
 		else
 		{
-			float3 OCmMax = ray.origin - make_float3(cylinder.x, cylinder.y, cylinder.z) - (cylinder.params.cylinderParameters.height / 2) * V;
+			float3 OCmMax = ray.origin - make_float3(cylinderPos.x, cylinderPos.y, cylinderPos.z) - (params.height / 2) * V;
 			temp = dot(-OCmMax, V) / den;
 			surfNormal = V;
 			useSurfNormal = 2;
@@ -189,7 +236,7 @@ inline __device__ bool cylinderHit(const Ray& ray, const Primitive& cylinder, Ra
 			}
 			else
 			{
-				float3 OCmMax = ray.origin - make_float3(cylinder.x, cylinder.y, cylinder.z) - (cylinder.params.cylinderParameters.height / 2) * V;
+				float3 OCmMax = ray.origin - make_float3(cylinderPos.x, cylinderPos.y, cylinderPos.z) - (params.height / 2) * V;
 				temp = dot(-OCmMax, V) / den;
 				surfNormal = V;
 				useSurfNormal = 2;
@@ -231,16 +278,22 @@ inline __device__ bool cylinderHit(const Ray& ray, const Primitive& cylinder, Ra
 	hitInfo.primitiveType = CSGTree::NodeType::Cylinder;
 }
 
-inline __device__ void cylinderHitDetails(const Ray& ray, const Primitive& cylinder, const RayHitMinimal& hitInfo, RayHit& detailedHitInfo)
+inline __device__ void cylinderHitDetails(
+	const Ray& ray,
+	const CudaPrimitivePos& cylinderPos,
+	const Parameters& cylinderParams,
+	const RayHitMinimal& hitInfo,
+	RayHit& detailedHitInfo
+)
 {
 	detailedHitInfo.hit = true;
 	detailedHitInfo.t = hitInfo.t;
 	detailedHitInfo.position = ray.computePosition(detailedHitInfo.t);
 	detailedHitInfo.primitiveIdx = hitInfo.primitiveIdx;
 
-	CylinderParameters params = cylinder.params.cylinderParameters;
+	CylinderParameters params = cylinderParams.cylinderParameters;
 	float3 V = make_float3(params.axisX, params.axisY, params.axisZ);
-	float3 C = make_float3(cylinder.x, cylinder.y, cylinder.z) - (cylinder.params.cylinderParameters.height / 2) * V;
+	float3 C = make_float3(cylinderPos.x, cylinderPos.y, cylinderPos.z) - (params.height / 2) * V;
 	float3 OC = ray.origin - C;
 
 
@@ -268,10 +321,14 @@ inline __device__ void cylinderHitDetails(const Ray& ray, const Primitive& cylin
 }
 
 //with help [https://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms]
-inline __device__ bool cubeHit(const Ray& ray, const Primitive& cube, RayHitMinimal& hitInfo, float& tmin)
+inline __device__ bool cubeHit(
+	const Ray& ray,
+	const CudaPrimitivePos& cubePos,
+	const Parameters& cubeParams,
+	RayHitMinimal& hitInfo, float& tmin
+)
 {
 	hitInfo.hit = CSG::CSGRayHit::Miss;
-	hitInfo.primitiveIdx = cube.id;
 
 
 
@@ -279,9 +336,9 @@ inline __device__ bool cubeHit(const Ray& ray, const Primitive& cube, RayHitMini
 	// r.org is origin of ray
 
 	float3 axis = make_float3(1, 1, 1);
-	float3 C = make_float3(cube.x, cube.y, cube.z);
-	float3 lb = C - cube.params.cubeParameters.size / 2 * axis;
-	float3 rt = C + cube.params.cubeParameters.size / 2 * axis;
+	float3 C = make_float3(cubePos.x, cubePos.y, cubePos.z);
+	float3 lb = C - cubeParams.cubeParameters.size / 2 * axis;
+	float3 rt = C + cubeParams.cubeParameters.size / 2 * axis;
 	float t1 = (lb.x - ray.origin.x) / ray.direction.x;
 	float t2 = (rt.x - ray.origin.x) / ray.direction.x;
 	float t3 = (lb.y - ray.origin.y) / ray.direction.y;
@@ -316,7 +373,7 @@ inline __device__ bool cubeHit(const Ray& ray, const Primitive& cube, RayHitMini
 	hitInfo.t = tempmin;
 	float3 PC = ray.computePosition(tempmin) - C;
 	float bias = 1.00001f;
-	float halfSize = cube.params.cubeParameters.size / 2;
+	float halfSize = cubeParams.cubeParameters.size / 2;
 	float3 normal = make_float3((float)(int)(PC.x / halfSize * bias), (float)(int)(PC.y / halfSize * bias), (float)(int)(PC.z / halfSize * bias));
 
 
@@ -329,19 +386,25 @@ inline __device__ bool cubeHit(const Ray& ray, const Primitive& cube, RayHitMini
 	return true;
 }
 
-inline __device__ void cubeHitDetails(const Ray& ray, const Primitive& cube, const RayHitMinimal& hitInfo, RayHit& detailedHitInfo)
+inline __device__ void cubeHitDetails(
+	const Ray& ray,
+	const CudaPrimitivePos& cubePos,
+	const Parameters& cubeParams,
+	const RayHitMinimal& hitInfo,
+	RayHit& detailedHitInfo
+)
 {
 	detailedHitInfo.hit = true;
 	detailedHitInfo.t = hitInfo.t;
 	detailedHitInfo.position = ray.computePosition(detailedHitInfo.t);
 	detailedHitInfo.primitiveIdx = hitInfo.primitiveIdx;
 
-	float3 C = make_float3(cube.x, cube.y, cube.z);
+	float3 C = make_float3(cubePos.x, cubePos.y, cubePos.z);
 
 
 	float3 PC = detailedHitInfo.position - C;
 	float bias = 1.00001;
-	float halfSize = cube.params.cubeParameters.size / 2;
+	float halfSize = cubeParams.cubeParameters.size / 2;
 	float3 normal = make_float3((float)(int)(PC.x / halfSize * bias), (float)(int)(PC.y / halfSize * bias), (float)(int)(PC.z / halfSize * bias));
 
 	detailedHitInfo.normal = normalize(normal);

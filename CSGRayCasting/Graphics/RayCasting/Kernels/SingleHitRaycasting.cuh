@@ -18,15 +18,33 @@
 inline __device__ bool isBVHNodeHit(const Ray& ray, const BVHNode& node, RayHitMinimal& hitInfo, float& tmin);
 
 //kernel called once per pixel, returns ray intersection data in hits array
-__global__ void RaycastKernel(Camera cam, CudaCSGTree tree, RayHit* hits, float width, float height);
+__global__ void RaycastKernel(
+	CudaCamera cam,
+	CSGNode* nodes,
+	CudaPrimitivePos* primitivePos,
+	Parameters* primitiveParameters,
+	RayHit* hits,
+	float width, float height
+);
 
 //decicdes which intersection method is called for given primitive node
-inline __device__ void hitPrimitive(const Ray& ray, const CudaCSGTree& tree, const CSGNode& node, RayHitMinimal& hitInfo, float& tmin);
+inline __device__ void hitPrimitive(
+	const Ray& ray,
+	const CudaPrimitivePos* primitvePos,
+	const Parameters* primitiveParameters,
+	const CSGNode& node,
+	RayHitMinimal& hitInfo, float& tmin
+);
 
 //CSG functions from paper [https://ceur-ws.org/Vol-1576/090.pdf]
 
 //main loop of state machine
-inline __device__ void CSGRayCast(CudaCSGTree& tree, Ray& ray, RayHitMinimal& resultRayhit);
+inline __device__ void CSGRayCast(
+	const CSGNode* nodes,
+	const CudaPrimitivePos* primitivePos,
+	const Parameters* primitiveParameters,
+	Ray& ray, RayHitMinimal& resultRayhit
+);
 
 //function responsible of exploring tree
 inline __device__ void GoTo(
@@ -35,12 +53,15 @@ inline __device__ void GoTo(
 	CudaStack<float, MAXSTACKSIZE>& timeStack,
 	unsigned char& action,
 	CSGNode& node,
-	CudaCSGTree& tree,
+	const CSGNode* nodes,
+	const CudaPrimitivePos* primitivePos,
+	const Parameters* primitiveParameters,
 	RayHitMinimal& leftRay,
 	RayHitMinimal& rightRay,
 	Ray& ray,
 	float& tmin,
-	bool& run);
+	bool& run
+);
 
 //function decides which action to take based of intersection of left and right subtree
 inline __device__ void Compute(
@@ -49,23 +70,33 @@ inline __device__ void Compute(
 	CudaStack<float, MAXSTACKSIZE>& timeStack,
 	unsigned char& action,
 	CSGNode& node,
-	CudaCSGTree& tree,
+	const CSGNode* nodes,
+	const CudaPrimitivePos* primitivePos,
+	const Parameters* primitiveParameters,
 	RayHitMinimal& leftRay,
 	RayHitMinimal& rightRay,
 	float& tmin,
-	bool& run);
+	bool& run
+);
 
 //retrieves actions from predefined tables
 inline __device__ int LookUpActions(unsigned char lHit, unsigned char rHit, int op);
 
 //returns parent node, or if not possible creates virtual node. If virutal node is created, tells state machine to end computations 
-inline __device__ CSGNode GetParent(CudaCSGTree& tree, CSGNode& node, bool& run);
+inline __device__ CSGNode GetParent(const CSGNode* nodes, CSGNode& node, bool& run);
 
 //
 // ---- code ----
 //
 
-__global__ void RaycastKernel(CudaCamera cam, CudaCSGTree tree, RayHit* hits, float width, float height)
+__global__ void RaycastKernel(
+	CudaCamera cam,
+	CSGNode* nodes,
+	CudaPrimitivePos* primitivePos,
+	Parameters* primitiveParameters,
+	RayHit* hits,
+	float width, float height
+)
 {
 	int x = blockIdx.x * blockDim.x + threadIdx.x;
 	int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -90,7 +121,7 @@ __global__ void RaycastKernel(CudaCamera cam, CudaCSGTree tree, RayHit* hits, fl
 
 	// For now, just test against the first sphere
 
-	CSGRayCast(tree, ray, hitInfo);
+	CSGRayCast(nodes, primitivePos, primitiveParameters, ray, hitInfo);
 	int pixelIdx = (y * (int)width + x);
 
 	RayHit detailedHitInfo;
@@ -98,28 +129,36 @@ __global__ void RaycastKernel(CudaCamera cam, CudaCSGTree tree, RayHit* hits, fl
 	if (hitInfo.hit != CSG::CSGRayHit::Miss)
 	{
 		if (hitInfo.primitiveType == CSGTree::NodeType::Sphere)
-			sphereHitDetails(ray, tree.primitives[hitInfo.primitiveIdx], hitInfo, detailedHitInfo);
+			sphereHitDetails(ray, primitivePos[hitInfo.primitiveIdx], primitiveParameters[hitInfo.primitiveIdx], hitInfo, detailedHitInfo);
 		if (hitInfo.primitiveType == CSGTree::NodeType::Cylinder)
-			cylinderHitDetails(ray, tree.primitives[hitInfo.primitiveIdx], hitInfo, detailedHitInfo);
+			cylinderHitDetails(ray, primitivePos[hitInfo.primitiveIdx], primitiveParameters[hitInfo.primitiveIdx], hitInfo, detailedHitInfo);
 		if (hitInfo.primitiveType == CSGTree::NodeType::Cube)
-			cubeHitDetails(ray, tree.primitives[hitInfo.primitiveIdx], hitInfo, detailedHitInfo);
+			cubeHitDetails(ray, primitivePos[hitInfo.primitiveIdx], primitiveParameters[hitInfo.primitiveIdx], hitInfo, detailedHitInfo);
 	}
 	hits[pixelIdx] = detailedHitInfo;
 }
 
-inline __device__ void hitPrimitive(const Ray& ray, const CudaCSGTree& tree, const CSGNode& node, RayHitMinimal& hitInfo, float& tmin)
+inline __device__ void hitPrimitive(
+	const Ray& ray,
+	const CudaPrimitivePos* primitvePos,
+	const Parameters* primitiveParameters,
+	const CSGNode& node,
+	RayHitMinimal& hitInfo,
+	float& tmin
+)
 {
+	hitInfo.primitiveIdx = node.primitiveIdx;
 	if (node.type == CSGTree::NodeType::Sphere)
 	{
-		sphereHit(ray, tree.primitives[node.primitiveIdx], hitInfo, tmin);
+		sphereHit(ray, primitvePos[node.primitiveIdx], primitiveParameters[node.primitiveIdx], hitInfo, tmin);
 	}
 	else if (node.type == CSGTree::NodeType::Cylinder)
 	{
-		cylinderHit(ray, tree.primitives[node.primitiveIdx], hitInfo, tmin);
+		cylinderHit(ray, primitvePos[node.primitiveIdx], primitiveParameters[node.primitiveIdx], hitInfo, tmin);
 	}
 	else if (node.type == CSGTree::NodeType::Cube)
 	{
-		cubeHit(ray, tree.primitives[node.primitiveIdx], hitInfo, tmin);
+		cubeHit(ray, primitvePos[node.primitiveIdx], primitiveParameters[node.primitiveIdx], hitInfo, tmin);
 	}
 	else
 	{
@@ -129,7 +168,12 @@ inline __device__ void hitPrimitive(const Ray& ray, const CudaCSGTree& tree, con
 
 }
 
-inline __device__ void CSGRayCast(CudaCSGTree& tree, Ray& ray, RayHitMinimal& resultRayhit)
+inline __device__ void CSGRayCast(
+	const CSGNode* nodes,
+	const CudaPrimitivePos* primitivePos,
+	const Parameters* primitiveParameters,
+	Ray& ray, RayHitMinimal& resultRayhit
+)
 {
 
 	CudaStack<unsigned char, MAXSTACKSIZE> actionStack;
@@ -159,7 +203,9 @@ inline __device__ void CSGRayCast(CudaCSGTree& tree, Ray& ray, RayHitMinimal& re
 				timeStack,
 				action,
 				node,
-				tree,
+				nodes,
+				primitivePos,
+				primitiveParameters,
 				leftRay,
 				rightRay,
 				ray,
@@ -173,7 +219,9 @@ inline __device__ void CSGRayCast(CudaCSGTree& tree, Ray& ray, RayHitMinimal& re
 				timeStack,
 				action,
 				node,
-				tree,
+				nodes,
+				primitivePos,
+				primitiveParameters,
 				leftRay,
 				rightRay,
 				tmin,
@@ -190,7 +238,9 @@ inline __device__ void GoTo(
 	CudaStack<float, MAXSTACKSIZE>& timeStack,
 	unsigned char& action,
 	CSGNode& node,
-	CudaCSGTree& tree,
+	const CSGNode* nodes,
+	const CudaPrimitivePos* primitivePos,
+	const Parameters* primitiveParameters,
 	RayHitMinimal& leftRay,
 	RayHitMinimal& rightRay,
 	Ray& ray,
@@ -199,29 +249,29 @@ inline __device__ void GoTo(
 {
 	if (action & CSG::CSGActions::GotoLft)
 	{
-		node = tree.nodes[node.left];
+		node = nodes[node.left];
 	}
 	else
 	{
-		node = tree.nodes[node.right];
+		node = nodes[node.right];
 	}
 
 	if (node.type == CSGTree::NodeType::Union ||
 		node.type == CSGTree::NodeType::Difference ||
 		node.type == CSGTree::NodeType::Intersection)
 	{
-		bool gotoL = isBVHNodeHit(ray, tree.nodes[node.left].bvhNode, leftRay, tmin);
-		bool gotoR = isBVHNodeHit(ray, tree.nodes[node.right].bvhNode, rightRay, tmin);
-		CSGNode tmpNode = tree.nodes[node.left];
+		bool gotoL = isBVHNodeHit(ray, nodes[node.left].bvhNode, leftRay, tmin);
+		bool gotoR = isBVHNodeHit(ray, nodes[node.right].bvhNode, rightRay, tmin);
+		CSGNode tmpNode = nodes[node.left];
 		if (gotoL && (tmpNode.primitiveIdx != -1))
 		{
-			hitPrimitive(ray, tree, tmpNode, leftRay, tmin);
+			hitPrimitive(ray, primitivePos, primitiveParameters, tmpNode, leftRay, tmin);
 			gotoL = false;
 		}
-		tmpNode = tree.nodes[node.right];
-		if (gotoR && (tree.nodes[node.right].primitiveIdx != -1))
+		tmpNode = nodes[node.right];
+		if (gotoR && (nodes[node.right].primitiveIdx != -1))
 		{
-			hitPrimitive(ray, tree, tmpNode, rightRay, tmin);
+			hitPrimitive(ray, primitivePos, primitiveParameters, tmpNode, rightRay, tmin);
 			gotoR = false;
 		}
 		if (gotoL || gotoR)
@@ -256,14 +306,14 @@ inline __device__ void GoTo(
 	{
 		if (action & CSG::CSGActions::GotoLft)
 		{
-			hitPrimitive(ray, tree, node, leftRay, tmin);
+			hitPrimitive(ray, primitivePos, primitiveParameters, node, leftRay, tmin);
 		}
 		else
 		{
-			hitPrimitive(ray, tree, node, rightRay, tmin);
+			hitPrimitive(ray, primitivePos, primitiveParameters, node, rightRay, tmin);
 		}
 		action = actionStack.pop();
-		node = GetParent(tree, node, run);
+		node = GetParent(nodes, node, run);
 	}
 }
 
@@ -273,7 +323,9 @@ inline __device__ void Compute(
 	CudaStack<float, MAXSTACKSIZE>& timeStack,
 	unsigned char& action,
 	CSGNode& node,
-	CudaCSGTree& tree,
+	const CSGNode* nodes,
+	const CudaPrimitivePos* primitivePos,
+	const Parameters* primitiveParameters,
 	RayHitMinimal& leftRay,
 	RayHitMinimal& rightRay,
 	float& tmin,
@@ -295,7 +347,7 @@ inline __device__ void Compute(
 	{
 		rightRay = leftRay;
 		action = actionStack.pop();
-		node = GetParent(tree, node, run);
+		node = GetParent(nodes, node, run);
 	}
 	else if ((actions & CSG::HitActions::RetR) || ((actions & CSG::HitActions::RetRIfCloser) && (leftRay.t > rightRay.t)))
 	{
@@ -308,7 +360,7 @@ inline __device__ void Compute(
 		}
 		leftRay = rightRay;
 		action = actionStack.pop();
-		node = GetParent(tree, node, run);
+		node = GetParent(nodes, node, run);
 	}
 	else if ((actions & CSG::HitActions::LoopL) || ((actions & CSG::HitActions::LoopLIfCloser) && (leftRay.t < rightRay.t)))
 	{
@@ -329,7 +381,7 @@ inline __device__ void Compute(
 		rightRay = RayHitMinimal();
 		leftRay = RayHitMinimal();
 		action = actionStack.pop();
-		node = GetParent(tree, node, run);
+		node = GetParent(nodes, node, run);
 	}
 }
 
@@ -378,11 +430,11 @@ inline __device__ int LookUpActions(unsigned char lHit, unsigned char rHit, int 
 	return -1;
 }
 
-inline __device__ CSGNode GetParent(CudaCSGTree& tree, CSGNode& node, bool& run)
+inline __device__ CSGNode GetParent(const CSGNode* nodes, CSGNode& node, bool& run)
 {
 	if (node.parent >= 0)
 	{
-		return tree.nodes[node.parent];
+		return nodes[node.parent];
 	}
 	run = false;
 	return CSGNode(0, 0, 0, 0, 0);

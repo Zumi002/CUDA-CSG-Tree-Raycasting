@@ -58,8 +58,9 @@ struct CSGTree
 struct CudaCSGTree
 {
 	CSGNode* nodes;
-
-	Primitive* primitives;
+	CudaPrimitivePos* primitivePos;
+	CudaPrimitiveColor* primitiveColor;
+	Parameters* primitiveParams;
 };
 
 std::vector<std::string> split(const std::string& text);

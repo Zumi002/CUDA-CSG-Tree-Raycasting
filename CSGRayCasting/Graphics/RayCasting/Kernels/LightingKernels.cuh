@@ -11,13 +11,13 @@
 //
 
 //kernel called once per pixel, calculates output color based of ray intersecion data and lightnigng
-__global__ void LightningKernel(CudaCamera cam, RayHit* hits, Primitive* primitives, float4* output, float3 lightDir, float width, float height);
+__global__ void LightningKernel(CudaCamera cam, RayHit* hits, CudaPrimitiveColor* primitieveColors, float4* output, float3 lightDir, float width, float height);
 
 //
 // ---- code ----
 //
 
-__global__ void LightningKernel(CudaCamera cam, RayHit* hits, Primitive* primitives, float4* output, float3 lightDir, float width, float height)
+__global__ void LightningKernel(CudaCamera cam, RayHit* hits, CudaPrimitiveColor* primitieveColors, float4* output, float3 lightDir, float width, float height)
 {
 	int x = blockIdx.x * blockDim.x + threadIdx.x;
 	int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -32,9 +32,9 @@ __global__ void LightningKernel(CudaCamera cam, RayHit* hits, Primitive* primiti
 
 	if (hitInfo.hit)
 	{
-		float3 color = make_float3(primitives[hitInfo.primitiveIdx].r,
-			primitives[hitInfo.primitiveIdx].g,
-			primitives[hitInfo.primitiveIdx].b);
+		float3 color = make_float3(primitieveColors[hitInfo.primitiveIdx].r,
+			primitieveColors[hitInfo.primitiveIdx].g,
+			primitieveColors[hitInfo.primitiveIdx].b);
 
 		float3 lightColor = make_float3(1.0f, 1.0f, 1.0f);
 

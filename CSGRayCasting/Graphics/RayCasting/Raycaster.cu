@@ -5,10 +5,14 @@ void Raycaster::ChangeTree(CSGTree& tree)
 {
     CleanUpTree();
     gpuErrchk(cudaMalloc(&cudaTree.nodes, tree.nodes.size() * sizeof(CSGNode)));
-    gpuErrchk(cudaMalloc(&cudaTree.primitives, tree.primitives.primitives.size() * sizeof(Primitive)));
+    gpuErrchk(cudaMalloc(&cudaTree.primitivePos, tree.primitives.primitivePos.size() * sizeof(CudaPrimitivePos)));
+    gpuErrchk(cudaMalloc(&cudaTree.primitiveColor, tree.primitives.primitiveColor.size() * sizeof(CudaPrimitiveColor)));
+    gpuErrchk(cudaMalloc(&cudaTree.primitiveParams, tree.primitives.primitiveParameters.size() * sizeof(Parameters)));
 
     gpuErrchk(cudaMemcpy(cudaTree.nodes, tree.nodes.data(), tree.nodes.size() * sizeof(CSGNode), cudaMemcpyHostToDevice));
-    gpuErrchk(cudaMemcpy(cudaTree.primitives, tree.primitives.primitives.data(), tree.primitives.primitives.size() * sizeof(Primitive), cudaMemcpyHostToDevice));
+    gpuErrchk(cudaMemcpy(cudaTree.primitivePos, tree.primitives.primitivePos.data(), tree.primitives.primitivePos.size() * sizeof(CudaPrimitivePos), cudaMemcpyHostToDevice));
+    gpuErrchk(cudaMemcpy(cudaTree.primitiveColor, tree.primitives.primitiveColor.data(), tree.primitives.primitiveColor.size() * sizeof(CudaPrimitiveColor), cudaMemcpyHostToDevice));
+    gpuErrchk(cudaMemcpy(cudaTree.primitiveParams, tree.primitives.primitiveParameters.data(), tree.primitives.primitiveParameters.size() * sizeof(Parameters), cudaMemcpyHostToDevice));
     allocedTree = true;
 }
 
@@ -32,16 +36,15 @@ void Raycaster::ChangeSize(int newWidth, int newHeight, CSGTree& tree)
 void Raycaster::Raycast(float4* devPBO, Camera cam, DirectionalLight light)
 {
     MapFromCamera(cam);
-
     if (alg == 0)
-        RaycastKernel << <gridDim, blockDim >> > (cudaCamera, cudaTree, devHits, width, height);
+        RaycastKernel << <gridDim, blockDim >> > (cudaCamera, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, width, height);
     else if (alg == 1)
-        CalculateInterscetion << <gridDim, blockDim >> > (width, height, shapeCount, cudaTree, devParts, cudaCamera, devHits);
+        CalculateInterscetion << <gridDim, blockDim >> > (width, height, shapeCount, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devParts, cudaCamera, devHits);
     cudaDeviceSynchronize();
 
 
 
-    LightningKernel << <gridDim, blockDim >> > (cudaCamera, devHits, cudaTree.primitives, devPBO, light.getLightDir(), width, height);
+    LightningKernel << <gridDim, blockDim >> > (cudaCamera, devHits, cudaTree.primitiveColor, devPBO, light.getLightDir(), width, height);
     cudaDeviceSynchronize();
 
 }
@@ -51,7 +54,9 @@ void Raycaster::CleanUpTree()
     if (allocedTree)
     {
         gpuErrchk(cudaFree(cudaTree.nodes));
-        gpuErrchk(cudaFree(cudaTree.primitives));
+        gpuErrchk(cudaFree(cudaTree.primitivePos));
+        gpuErrchk(cudaFree(cudaTree.primitiveColor));
+        gpuErrchk(cudaFree(cudaTree.primitiveParams));
         allocedTree = false;
     }
 }
@@ -79,11 +84,11 @@ void  Raycaster::SetupClassical(CSGTree& tree)
 {
     if (allocedTree)
     {
-        Parts = (int*)malloc(tree.primitives.primitives.size() * 4 * sizeof(int));
+        Parts = (int*)malloc(tree.primitives.primitivePos.size() * 4 * sizeof(int));
         CreateParts(tree, Parts, 0);
-        gpuErrchk(cudaMalloc(&devParts, tree.primitives.primitives.size() * 4 * sizeof(int)));
-        gpuErrchk(cudaMemcpy(devParts, Parts, tree.primitives.primitives.size() * 4 * sizeof(int), cudaMemcpyHostToDevice));
-        shapeCount = tree.primitives.primitives.size();
+        gpuErrchk(cudaMalloc(&devParts, tree.primitives.primitivePos.size() * 4 * sizeof(int)));
+        gpuErrchk(cudaMemcpy(devParts, Parts, tree.primitives.primitivePos.size() * 4 * sizeof(int), cudaMemcpyHostToDevice));
+        shapeCount = tree.primitives.primitivePos.size();
         allocedClassicalAdds = true;
     }
 }
