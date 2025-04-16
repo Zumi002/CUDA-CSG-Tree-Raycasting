@@ -5,266 +5,305 @@
 CSGTree CSGTree::Parse(const std::string& text)
 {
 
-	CSGTree tree;
-	std::vector<std::string> splited = split(text);
+    CSGTree tree;
+    std::vector<std::string> splited = split(text);
 
-	//pair first = nodeIdx, second = childrenCount
-	std::stack<std::pair<int, int>> nodesStack;
+    //pair first = nodeIdx, second = childrenCount
+    std::stack<std::pair<int, int>> nodesStack;
 
-	int primitivesCount = 0;
-	int nodesCount = 0;
+    int primitivesCount = 0;
+    int nodesCount = 0;
 
-	for (int i = 0; i < splited.size(); i++)
-	{
-		tree.nodes.push_back(CSGNode(-1, -1, -1, -1, -1));
-		if (nodesCount!=0)
-		{
-			if (nodesStack.empty())
-			{
-				throw std::invalid_argument("Cannot parse");
-			}
+    for (int i = 0; i < splited.size(); i++)
+    {
+        tree.nodes.push_back(CSGNode(-1, -1, -1, -1, -1));
+        if (nodesCount != 0)
+        {
+            if (nodesStack.empty())
+            {
+                throw std::invalid_argument("Cannot parse");
+            }
 
-			auto* nodeInfo = &nodesStack.top();
-			if (nodeInfo->second == 0)
-			{
-				tree.nodes[nodeInfo->first].left = nodesCount;
-				tree.nodes[nodesCount].parent = nodeInfo->first;
-				nodeInfo->second++;
-			}
-			else
-			{
-				tree.nodes[nodeInfo->first].right = nodesCount;
-				tree.nodes[nodesCount].parent = nodeInfo->first;
-				nodesStack.pop();
-			}
-		}
+            auto* nodeInfo = &nodesStack.top();
+            if (nodeInfo->second == 0)
+            {
+                tree.nodes[nodeInfo->first].left = nodesCount;
+                tree.nodes[nodesCount].parent = nodeInfo->first;
+                nodeInfo->second++;
+            }
+            else
+            {
+                tree.nodes[nodeInfo->first].right = nodesCount;
+                tree.nodes[nodesCount].parent = nodeInfo->first;
+                nodesStack.pop();
+            }
+        }
 
-		if (splited[i] == "Union")
-		{
-			tree.nodes[nodesCount].type = CSGTree::NodeType::Union;
-			nodesStack.push({ nodesCount, 0 });
-		}
-		else if (splited[i] == "Difference")
-		{
-			tree.nodes[nodesCount].type = CSGTree::NodeType::Difference;
-			nodesStack.push({ nodesCount, 0 });
-		}
-		else if (splited[i] == "Intersection")
-		{
-			tree.nodes[nodesCount].type = CSGTree::NodeType::Intersection;
-			nodesStack.push({ nodesCount, 0 });
-		}
-		else if (splited[i] == "Sphere")
-		{
-			tree.nodes[nodesCount].type = CSGTree::NodeType::Sphere;
-			tree.nodes[nodesCount].primitiveIdx = primitivesCount;
+        if (splited[i] == "Union")
+        {
+            tree.nodes[nodesCount].type = CSGTree::NodeType::Union;
+            nodesStack.push({ nodesCount, 0 });
+        }
+        else if (splited[i] == "Difference")
+        {
+            tree.nodes[nodesCount].type = CSGTree::NodeType::Difference;
+            nodesStack.push({ nodesCount, 0 });
+        }
+        else if (splited[i] == "Intersection")
+        {
+            tree.nodes[nodesCount].type = CSGTree::NodeType::Intersection;
+            nodesStack.push({ nodesCount, 0 });
+        }
+        else if (splited[i] == "Sphere")
+        {
+            tree.nodes[nodesCount].type = CSGTree::NodeType::Sphere;
+            tree.nodes[nodesCount].primitiveIdx = primitivesCount;
 
-			float x = std::stof(splited[i + 1]);
-			float y = std::stof(splited[i + 2]);
-			float z = std::stof(splited[i + 3]);
+            float x = std::stof(splited[i + 1]);
+            float y = std::stof(splited[i + 2]);
+            float z = std::stof(splited[i + 3]);
 
-			if (splited[i + 4].size() != 6)
-			{
-				throw std::invalid_argument("Cannot parse color " + splited[i + 4]);
-			}
-			float r = color(splited[i + 4].substr(0, 2));
-			float g = color(splited[i + 4].substr(2, 2));
-			float b = color(splited[i + 4].substr(4, 2));
+            if (splited[i + 4].size() != 6)
+            {
+                throw std::invalid_argument("Cannot parse color " + splited[i + 4]);
+            }
+            float r = color(splited[i + 4].substr(0, 2));
+            float g = color(splited[i + 4].substr(2, 2));
+            float b = color(splited[i + 4].substr(4, 2));
 
-			float radius = std::stof(splited[i + 5]);
+            float radius = std::stof(splited[i + 5]);
 
-			tree.primitives.addSphere(primitivesCount, x, y, z, r, g, b, radius);
-			i += 5;
-			primitivesCount++;
-		}
-		else if (splited[i] == "Cylinder")
-		{
-			tree.nodes[nodesCount].type = CSGTree::NodeType::Cylinder;
-			tree.nodes[nodesCount].primitiveIdx = primitivesCount;
+            tree.primitives.addSphere(primitivesCount, x, y, z, r, g, b, radius);
+            i += 5;
+            primitivesCount++;
+        }
+        else if (splited[i] == "Cylinder")
+        {
+            tree.nodes[nodesCount].type = CSGTree::NodeType::Cylinder;
+            tree.nodes[nodesCount].primitiveIdx = primitivesCount;
 
-			float x = std::stof(splited[i + 1]);
-			float y = std::stof(splited[i + 2]);
-			float z = std::stof(splited[i + 3]);
+            float x = std::stof(splited[i + 1]);
+            float y = std::stof(splited[i + 2]);
+            float z = std::stof(splited[i + 3]);
 
-			if (splited[i + 4].size() != 6)
-			{
-				throw std::invalid_argument("Cannot parse color " + splited[i + 4]);
-			}
-			float r = color(splited[i + 4].substr(0, 2));
-			float g = color(splited[i + 4].substr(2, 2));
-			float b = color(splited[i + 4].substr(4, 2));
+            if (splited[i + 4].size() != 6)
+            {
+                throw std::invalid_argument("Cannot parse color " + splited[i + 4]);
+            }
+            float r = color(splited[i + 4].substr(0, 2));
+            float g = color(splited[i + 4].substr(2, 2));
+            float b = color(splited[i + 4].substr(4, 2));
 
-			float radius = std::stof(splited[i + 5]);
-			float height = std::stof(splited[i + 6]);
-			double rotX = std::stod(splited[i + 7]);
-			double rotY = std::stod(splited[i + 8]);
-			double rotZ = std::stod(splited[i + 9]);
+            float radius = std::stof(splited[i + 5]);
+            float height = std::stof(splited[i + 6]);
+            double rotX = std::stod(splited[i + 7]);
+            double rotY = std::stod(splited[i + 8]);
+            double rotZ = std::stod(splited[i + 9]);
 
-			if (rotX > 360 || rotX < 0)
-				throw std::invalid_argument("Invalid roation rotX should be in range [0, 360] deg");
-			if (rotY > 360 || rotY < 0)
-				throw std::invalid_argument("Invalid roation rotY should be in range [0, 360] deg");
-			if (rotZ > 360 || rotZ < 0)
-				throw std::invalid_argument("Invalid roation rotZ should be in range [0, 360] deg");
+            if (rotX > 360 || rotX < 0)
+                throw std::invalid_argument("Invalid roation rotX should be in range [0, 360] deg");
+            if (rotY > 360 || rotY < 0)
+                throw std::invalid_argument("Invalid roation rotY should be in range [0, 360] deg");
+            if (rotZ > 360 || rotZ < 0)
+                throw std::invalid_argument("Invalid roation rotZ should be in range [0, 360] deg");
 
 
-			tree.primitives.addCylinder(primitivesCount, x, y, z, r, g, b, radius, height, rotX, rotY, rotZ);
-			i += 9;
-			primitivesCount++;
-		}
-		else if (splited[i] == "Cube")
-		{
-			tree.nodes[nodesCount].type = CSGTree::NodeType::Cube;
-			tree.nodes[nodesCount].primitiveIdx = primitivesCount;
+            tree.primitives.addCylinder(primitivesCount, x, y, z, r, g, b, radius, height, rotX, rotY, rotZ);
+            i += 9;
+            primitivesCount++;
+        }
+        else if (splited[i] == "Cube")
+        {
+            tree.nodes[nodesCount].type = CSGTree::NodeType::Cube;
+            tree.nodes[nodesCount].primitiveIdx = primitivesCount;
 
-			float x = std::stof(splited[i + 1]);
-			float y = std::stof(splited[i + 2]);
-			float z = std::stof(splited[i + 3]);
+            float x = std::stof(splited[i + 1]);
+            float y = std::stof(splited[i + 2]);
+            float z = std::stof(splited[i + 3]);
 
-			if (splited[i + 4].size() != 6)
-			{
-				throw std::invalid_argument("Cannot parse color " + splited[i + 4]);
-			}
-			float r = color(splited[i + 4].substr(0, 2));
-			float g = color(splited[i + 4].substr(2, 2));
-			float b = color(splited[i + 4].substr(4, 2));
+            if (splited[i + 4].size() != 6)
+            {
+                throw std::invalid_argument("Cannot parse color " + splited[i + 4]);
+            }
+            float r = color(splited[i + 4].substr(0, 2));
+            float g = color(splited[i + 4].substr(2, 2));
+            float b = color(splited[i + 4].substr(4, 2));
 
-			float size = std::stof(splited[i + 5]);
+            float size = std::stof(splited[i + 5]);
 
-			tree.primitives.addCube(primitivesCount, x, y, z, r, g, b, size);
-			i += 5;
-			primitivesCount++;
-		}
-		else
-		{
-			throw std::invalid_argument("Cannot parse - Unrecognized keyword: " + splited[i]);
-		}
+            tree.primitives.addCube(primitivesCount, x, y, z, r, g, b, size);
+            i += 5;
+            primitivesCount++;
+        }
+        else
+        {
+            throw std::invalid_argument("Cannot parse - Unrecognized keyword: " + splited[i]);
+        }
 
-		nodesCount++;
-	}
+        nodesCount++;
+    }
 
-	if (nodesCount != 2*primitivesCount - 1)
-		throw std::invalid_argument("Cannot parse - number of primitives do not match number of nodes");
+    if (nodesCount != 2 * primitivesCount - 1)
+        throw std::invalid_argument("Cannot parse - number of primitives do not match number of nodes");
 
-	tree.ConstructBVH();
+    tree.ConstructBVH();
 
-	return tree;
+    return tree;
 }
 
 void CSGTree::ConstructBVH()
 {
-	std::stack<int> nodesID;
-	nodesID.push(0);
-	std::vector<bool> visited(nodes.size(), false);
-	while (nodesID.size())
-	{
-		int id = nodesID.top();
-		if (visited[id])
-		{
-			nodesID.pop();
-			nodes[id].bvhNode = BVHNode(nodes[nodes[id].left].bvhNode, nodes[nodes[id].right].bvhNode);
-		}
-		else if (nodes[id].primitiveIdx != -1)
-		{
-			nodesID.pop();
-			nodes[id].bvhNode = BVHNode(primitives.primitivePos[nodes[id].primitiveIdx], primitives.primitiveParameters[nodes[id].primitiveIdx], nodes[id].type);
-		}
-		else
-		{
-			nodesID.push(nodes[id].left);
-			nodesID.push(nodes[id].right);
-			visited[id] = true;
-		}
-	}
+    std::stack<int> nodesID;
+    nodesID.push(0);
+    std::vector<bool> visited(nodes.size(), false);
+    while (nodesID.size())
+    {
+        int id = nodesID.top();
+        if (visited[id])
+        {
+            nodesID.pop();
+            nodes[id].bvhNode = BVHNode(nodes[nodes[id].left].bvhNode, nodes[nodes[id].right].bvhNode);
+        }
+        else if (nodes[id].primitiveIdx != -1)
+        {
+            nodesID.pop();
+            nodes[id].bvhNode = BVHNode(primitives.primitivePos[nodes[id].primitiveIdx], primitives.primitiveParameters[nodes[id].primitiveIdx], nodes[id].type);
+        }
+        else
+        {
+            nodesID.push(nodes[id].left);
+            nodesID.push(nodes[id].right);
+            visited[id] = true;
+        }
+    }
 }
 
 std::vector<std::string> split(const std::string& text)
 {
-	std::vector<std::string> splitString;
-	std::stringstream ss(text);
+    std::vector<std::string> splitString;
+    std::stringstream ss(text);
 
-	std::string str;
+    std::string str;
 
-	while (ss >> str)
-	{
-		splitString.push_back(str);
-	}
+    while (ss >> str)
+    {
+        splitString.push_back(str);
+    }
 
-	return splitString;
+    return splitString;
 }
 
 float color(const std::string& hex)
 {
-	int value = std::stoi(hex, nullptr, 16);
-	return (float)value / 255;
+    int value = std::stoi(hex, nullptr, 16);
+    return (float)value / 255;
 }
 
-void CreateParts(CSGTree &tree, int* parts, int node)
+void CreateParts(CSGTree& tree, int* parts, int node)
 {
-	
-		int ll, lr, rl, rr;
-		if (tree.nodes[tree.nodes[node].left].left == -1) // is leaf
-		{
-			ll = (tree.nodes[node].left - tree.primitives.primitivePos.size() + 1) * 2;
-			lr = (tree.nodes[node].left - tree.primitives.primitivePos.size() + 1) * 2 + 1;
-		}
-		else
-		{
-			CreateParts(tree, parts, tree.nodes[node].left);
-			ll = parts[tree.nodes[node].left * 4];
-			lr = parts[tree.nodes[node].left * 4 + 3];
-		}
-		if (tree.nodes[tree.nodes[node].right].left == -1) // is leaf
-		{
-			rl = (tree.nodes[node].right - tree.primitives.primitivePos.size() + 1) * 2;
-			rr = (tree.nodes[node].right - tree.primitives.primitivePos.size() + 1) * 2 + 1;
-		}
-		else
-		{
-			CreateParts(tree, parts, tree.nodes[node].right);
-			rl = parts[tree.nodes[node].right * 4];
-			rr = parts[tree.nodes[node].right * 4 + 3];
-		}
-		parts[node * 4] = ll;
-		parts[node * 4 + 1] = lr;
-		parts[node * 4 + 2] = rl;
-		parts[node * 4 + 3] = rr;
-	
+
+    int ll, lr, rl, rr;
+    if (tree.nodes[tree.nodes[node].left].left == -1) // is leaf
+    {
+        ll = (tree.nodes[node].left - tree.primitives.primitivePos.size() + 1) * 2;
+        lr = (tree.nodes[node].left - tree.primitives.primitivePos.size() + 1) * 2 + 1;
+    }
+    else
+    {
+        CreateParts(tree, parts, tree.nodes[node].left);
+        ll = parts[tree.nodes[node].left * 4];
+        lr = parts[tree.nodes[node].left * 4 + 3];
+    }
+    if (tree.nodes[tree.nodes[node].right].left == -1) // is leaf
+    {
+        rl = (tree.nodes[node].right - tree.primitives.primitivePos.size() + 1) * 2;
+        rr = (tree.nodes[node].right - tree.primitives.primitivePos.size() + 1) * 2 + 1;
+    }
+    else
+    {
+        CreateParts(tree, parts, tree.nodes[node].right);
+        rl = parts[tree.nodes[node].right * 4];
+        rr = parts[tree.nodes[node].right * 4 + 3];
+    }
+    parts[node * 4] = ll;
+    parts[node * 4 + 1] = lr;
+    parts[node * 4 + 2] = rl;
+    parts[node * 4 + 3] = rr;
+
 }
 
 void CSGTree::TransformForClassical()
 {
-	//left - false, right - true
-	std::vector<CSGNode> nodeCopy = nodes;
-	std::vector<int> newIdx(nodes.size());
-	int j = 0;
-	
-	for (int i = 0; i < nodes.size(); i++)
-	{
-		if (nodes[i].primitiveIdx != -1)
-			continue;
-		
-		nodes[j] = nodes[i];
-		newIdx[i] = j;
-		j++;
-	}
-	//add leaves at the end
-	for (int i = 0; i < nodes.size(); i++)
-	{
-		if (nodeCopy[i].primitiveIdx != -1)
-		{
-			nodes[j] = nodeCopy[i];
-			newIdx[i] = j;
-			j++;
-		}
-	}
-	//reapply connections
-	for (int i = 0; i < nodes.size(); i++)
-	{
-		if (nodes[i].primitiveIdx != -1)
-			continue;
-		nodes[i].left = newIdx[nodes[i].left];
-		nodes[i].right = newIdx[nodes[i].right];
-	}
+    //left - false, right - true
+    std::vector<CSGNode> nodeCopy = nodes;
+    std::vector<int> newIdx(nodes.size());
+    int j = 0;
+
+    for (int i = 0; i < nodes.size(); i++)
+    {
+        if (nodes[i].primitiveIdx != -1)
+            continue;
+
+        nodes[j] = nodes[i];
+        newIdx[i] = j;
+        j++;
+    }
+    //add leaves at the end
+    for (int i = 0; i < nodes.size(); i++)
+    {
+        if (nodeCopy[i].primitiveIdx != -1)
+        {
+            nodes[j] = nodeCopy[i];
+            newIdx[i] = j;
+            j++;
+        }
+    }
+    //reapply connections
+    for (int i = 0; i < nodes.size(); i++)
+    {
+        if (nodes[i].primitiveIdx != -1)
+            continue;
+        nodes[i].left = newIdx[nodes[i].left];
+        nodes[i].right = newIdx[nodes[i].right];
+    }
+}
+
+void CSGTree::TransformForRaymarching()
+{
+    std::vector<CSGNode> nodeCopy = nodes;
+    std::vector<int> newIdx(nodes.size());
+    std::stack<int> nodesToVisit;
+    std::vector<int> state(nodes.size(), 0);
+
+    int currentNode = 0;
+    int Idx = 0;
+    nodesToVisit.push(0);
+    while (nodesToVisit.size())
+    {
+        currentNode = nodesToVisit.top();
+        nodesToVisit.pop();
+        if (state[currentNode] == 0 && nodes[currentNode].primitiveIdx == -1)
+        {
+            nodesToVisit.push(currentNode);
+            nodesToVisit.push(nodes[currentNode].right);
+            nodesToVisit.push(nodes[currentNode].left);
+            state[currentNode] = 1;
+        }
+        else if (state[currentNode] == 1 || nodes[currentNode].primitiveIdx != -1)
+        {
+            newIdx[currentNode] = Idx;
+            nodeCopy[Idx++] = nodes[currentNode];
+            state[currentNode] = 2;
+        }
+    }
+    nodes = nodeCopy;
+    //reapply connections
+    for (int i = 0; i < nodes.size(); i++)
+    {
+        if (nodes[i].primitiveIdx != -1)
+            continue;
+        nodes[i].left = newIdx[nodes[i].left];
+        nodes[i].right = newIdx[nodes[i].right];
+    }
 
 }

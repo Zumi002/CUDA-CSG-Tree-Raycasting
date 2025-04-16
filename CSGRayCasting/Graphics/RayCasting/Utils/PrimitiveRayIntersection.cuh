@@ -56,7 +56,6 @@ inline __device__ void cubeHitDetails(
 	RayHit& detailedHitInfo
 );
 
-
 //
 // ---- code ----
 //

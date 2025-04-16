@@ -53,6 +53,7 @@ struct CSGTree
 	static CSGTree Parse(const std::string& text);
 	void ConstructBVH();
 	void TransformForClassical();
+	void TransformForRaymarching();
 };
 
 struct CudaCSGTree

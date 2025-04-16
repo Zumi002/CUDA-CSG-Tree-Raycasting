@@ -33,12 +33,12 @@ class RenderManager
 	
 	cudaGraphicsResource* cudaRaycastingPBOResource;
 
-	CSGTree tree, classicalTree;
+	CSGTree tree, classicalTree, raymarchingTree;
 	bool treeSet = false;
 
 	int lastRenderingAlg = 0;
 	int renderingAlg = 0;
-	const char* algorithmListBoxItems[2] = {"Single hit", "Classical"};
+	const char* algorithmListBoxItems[3] = {"Single-hit raycasting", "Classical raycasting", "Raymarching"};
 
 	int cameraIdx = 0;
 	const char* cameraListBoxItems[2] = { "FreeRoam", "Orbital" };

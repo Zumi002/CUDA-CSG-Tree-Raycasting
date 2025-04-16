@@ -13,7 +13,7 @@ class CudaStack
 	{
 		if (size() >= N)
 		{
-			int stackFull = 0;
+			//int stackFull = 0;
 //			assert(stackFull);
 			return;
 		}
@@ -25,7 +25,7 @@ class CudaStack
 	{
 		if (empty())
 		{
-			int stackEmpty = 0;
+			//int stackEmpty = 0;
 	//		assert(stackEmpty);
 			return stack[count];
 		}

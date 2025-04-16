@@ -43,3 +43,17 @@ inline __device__ float3 reflect(const float3& a, const float3& b)
 	return ret;
 }
 
+inline __device__ float length(const float3& a)
+{
+	return sqrtf(dot(a, a));
+}
+
+inline __device__ float3 abs(const float3& a)
+{
+    return make_float3(fabs(a.x), fabs(a.y), fabs(a.z));
+}
+
+inline __device__ float3 max(const float3& a, const float3& b)
+{
+    return make_float3(fmaxf(a.x, b.x), fmaxf(a.y, b.y), fmaxf(a.z, b.z));
+}

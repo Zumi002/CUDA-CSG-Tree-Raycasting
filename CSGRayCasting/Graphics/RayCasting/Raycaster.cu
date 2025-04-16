@@ -14,6 +14,7 @@ void Raycaster::ChangeTree(CSGTree& tree)
     gpuErrchk(cudaMemcpy(cudaTree.primitiveColor, tree.primitives.primitiveColor.data(), tree.primitives.primitiveColor.size() * sizeof(CudaPrimitiveColor), cudaMemcpyHostToDevice));
     gpuErrchk(cudaMemcpy(cudaTree.primitiveParams, tree.primitives.primitiveParameters.data(), tree.primitives.primitiveParameters.size() * sizeof(Parameters), cudaMemcpyHostToDevice));
     allocedTree = true;
+    nodeCount = tree.nodes.size();
 }
 
 void Raycaster::ChangeSize(int newWidth, int newHeight)
@@ -21,7 +22,18 @@ void Raycaster::ChangeSize(int newWidth, int newHeight)
     CleanUpTexture();
     width = newWidth;
     height = newHeight;
-    blockDim = dim3(BLOCKXSIZE, BLOCKYSIZE);
+    if (alg == 0)
+    {
+        blockDim = dim3(BLOCKXSIZE, BLOCKYSIZE);
+    }
+    else if (alg == 1)
+    {
+        blockDim = dim3(BLOCKXSIZERAYMARCH, BLOCKYSIZERAYMARCH);
+    }
+    else if (alg == 2)
+    {
+        blockDim = dim3(BLOCKXSIZERAYMARCH, BLOCKYSIZERAYMARCH);
+    }
     gridDim = dim3((width + blockDim.x - 1) / blockDim.x, (height + blockDim.y - 1) / blockDim.y);
     gpuErrchk(cudaMalloc(&devHits, width * height * sizeof(RayHit)));
     alloced = true;
@@ -40,13 +52,14 @@ void Raycaster::Raycast(float4* devPBO, Camera cam, DirectionalLight light)
         RaycastKernel << <gridDim, blockDim >> > (cudaCamera, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, width, height);
     else if (alg == 1)
         CalculateInterscetion << <gridDim, blockDim >> > (width, height, shapeCount, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devParts, cudaCamera, devHits);
+    else if (alg == 2)
+        RaymarchingKernel << <gridDim, blockDim >> > (cudaCamera, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, nodeCount, width, height);
     cudaDeviceSynchronize();
 
 
 
     LightningKernel << <gridDim, blockDim >> > (cudaCamera, devHits, cudaTree.primitiveColor, devPBO, light.getLightDir(), width, height);
     cudaDeviceSynchronize();
-
 }
 
 void Raycaster::CleanUpTree()
@@ -82,7 +95,7 @@ void Raycaster::CleanUpClassical()
 
 void  Raycaster::SetupClassical(CSGTree& tree)
 {
-    if (allocedTree)
+    if (allocedTree&&tree.nodes.size())
     {
         Parts = (int*)malloc(tree.primitives.primitivePos.size() * 4 * sizeof(int));
         CreateParts(tree, Parts, 0);

@@ -2,6 +2,7 @@
 
 #include "SingleHitRaycasting.cuh"
 #include "ClassicRaycasting.cuh"
+#include "RayMarching.cuh"
 #include "LightingKernels.cuh"
 
 //macro from https://stackoverflow.com/questions/14038589/what-is-the-canonical-way-to-check-for-errors-using-the-cuda-runtime-api

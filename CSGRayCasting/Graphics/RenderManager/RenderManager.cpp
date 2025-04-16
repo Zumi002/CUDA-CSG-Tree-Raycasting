@@ -103,7 +103,7 @@ void RenderManager::RenderImGui()
 		fileDialog->Open();
 	}
 	ImGui::Separator();
-	ImGui::Combo("Algorithm", &renderingAlg, algorithmListBoxItems, 2);
+	ImGui::Combo("Algorithm", &renderingAlg, algorithmListBoxItems, 3);
 	ImGui::Separator();
 	ImGui::LabelText("","Camera");
 	ImGui::Combo("Type", &cameraIdx, cameraListBoxItems, 2);
@@ -173,6 +173,8 @@ void RenderManager::ChangeAlgorithm()
 		raycaster.ChangeAlg(tree, lastRenderingAlg);
 	if (lastRenderingAlg == 1)
 		raycaster.ChangeAlg(classicalTree, lastRenderingAlg);
+	if(lastRenderingAlg == 2)
+        raycaster.ChangeAlg(raymarchingTree, lastRenderingAlg);
 }
 
 void RenderManager::ChangeTree()
@@ -209,8 +211,13 @@ void RenderManager::ChangeSize()
 void RenderManager::SetTreeToRender(CSGTree newTree)
 {
 	tree = newTree;
+
 	classicalTree = newTree;
 	classicalTree.TransformForClassical();
+
+	raymarchingTree = newTree;
+	raymarchingTree.TransformForRaymarching();
+
 	treeSet = true;
 	ChangeSize();
 	ChangeTree();

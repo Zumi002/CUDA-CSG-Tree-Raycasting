@@ -4,7 +4,6 @@
 #include <device_launch_parameters.h>
 #include "../Utils/PrimitiveRayIntersection.cuh"
 #include "../Utils/CudaStack.cuh"
-#include "../../RenderManager/Camera/Camera.h"
 #include "../CSGTree/CSGTree.cuh"
 #include "../Utils/CudaCamera.cuh"
 

@@ -10,6 +10,9 @@
 #define BLOCKXSIZE 8
 #define BLOCKYSIZE 4
 
+#define BLOCKXSIZERAYMARCH 64
+#define BLOCKYSIZERAYMARCH 64
+
 class Raycaster
 {
 	int width, height;
@@ -22,6 +25,7 @@ class Raycaster
 	int* Parts;
 	int alg = 0;
 	int shapeCount = 0;
+	int nodeCount = 0;
 	CudaCamera cudaCamera = CudaCamera();
 
 	bool alloced = false;

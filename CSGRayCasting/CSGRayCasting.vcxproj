@@ -37,6 +37,7 @@
     <ClInclude Include="Graphics\RayCasting\CSGTree\Primitives\Primitives.h" />
     <ClInclude Include="Graphics\RayCasting\Kernels\ClassicRaycasting.cuh" />
     <ClInclude Include="Graphics\RayCasting\Kernels\LightingKernels.cuh" />
+    <ClInclude Include="Graphics\RayCasting\Kernels\RayMarching.cuh" />
     <ClInclude Include="Graphics\RayCasting\Utils\CudaCamera.cuh" />
     <ClInclude Include="Graphics\RayCasting\Utils\PrimitiveRayIntersection.cuh" />
     <ClInclude Include="Graphics\RayCasting\Kernels\SingleHitRaycasting.cuh" />
@@ -45,8 +46,10 @@
     <ClInclude Include="Graphics\RayCasting\Utils\CSGUtils.cuh" />
     <ClInclude Include="Graphics\RayCasting\Utils\CudaStack.cuh" />
     <ClInclude Include="Graphics\RayCasting\Utils\Float3Utils.cuh" />
+    <ClInclude Include="Graphics\RayCasting\Utils\PrimitiveSDF.cuh" />
     <ClInclude Include="Graphics\RayCasting\Utils\Ray.cuh" />
     <ClInclude Include="Graphics\RayCasting\Utils\RayHit.cuh" />
+    <ClInclude Include="Graphics\RayCasting\Utils\RaymarchFloatWithIndex.cuh" />
     <ClInclude Include="Graphics\RenderManager\Camera\Camera.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Graphics\RenderManager\Camera\FreeRoamCamera.h" />

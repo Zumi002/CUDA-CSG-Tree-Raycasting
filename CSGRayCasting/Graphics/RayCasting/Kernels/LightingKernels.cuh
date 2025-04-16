@@ -2,7 +2,6 @@
 
 #include <device_launch_parameters.h>
 #include "../Utils/Ray.cuh"
-#include "../../RenderManager/Camera/Camera.h"
 #include "../CSGTree/CSGTree.cuh"
 #include "../Utils/CudaCamera.cuh"
 
