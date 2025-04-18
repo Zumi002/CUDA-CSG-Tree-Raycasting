@@ -22,19 +22,6 @@ void Raycaster::ChangeSize(int newWidth, int newHeight)
     CleanUpTexture();
     width = newWidth;
     height = newHeight;
-    if (alg == 0)
-    {
-        blockDim = dim3(BLOCKXSIZE, BLOCKYSIZE);
-    }
-    else if (alg == 1)
-    {
-        blockDim = dim3(BLOCKXSIZERAYMARCH, BLOCKYSIZERAYMARCH);
-    }
-    else if (alg == 2)
-    {
-        blockDim = dim3(BLOCKXSIZERAYMARCH, BLOCKYSIZERAYMARCH);
-    }
-    gridDim = dim3((width + blockDim.x - 1) / blockDim.x, (height + blockDim.y - 1) / blockDim.y);
     gpuErrchk(cudaMalloc(&devHits, width * height * sizeof(RayHit)));
     alloced = true;
 }
@@ -120,9 +107,20 @@ void Raycaster::ChangeAlg(CSGTree& tree, int newAlg)
         CleanUpClassical();
     ChangeTree(tree);
     alg = newAlg;
-    if (alg == 1)
+    if (alg == 0)
+    {
+        blockDim = dim3(BLOCKXSIZE, BLOCKYSIZE);
+    }
+    else if (alg == 1)
+    {
+        blockDim = dim3(BLOCKXSIZERAYMARCH, BLOCKYSIZERAYMARCH);
         SetupClassical(tree);
-
+    }
+    else if (alg == 2)
+    {
+        blockDim = dim3(BLOCKXSIZERAYMARCH, BLOCKYSIZERAYMARCH);
+    }
+    gridDim = dim3((width + blockDim.x - 1) / blockDim.x, (height + blockDim.y - 1) / blockDim.y);
 }
 
 void Raycaster::MapFromCamera(Camera cam)

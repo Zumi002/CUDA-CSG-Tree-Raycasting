@@ -179,7 +179,6 @@ void RenderManager::ChangeAlgorithm()
 
 void RenderManager::ChangeTree()
 {
-	raycaster.ChangeTree(tree);
 	ChangeAlgorithm();
 }
 
