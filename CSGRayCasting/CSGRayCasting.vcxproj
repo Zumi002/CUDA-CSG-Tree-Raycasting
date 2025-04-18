@@ -140,6 +140,7 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+      <FastMath>true</FastMath>
     </CudaCompile>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)Libraries\SDL2.dll" "$(TargetDir)"</Command>

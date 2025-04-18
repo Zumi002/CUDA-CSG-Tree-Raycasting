@@ -342,7 +342,7 @@ inline __device__ void Compute(
 		}
 	}
 	int actions = LookUpActions(leftRay.hit, rightRay.hit, node.type);
-	if ((actions & CSG::HitActions::RetL) || ((actions & CSG::HitActions::RetLIfCloser) && (leftRay.t < rightRay.t)))
+	if ((actions & CSG::HitActions::RetL) || ((actions & CSG::HitActions::RetLIfCloser) && (leftRay.t <= rightRay.t)))
 	{
 		rightRay = leftRay;
 		action = actionStack.pop();
@@ -361,7 +361,7 @@ inline __device__ void Compute(
 		action = actionStack.pop();
 		node = GetParent(nodes, node, run);
 	}
-	else if ((actions & CSG::HitActions::LoopL) || ((actions & CSG::HitActions::LoopLIfCloser) && (leftRay.t < rightRay.t)))
+	else if ((actions & CSG::HitActions::LoopL) || ((actions & CSG::HitActions::LoopLIfCloser) && (leftRay.t <= rightRay.t)))
 	{
 		tmin = leftRay.t;
 		primitiveStack.push(rightRay);

@@ -1,5 +1,7 @@
 #include "Raycaster.cuh"
 #include "Kernels/Kernels.cuh"
+#include "cuda_profiler_api.h"
+
 
 void Raycaster::ChangeTree(CSGTree& tree)
 {
@@ -35,6 +37,7 @@ void Raycaster::ChangeSize(int newWidth, int newHeight, CSGTree& tree)
 void Raycaster::Raycast(float4* devPBO, Camera cam, DirectionalLight light)
 {
     MapFromCamera(cam);
+    cudaProfilerStart();
     if (alg == 0)
         RaycastKernel << <gridDim, blockDim >> > (cudaCamera, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, width, height);
     else if (alg == 1)
@@ -47,6 +50,7 @@ void Raycaster::Raycast(float4* devPBO, Camera cam, DirectionalLight light)
 
     LightningKernel << <gridDim, blockDim >> > (cudaCamera, devHits, cudaTree.primitiveColor, devPBO, light.getLightDir(), width, height);
     cudaDeviceSynchronize();
+    cudaProfilerStop();
 }
 
 void Raycaster::CleanUpTree()

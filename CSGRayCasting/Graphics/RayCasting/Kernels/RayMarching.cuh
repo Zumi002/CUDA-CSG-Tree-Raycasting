@@ -101,7 +101,8 @@ __device__ inline RayHit GetDetailedHitInfo(
     const int& t,
     const int& numberOfNodes,
     CudaStack<float, MAXRAYMARCHINGSTACKSIZE>& distanceStack,
-    const float3& camPos   
+    const float3& camPos,
+    const bool& inside
 );
 
 __device__ inline float3 SDNormal(
@@ -154,6 +155,14 @@ __global__ void RaymarchingKernel(
     float mapResult = RAYMARCHFAR;
     float t = 0;
     int minDistPrimitiveIdx = -1;
+    bool inside = false;
+
+    // first unrolled to check if we are inside
+    mapResult = MapCSGTree(nodes, primitivePos, primitiveParameters, ray.origin, numberOfNodes, distanceStack);
+    ray.origin = ray.origin + fabs(mapResult) * ray.direction;
+    t += fabs(mapResult);
+    marches++;
+    inside = mapResult < 0 ? true : false;
     while (marches < MAXMARCHES && fabs(mapResult) > RAYMARCHEPSILON && t < RAYMARCHFAR)
     {
         mapResult = MapCSGTree(nodes, primitivePos, primitiveParameters, ray.origin, numberOfNodes, distanceStack);
@@ -164,7 +173,7 @@ __global__ void RaymarchingKernel(
     CudaStack<FloatWithIndex, MAXRAYMARCHINGSTACKSIZE> distanceStackWithIndex;
     FloatWithIndex mapResultWithIdx = MapCSGTreeWithIndex(nodes, primitivePos, primitiveParameters, ray.origin, numberOfNodes, distanceStackWithIndex);
 
-    hits[pixelIdx] = GetDetailedHitInfo(ray, nodes, primitivePos, primitiveParameters, mapResultWithIdx, t, numberOfNodes, distanceStack, cam.position);
+    hits[pixelIdx] = GetDetailedHitInfo(ray, nodes, primitivePos, primitiveParameters, mapResultWithIdx, t, numberOfNodes, distanceStack, cam.position, inside);
 }
 
 __device__ FloatWithIndex MapCSGTreeWithIndex(
@@ -270,15 +279,15 @@ __device__ float GetSD(
 
 __device__ void UnionSDWithIndex(const FloatWithIndex& a, FloatWithIndex& b)
 {
-    b = (a.f < b.f) ? a : b;
+    b = (a.f <= b.f) ? a : b;
 }
 __device__ void IntersectionSDWithIndex(const FloatWithIndex& a, FloatWithIndex& b)
 {
-    b = (a.f > b.f) ? a : b;
+    b = (a.f >= b.f) ? a : b;
 }
 __device__ void DifferenceSDWithIndex(const FloatWithIndex& a, FloatWithIndex& b)
 {
-    if (a.f > -b.f)
+    if (a.f >= -b.f)
     {
         b = a;
     }
@@ -338,11 +347,12 @@ inline __device__ RayHit GetDetailedHitInfo(
     const CSGNode*& nodes,
     const CudaPrimitivePos*& primitivePos,
     const Parameters*& primitiveParameters,
-    const FloatWithIndex& mapResult, 
+    const FloatWithIndex& mapResult,
     const int& t,
     const int& numberOfNodes,
     CudaStack<float, MAXRAYMARCHINGSTACKSIZE>& distanceStack,
-    const float3& camPos
+    const float3& camPos,
+    const bool& inside
 )
 {
     RayHit hit;
@@ -356,6 +366,7 @@ inline __device__ RayHit GetDetailedHitInfo(
     hit.primitiveIdx = mapResult.idx;
     hit.position = ray.origin;
     hit.normal = SDNormal(ray, nodes, primitivePos, primitiveParameters, numberOfNodes, distanceStack);
+    hit.normal = (inside ? -1 : 1)*hit.normal;
     return hit;
 }
 
