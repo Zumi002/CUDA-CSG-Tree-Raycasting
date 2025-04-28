@@ -47,6 +47,15 @@ void Application::Run()
 	checkGLError();
 	while (!quit)
 	{
+		if (isInTestMode)
+		{
+			auto now = std::chrono::steady_clock::now();
+			elapsed = std::chrono::duration<float>(now - start).count();
+			if (elapsed > MAX_TEST_TIME)
+			{
+				quit = true;
+			}
+		}
 		Input();
 		renderer->Render();
 		Uint32 newTime = SDL_GetTicks();
@@ -91,11 +100,14 @@ bool Application::LoadCSGTree(const std::string& fileName)
 		tree = tmpTree;
 
 		renderer->SetTreeToRender(tree);
+
+		return true;
 	}
 	catch (const std::exception& exc)
 	{
 		fprintf(stderr, "Cannot load tree: %s\n", exc.what());
 	}
+	return false;
 }
 
 void Application::SaveSettings()
@@ -107,21 +119,29 @@ void Application::Input()
 {
 
 	inputManager->Input();
-	quit = inputManager->quit;
 
-	if (fileDialog.HasSelected())
+	quit = quit || (inputManager->quit);
+
+	if (!isInTestMode)
 	{
-		LoadCSGTree(fileDialog.GetSelected().string());
-		fileDialog.ClearSelected();
-	}
+		if (fileDialog.HasSelected())
+		{
+			LoadCSGTree(fileDialog.GetSelected().string());
+			fileDialog.ClearSelected();
+		}
 
-	if (renderer->activeCam != nullptr)
+		if (renderer->activeCam != nullptr)
+		{
+			renderer->activeCam->HandleInput(inputManager->camControls, inputManager->mouseControls);
+		}
+
+		inputManager->mouseControls.relativeX = 0;
+		inputManager->mouseControls.relativeY = 0;
+	}
+	else
 	{
-		renderer->activeCam->HandleInput(inputManager->camControls, inputManager->mouseControls);
+		TestModeCameraManipulation();
 	}
-
-	inputManager->mouseControls.relativeX = 0;
-	inputManager->mouseControls.relativeY = 0;
 }
 
 void Application::checkGLError() {
@@ -139,4 +159,22 @@ void Application::CleanUp()
 	SDL_DestroyWindow(window);
 }
 
+void Application::SetTestMode(int alg)
+{
+	if (alg < 0 || alg>2)
+		return; //should never happen
+
+	renderer->SetTestMode(alg);
+	renderer->SelectCamera(1); //orbital
+	isInTestMode = true;
+	start = std::chrono::steady_clock::now();
+}
+
+void Application::TestModeCameraManipulation()
+{
+	OrbitalCamera* orbitalCamera = (OrbitalCamera*)(renderer->activeCam);
+	orbitalCamera->radius = 10 * (1.5f + sinf(elapsed / 3));
+	orbitalCamera->SetOrbitRotation(360*(1.0+sinf(elapsed / 5)), 90*cosf(elapsed / 4));
+	orbitalCamera->MoveCamera();
+}
 

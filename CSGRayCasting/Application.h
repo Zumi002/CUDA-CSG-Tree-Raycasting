@@ -13,13 +13,18 @@
 #include "Graphics/RenderManager/Camera/OrbitalCamera.h"
 #include "Graphics/RenderManager/Camera/FreeRoamCamera.h"
 
+#define MAX_TEST_TIME 20.f
+
 class Application
 {
 	int screenWidth = 800,
 		screenHeight = 600;
 
 	bool quit = false;
+	bool isInTestMode = false;
 
+	std::chrono::time_point<std::chrono::steady_clock> start;
+	float elapsed = 0.f;
 
 	SDL_Window* window;
 	
@@ -40,6 +45,7 @@ class Application
 
 	void Input();
 	void checkGLError();
+	void TestModeCameraManipulation();
 	public:
 		Application(const std::string windowName);
 		void CreateAppWindow(const std::string windowName);
@@ -48,4 +54,5 @@ class Application
 		void SaveSettings();
 		void CleanUp();
 		void LoadCameraSettings(const std::string& fileName);
+		void SetTestMode(int alg);
 };

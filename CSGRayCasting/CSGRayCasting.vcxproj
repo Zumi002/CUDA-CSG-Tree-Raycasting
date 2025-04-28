@@ -31,6 +31,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CLI11\CLI11.hpp" />
     <ClInclude Include="Controls\InputManager.h" />
     <ClInclude Include="Graphics\RayCasting\CSGTree\BVH\BVHNode.cuh" />
     <ClInclude Include="Graphics\RayCasting\CSGTree\CSGTree.cuh" />

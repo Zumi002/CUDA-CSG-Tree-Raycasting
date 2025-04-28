@@ -36,6 +36,8 @@ class RenderManager
 	CSGTree tree, classicalTree, raymarchingTree;
 	bool treeSet = false;
 
+	bool isInTestMode = false;
+
 	int lastRenderingAlg = 0;
 	int renderingAlg = 0;
 	const char* algorithmListBoxItems[3] = {"Single-hit raycasting", "Classical raycasting", "Raymarching"};
@@ -61,7 +63,8 @@ class RenderManager
 		void Render();
 		void SetTreeToRender(CSGTree tree);
 		void CleanUp();
-
+		void SetTestMode(int alg);
+		void SelectCamera(int cameraIndex);
 };
 
 

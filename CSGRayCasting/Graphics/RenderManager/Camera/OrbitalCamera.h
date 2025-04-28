@@ -20,5 +20,6 @@ public:
     virtual void HandleInput(const CameraControls& camControls, const MouseControls& mouseControls) override;
     virtual CameraType GetType() override { return CameraType::OrbitalCamera; }
     void RotateOrbit(float deltaPitch, float deltaYaw);
+    void SetOrbitRotation(float pitch, float yaw);
     void MoveCamera();
 };
