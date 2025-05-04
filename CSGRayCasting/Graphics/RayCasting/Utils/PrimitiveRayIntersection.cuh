@@ -121,8 +121,7 @@ inline __device__  void sphereHitDetails(
 )
 {
 	detailedHitInfo.hit = true;
-	detailedHitInfo.t = hitInfo.t;
-	detailedHitInfo.position = ray.computePosition(detailedHitInfo.t);
+	detailedHitInfo.position = ray.computePosition(hitInfo.t);
 	detailedHitInfo.primitiveIdx = hitInfo.primitiveIdx;
 	detailedHitInfo.normal = normalize(
 		make_float3(
@@ -286,8 +285,7 @@ inline __device__ void cylinderHitDetails(
 )
 {
 	detailedHitInfo.hit = true;
-	detailedHitInfo.t = hitInfo.t;
-	detailedHitInfo.position = ray.computePosition(detailedHitInfo.t);
+	detailedHitInfo.position = ray.computePosition(hitInfo.t);
 	detailedHitInfo.primitiveIdx = hitInfo.primitiveIdx;
 
 	CylinderParameters params = cylinderParams.cylinderParameters;
@@ -394,8 +392,7 @@ inline __device__ void cubeHitDetails(
 )
 {
 	detailedHitInfo.hit = true;
-	detailedHitInfo.t = hitInfo.t;
-	detailedHitInfo.position = ray.computePosition(detailedHitInfo.t);
+	detailedHitInfo.position = ray.computePosition(hitInfo.t);
 	detailedHitInfo.primitiveIdx = hitInfo.primitiveIdx;
 
 	float3 C = make_float3(cubePos.x, cubePos.y, cubePos.z);

@@ -362,7 +362,6 @@ inline __device__ RayHit GetDetailedHitInfo(
         return hit;
     }
     hit.hit = true;
-    hit.t = t;
     hit.primitiveIdx = mapResult.idx;
     hit.position = ray.origin;
     hit.normal = SDNormal(ray, nodes, primitivePos, primitiveParameters, numberOfNodes, distanceStack);
