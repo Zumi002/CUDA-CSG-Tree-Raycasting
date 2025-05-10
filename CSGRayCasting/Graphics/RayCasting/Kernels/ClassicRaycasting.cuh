@@ -9,6 +9,7 @@
 #define NOT_INTERSECTED FLT_MAX
 #define DEBUG_PIXEL_X 300
 #define DEBUG_PIXEL_Y 300
+#define CLASSICSHAREDPRIMITIVES 256
 //#define CLASSICRAYCASTING_DEBUG
 
 //
@@ -26,27 +27,38 @@ __global__ void CalculateInterscetion(
     RayHit* hits
 );
 
+__global__ void CalculateInterscetionShared(
+	int width, int height,
+	int shape_count,
+	CSGNode* nodes,
+	CudaPrimitivePos* positions,
+	Parameters* primitiveParameters,
+	int* parts,
+	CudaCamera cam,
+	RayHit* hits
+);
+
 inline __device__ bool IntersectionPointSphere(
-    const float3& spherePosition,
+    float3 spherePosition,
     float radius,
-    const float3& rayOrigin,
-    const float3& rayDirection,
+    float3 rayOrigin,
+    float3 rayDirection,
     float& t1, float& t2
 );
 
 inline __device__ bool IntersectionPointCube(
 	const CudaPrimitivePos& cubePosition,
 	const Parameters& cubeParams,
-    const float3& rayOrigin,
-    const float3& rayDirection,
+    float3 rayOrigin,
+    float3 rayDirection,
     float& t1, float& t2
 );
 
 inline __device__ bool IntersectionPointCylinder(
 	const CudaPrimitivePos& cylinderPosition,
 	const Parameters& cylinderParams,
-    const float3& rayOrigin,
-    const float3& rayDirection,
+    float3 rayOrigin,
+    float3 rayDirection,
     float& t1, float& t2
 );
 
@@ -78,9 +90,9 @@ inline __device__ float4 NormalizeVector4(float4 vector);
 
 inline __device__ float3 NormalizeVector3(float3 vector);
 
-inline __device__ float3 cross(const float3& a, const float3& b);
+inline __device__ float3 cross(float3 a, float3 b);
 
-inline __device__ float dot3(const float3& a, const float3& b);
+inline __device__ float dot3(float3 a, float3 b);
 
 inline __device__ void MultiplyVectorByMatrix4(float4& vector, const float* matrix);
 
@@ -91,8 +103,8 @@ inline __device__ void MultiplyVectorByMatrix4(float4& vector, const float* matr
 inline __device__ bool IntersectionPointCube(
 	const CudaPrimitivePos& cubePosition,
 	const Parameters& cubeParams,
-	const float3& rayOrigin,
-	const float3& rayDirection,
+	float3 rayOrigin,
+	float3 rayDirection,
 	float& t1, float& t2
 )
 {
@@ -136,8 +148,8 @@ inline __device__ bool IntersectionPointCube(
 inline __device__ bool IntersectionPointCylinder(
 	const CudaPrimitivePos& cylinderPosition,
 	const Parameters& cylinderParams,
-	const float3& rayOrigin,
-	const float3& rayDirection,
+	float3 rayOrigin,
+	float3 rayDirection,
 	float& t1, float& t2
 )
 {
@@ -512,7 +524,14 @@ inline __device__ void CommonPartIntervals(float* sphereIntersections, float* te
 }
 
 
-__global__ void CalculateInterscetion(int width, int height, int shape_count, CSGNode* nodes, CudaPrimitivePos* primitivePos, Parameters* primitiveParameters, int* parts, CudaCamera cam,
+__global__ void CalculateInterscetion(
+	int width, int height,
+	int shape_count,
+	CSGNode* nodes,
+	CudaPrimitivePos* primitivePos,
+	Parameters* primitiveParameters,
+	int* parts,
+	CudaCamera cam,
 	RayHit* hits)
 {
 
@@ -551,9 +570,6 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, CS
 			float3 spherePosition = make_float3(primitivePos[nodes[k].primitiveIdx].x, primitivePos[nodes[k].primitiveIdx].y, primitivePos[nodes[k].primitiveIdx].z);
 			float radius = primitiveParameters[nodes[k].primitiveIdx].sphereParameters.radius;
 			IntersectionPointSphere(spherePosition, radius, camera_pos, ray, t1, t2);
-
-			float3 pixelPosition1 = make_float3(camera_pos.x + t1 * ray.x, camera_pos.y + t1 * ray.y, camera_pos.z + t1 * ray.z);
-			float3 pixelPosition2 = make_float3(camera_pos.x + t2 * ray.x, camera_pos.y + t2 * ray.y, camera_pos.z + t2 * ray.z);
 		}
 		else if (nodes[k].type == CSGTree::NodeType::Cube)
 		{
@@ -632,12 +648,10 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, CS
 		{
 			SubstractIntervals(sphereIntersections, tempArray, p1, p2, k1, k2, false);
 		}
-
 		else if (nodes[nodeIndex].type == CSGTree::NodeType::Intersection)
 		{
 			CommonPartIntervals(sphereIntersections, tempArray, p1, p2, k1, k2, false);
 		}
-
 		else
 		{
 			AddIntervals(sphereIntersections, tempArray, p1, p2, k1, k2, false);
@@ -721,11 +735,228 @@ __global__ void CalculateInterscetion(int width, int height, int shape_count, CS
 	hits[pixelIdx] = detailedHitInfo;
 }
 
+__global__ void CalculateInterscetionShared(
+	int width, int height,
+	int shape_count,
+	CSGNode* nodes,
+	CudaPrimitivePos* primitivePos,
+	Parameters* primitiveParameters,
+	int* parts,
+	CudaCamera cam,
+	RayHit* hits)
+{
+
+	int x = threadIdx.x + blockIdx.x * blockDim.x;
+	int y = threadIdx.y + blockIdx.y * blockDim.y;
+
+
+	if (x >= width || y >= height)
+		return;
+
+
+	float t1 = NOT_INTERSECTED, t2 = NOT_INTERSECTED;
+	const int sphereCount = 300;
+	float sphereIntersections[2 * sphereCount]; // 2 floats for each sphere
+	float sphereIntersectionsCopy[2 * sphereCount]; // 2 floats for each sphere
+	float tempArray[2 * sphereCount]; // 2 floats for each sphere
+
+	float3 camera_pos = cam.position;
+
+	// Calculate normalized device coordinates (NDC)
+	float u = ((float)x + 0.5f) / ((float)width - 1);
+	float v = ((float)y + 0.5f) / ((float)height - 1);
+
+	// Convert to screen space coordinates (-1 to 1)
+	float nx = (2.0f * u - 1.0f) * ((float)width / (float)height) * tan(cam.fov / 2.0f);
+	float ny = (1.0f - 2.0f * v) * tan(cam.fov / 2.0f);
+
+	float3 ray = normalize(nx * cam.right + ny * cam.up + cam.forward);
+
+	extern __shared__ char shared[];
+	CudaPrimitivePos* sharedPrimitivePos = (CudaPrimitivePos*)(shared);
+	Parameters* sharedParameters = (Parameters*)(sharedPrimitivePos + CLASSICSHAREDPRIMITIVES);
+	short* sharedTypes = (short*)(sharedParameters + CLASSICSHAREDPRIMITIVES);
+
+	for (int k = shape_count - 1; k < 2 * shape_count - 1; k++)
+	{
+		float t1 = NOT_INTERSECTED, t2 = NOT_INTERSECTED;
+		if (nodes[k].type == CSGTree::NodeType::Sphere)
+		{
+			float3 spherePosition = make_float3(primitivePos[nodes[k].primitiveIdx].x, primitivePos[nodes[k].primitiveIdx].y, primitivePos[nodes[k].primitiveIdx].z);
+			float radius = primitiveParameters[nodes[k].primitiveIdx].sphereParameters.radius;
+			IntersectionPointSphere(spherePosition, radius, camera_pos, ray, t1, t2);
+		}
+		else if (nodes[k].type == CSGTree::NodeType::Cube)
+		{
+			if (!IntersectionPointCube(primitivePos[nodes[k].primitiveIdx], primitiveParameters[nodes[k].primitiveIdx], camera_pos, ray, t1, t2))
+			{
+				t1 = NOT_INTERSECTED;
+				t2 = NOT_INTERSECTED;
+			}
+
+		}
+		else if (nodes[k].type == CSGTree::NodeType::Cylinder)
+		{
+			if (!IntersectionPointCylinder(primitivePos[nodes[k].primitiveIdx], primitiveParameters[nodes[k].primitiveIdx], camera_pos, ray, t1, t2))
+			{
+				t1 = NOT_INTERSECTED;
+				t2 = NOT_INTERSECTED;
+			}
+		}
+
+		int m = k - shape_count + 1;
+
+
+		sphereIntersections[2 * m] = t1;
+		sphereIntersections[2 * m + 1] = t2;
+		sphereIntersectionsCopy[2 * m] = t1;
+		sphereIntersectionsCopy[2 * m + 1] = t2;
+	}
+
+
+
+
+	for (int i = shape_count - 2; i >= 0; i--)
+	{
+		int nodeIndex = i;
+
+
+
+		//punkty znajduja sie w lewym od indeksu a do b, w prawym od c do d
+		int p1 = parts[4 * nodeIndex];
+		int k1 = parts[4 * nodeIndex + 1];
+		int p2 = parts[4 * nodeIndex + 2];
+		int k2 = parts[4 * nodeIndex + 3];
+
+#ifdef CLASSICRAYCASTING_DEBUG
+		if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y)
+		{
+			printf("Node %d\n", nodeIndex);
+			if (dev_tree.nodes[nodeIndex].type == CSGTree::NodeType::Difference)
+			{
+				printf("Difference\n");
+			}
+
+			else if (dev_tree.nodes[nodeIndex].type == CSGTree::NodeType::Intersection)
+			{
+				printf("Intersection\n");
+			}
+
+			else
+			{
+				printf("Union\n");
+			}
+			printf("Operation: %d, p1: %d k1: %d p2: %d k2: %d\n", dev_tree.nodes[nodeIndex].type, p1, k1, p2, k2);
+			for (int i = 0; i < 2 * shape_count - 1; i++)
+			{
+				printf("%f %f ", sphereIntersections[2 * i], sphereIntersections[2 * i + 1]);
+			}
+			printf("\n");
+			printf("\n");
+		}
+#endif // CLASSICRAYCASTING_DEBUG
+
+
+
+
+		if (nodes[nodeIndex].type == CSGTree::NodeType::Difference)
+		{
+			SubstractIntervals(sphereIntersections, tempArray, p1, p2, k1, k2, false);
+		}
+		else if (nodes[nodeIndex].type == CSGTree::NodeType::Intersection)
+		{
+			CommonPartIntervals(sphereIntersections, tempArray, p1, p2, k1, k2, false);
+		}
+		else
+		{
+			AddIntervals(sphereIntersections, tempArray, p1, p2, k1, k2, false);
+		}
+
+	}
+#ifdef CLASSICRAYCASTING_DEBUG
+
+	if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y)
+	{
+		printf("Result\n");
+		for (int i = 0; i < 2 * shape_count - 1; i++)
+		{
+			printf("%f %f ", sphereIntersections[2 * i], sphereIntersections[2 * i + 1]);
+		}
+		printf("\n");
+		printf("\n");
+	}
+#endif // CLASSICRAYCASTING_DEBUG
+
+
+	float t = NOT_INTERSECTED;
+	for (int i = 0; i <= parts[3]; i++)
+	{
+		if (sphereIntersections[i] == NOT_INTERSECTED)
+			break;
+		if (sphereIntersections[i] > 0)
+		{
+			if (sphereIntersections[i] == sphereIntersections[i + 1])
+				continue;
+			t = sphereIntersections[i];
+			break;
+		}
+	}
+
+#ifdef CLASSICRAYCASTING_DEBUG
+
+	if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y)
+	{
+		printf("t: %f\n", t);
+		printf("%f\n", (sphereIntersections[0] - sphereIntersections[1]) * 1000);
+		int pixelIdx = (y * (int)width + x);
+		RayHit detailedHitInfo;
+		detailedHitInfo.hit = false;
+		hits[pixelIdx] = detailedHitInfo;
+		return;
+	}
+#endif // CLASSICRAYCASTING_DEBUG
+
+	RayHitMinimal rayHitMinimal;
+	rayHitMinimal.hit = CSG::CSGRayHit::Miss;
+	rayHitMinimal.t = t;
+	if (t > 0 && t != NOT_INTERSECTED && sphereIntersections[0] != sphereIntersections[1])
+	{
+		for (int k = shape_count - 1; k < 2 * shape_count - 1; k++)
+		{
+			int m = k - shape_count + 1;
+			if (t != sphereIntersectionsCopy[2 * m] && t != sphereIntersectionsCopy[2 * m + 1]) continue;
+
+			rayHitMinimal.primitiveIdx = nodes[k].primitiveIdx;
+			rayHitMinimal.primitiveType = nodes[k].type;
+			rayHitMinimal.hit = (t == sphereIntersectionsCopy[2 * m]) ? CSG::CSGRayHit::Enter : CSG::CSGRayHit::Exit;
+			break;
+		}
+	}
+
+	int pixelIdx = (y * (int)width + x);
+
+	RayHit detailedHitInfo;
+	detailedHitInfo.hit = false;
+	Ray myRay = Ray(camera_pos, ray);
+	if (rayHitMinimal.hit != CSG::CSGRayHit::Miss)
+	{
+		if (rayHitMinimal.primitiveType == CSGTree::NodeType::Sphere)
+			sphereHitDetails(myRay, primitivePos[rayHitMinimal.primitiveIdx], primitiveParameters[rayHitMinimal.primitiveIdx], rayHitMinimal, detailedHitInfo);
+		if (rayHitMinimal.primitiveType == CSGTree::NodeType::Cylinder)
+			cylinderHitDetails(myRay, primitivePos[rayHitMinimal.primitiveIdx], primitiveParameters[rayHitMinimal.primitiveIdx], rayHitMinimal, detailedHitInfo);
+		if (rayHitMinimal.primitiveType == CSGTree::NodeType::Cube)
+			cubeHitDetails(myRay, primitivePos[rayHitMinimal.primitiveIdx], primitiveParameters[rayHitMinimal.primitiveIdx], rayHitMinimal, detailedHitInfo);
+	}
+	hits[pixelIdx] = detailedHitInfo;
+}
+
+
+
 inline __device__ bool IntersectionPointSphere(
-	const float3& spherePosition,
+	float3 spherePosition,
 	float radius,
-	const float3& rayOrigin,
-	const float3& rayDirection,
+	float3 rayOrigin,
+	float3 rayDirection,
 	float& t1,
 	float& t2)
 {
@@ -792,12 +1023,12 @@ inline __device__ float3 NormalizeVector3(float3 vector)
 	return vector;
 }
 
-inline __device__ float dot3(const float3& a, const float3& b)
+inline __device__ float dot3(float3 a, float3 b)
 {
 	return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
-inline __device__ float3 cross(const float3& a, const float3& b)
+inline __device__ float3 cross(float3 a, float3 b)
 {
 	float3 result;
 	result.x = a.y * b.z - a.z * b.y;

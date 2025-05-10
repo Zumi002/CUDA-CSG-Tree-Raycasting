@@ -11,7 +11,7 @@ CSGTree CSGTree::Parse(const std::string& text)
     //pair first = nodeIdx, second = childrenCount
     std::stack<std::pair<int, int>> nodesStack;
 
-    int primitivesCount = 0;
+    short primitivesCount = 0;
     int nodesCount = 0;
 
     for (int i = 0; i < splited.size(); i++)
@@ -146,28 +146,27 @@ CSGTree CSGTree::Parse(const std::string& text)
     if (nodesCount != 2 * primitivesCount - 1)
         throw std::invalid_argument("Cannot parse - number of primitives do not match number of nodes");
 
-    tree.ConstructBVH();
-
     return tree;
 }
 
-void CSGTree::ConstructBVH()
+std::vector<BVHNode> CSGTree::ConstructBVH()
 {
     std::stack<int> nodesID;
     nodesID.push(0);
     std::vector<bool> visited(nodes.size(), false);
+    std::vector<BVHNode> bvhNodes(nodes.size());
     while (nodesID.size())
     {
         int id = nodesID.top();
         if (visited[id])
         {
             nodesID.pop();
-            nodes[id].bvhNode = BVHNode(nodes[nodes[id].left].bvhNode, nodes[nodes[id].right].bvhNode);
+            bvhNodes[id] = BVHNode(bvhNodes[nodes[id].left], bvhNodes[nodes[id].right]);
         }
         else if (nodes[id].primitiveIdx != -1)
         {
             nodesID.pop();
-            nodes[id].bvhNode = BVHNode(primitives.primitivePos[nodes[id].primitiveIdx], primitives.primitiveParameters[nodes[id].primitiveIdx], nodes[id].type);
+            bvhNodes[id] = BVHNode(primitives.primitivePos[nodes[id].primitiveIdx], primitives.primitiveParameters[nodes[id].primitiveIdx], nodes[id].type);
         }
         else
         {
@@ -176,6 +175,7 @@ void CSGTree::ConstructBVH()
             visited[id] = true;
         }
     }
+    return bvhNodes;
 }
 
 std::vector<std::string> split(const std::string& text)

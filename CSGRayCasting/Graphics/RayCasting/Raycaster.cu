@@ -1,7 +1,24 @@
 #include "Raycaster.cuh"
 #include "Kernels/Kernels.cuh"
-#include "cuda_profiler_api.h"
 
+Raycaster::Raycaster()
+{
+    gpuErrchk(cudaFuncSetAttribute(RaycastKernel,
+        cudaFuncAttributeMaxDynamicSharedMemorySize,
+        65536));
+
+    gpuErrchk(cudaFuncSetAttribute(CalculateInterscetion,
+        cudaFuncAttributeMaxDynamicSharedMemorySize,
+        65536));
+
+    gpuErrchk(cudaFuncSetAttribute(RaymarchingKernel,
+        cudaFuncAttributeMaxDynamicSharedMemorySize,
+        65536));
+
+    gpuErrchk(cudaFuncSetAttribute(LightningKernel,
+        cudaFuncAttributeMaxDynamicSharedMemorySize,
+        65536));
+}
 
 void Raycaster::ChangeTree(CSGTree& tree)
 {
@@ -37,20 +54,27 @@ void Raycaster::ChangeSize(int newWidth, int newHeight, CSGTree& tree)
 void Raycaster::Raycast(float4* devPBO, Camera cam, DirectionalLight light)
 {
     MapFromCamera(cam);
-    cudaProfilerStart();
+    cuProfilerStart();
     if (alg == 0)
-        RaycastKernel << <gridDim, blockDim >> > (cudaCamera, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, width, height);
+        RaycastKernel << <gridDimSingle, blockDimSingle >> > (cudaCamera, cudaTree.nodes, devBvhNodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, width, height);
     else if (alg == 1)
         CalculateInterscetion << <gridDim, blockDim >> > (width, height, shapeCount, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devParts, cudaCamera, devHits);
     else if (alg == 2)
-        RaymarchingKernel << <gridDim, blockDim >> > (cudaCamera, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, nodeCount, width, height);
+    {
+        if (nodeCount <= RAYMARCHSHAREDNODES)
+        {
+            RaymarchingKernelShared << <gridDim, blockDim >> > (cudaCamera, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, nodeCount, width, height);
+        }
+        else
+        {
+            RaymarchingKernel << <gridDim, blockDim>> > (cudaCamera, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, nodeCount, width, height);
+        }
+    }
     cudaDeviceSynchronize();
-
-
+    cuProfilerStop();
 
     LightningKernel << <gridDim, blockDim >> > (cudaCamera, devHits, cudaTree.primitiveColor, devPBO, light.getLightDir(), width, height);
     cudaDeviceSynchronize();
-    cudaProfilerStop();
 }
 
 void Raycaster::CleanUpTree()
@@ -102,28 +126,33 @@ void Raycaster::CleanUp()
     CleanUpTree();
     CleanUpTexture();
     CleanUpClassical();
+    CleanUpSingleHit();
 }
 
 void Raycaster::ChangeAlg(CSGTree& tree, int newAlg)
 {
-
-    if (alg == 1)
+    if (alg == 0)
+    {
+        CleanUpSingleHit();
+    }
+    else if (alg == 1)
+    {
         CleanUpClassical();
+    }
     ChangeTree(tree);
     alg = newAlg;
     if (alg == 0)
     {
-        blockDim = dim3(BLOCKXSIZE, BLOCKYSIZE);
+        SetupSingleHit(tree);
     }
     else if (alg == 1)
     {
-        blockDim = dim3(BLOCKXSIZERAYMARCH, BLOCKYSIZERAYMARCH);
         SetupClassical(tree);
     }
-    else if (alg == 2)
-    {
-        blockDim = dim3(BLOCKXSIZERAYMARCH, BLOCKYSIZERAYMARCH);
-    }
+
+    blockDimSingle = dim3(BLOCKXSIZE, BLOCKYSIZE);
+    gridDimSingle = dim3((width + blockDimSingle.x - 1) / blockDimSingle.x, (height + blockDimSingle.y - 1) / blockDimSingle.y);
+    blockDim = dim3(BLOCKXSIZERAYMARCH, BLOCKYSIZERAYMARCH);
     gridDim = dim3((width + blockDim.x - 1) / blockDim.x, (height + blockDim.y - 1) / blockDim.y);
 }
 
@@ -134,4 +163,24 @@ void Raycaster::MapFromCamera(Camera cam)
     cudaCamera.right = make_float3(cam.right[0], cam.right[1], cam.right[2]);
     cudaCamera.up = make_float3(cam.up[0], cam.up[1], cam.up[2]);
     cudaCamera.fov = cam.fov;
+}
+
+void Raycaster::SetupSingleHit(CSGTree& tree)
+{
+    if (allocedTree && tree.nodes.size())
+    {
+        std::vector<BVHNode> bvhNodes = tree.ConstructBVH();
+        gpuErrchk(cudaMalloc(&devBvhNodes, bvhNodes.size()*sizeof(BVHNode)));
+        gpuErrchk(cudaMemcpy(devBvhNodes, bvhNodes.data(), bvhNodes.size() * sizeof(BVHNode), cudaMemcpyHostToDevice));
+        allocedSingleHitAdds = true;
+    }
+}
+
+void Raycaster::CleanUpSingleHit()
+{
+    if (allocedSingleHitAdds)
+    {
+        gpuErrchk(cudaFree(devBvhNodes));
+        allocedSingleHitAdds = false;
+    }
 }

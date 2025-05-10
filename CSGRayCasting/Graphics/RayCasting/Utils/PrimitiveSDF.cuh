@@ -13,21 +13,21 @@
 //
 
 __device__ inline float SphereSD(
-    const float3& p,
-    const CudaPrimitivePos& spherePosition,
-    const Parameters& sphereParameters
+    float3 p,
+    CudaPrimitivePos spherePosition,
+    Parameters sphereParameters
 );
 
 __device__ inline float CubeSD(
-    const float3& p,
-    const CudaPrimitivePos& cubePosition,
-    const Parameters& cubeParameters
+    float3 p,
+    CudaPrimitivePos cubePosition,
+    Parameters cubeParameters
 );
 
 __device__ inline float CylinderSD(
-    const float3& p,
-    const CudaPrimitivePos& cylinderPosition,
-    const Parameters& cylinderParameters
+    float3 p,
+    CudaPrimitivePos cylinderPosition,
+    Parameters cylinderParameters
 );
 
 //
@@ -35,9 +35,9 @@ __device__ inline float CylinderSD(
 //
 
 __device__ float SphereSD(
-    const float3& p,
-    const CudaPrimitivePos& spherePosition,
-    const Parameters& sphereParameters
+    float3 p,
+    CudaPrimitivePos spherePosition,
+    Parameters sphereParameters
 )
 {
     return length(p - make_float3(spherePosition.x, spherePosition.y, spherePosition.z)) -
@@ -45,9 +45,9 @@ __device__ float SphereSD(
 }
 
 __device__ float CubeSD(
-    const float3& p,
-    const CudaPrimitivePos& cubePosition,
-    const Parameters& cubeParameters
+    float3 p,
+    CudaPrimitivePos cubePosition,
+    Parameters cubeParameters
 )
 {
     float3 pc = p - make_float3(cubePosition.x, cubePosition.y, cubePosition.z);
@@ -60,9 +60,9 @@ __device__ float CubeSD(
 }
 
 __device__ float CylinderSD(
-    const float3& p,
-    const CudaPrimitivePos& cylinderPosition,
-    const Parameters& cylinderParameters
+    float3 p,
+    CudaPrimitivePos cylinderPosition,
+    Parameters cylinderParameters
 )
 {
     CylinderParameters params = cylinderParameters.cylinderParameters;

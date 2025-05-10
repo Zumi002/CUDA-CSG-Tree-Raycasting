@@ -12,25 +12,24 @@
 
 #include <cuda_runtime.h>
 
-struct CSGNode
+struct __align__(16) CSGNode
 {
-	int type;
-	int primitiveIdx;
+	short type;
+	short primitiveIdx;
 	int left;
 	int right;
 	int parent;
 
-	BVHNode bvhNode;
-
-	__host__ __device__ CSGNode(int Type, int PrimitiveIdx, int Left, int Right, int Parent)
+	__host__ __device__ CSGNode(short Type, short PrimitiveIdx, int Left, int Right, int Parent)
 	{
 		type = Type;
 		primitiveIdx = PrimitiveIdx;
 		left = Left;
 		right = Right;
 		parent = Parent;
-		bvhNode = BVHNode();
 	}
+
+	__device__ CSGNode() {}
 };
 
 struct CSGTree
@@ -51,7 +50,7 @@ struct CSGTree
 	Primitives primitives;
 
 	static CSGTree Parse(const std::string& text);
-	void ConstructBVH();
+	std::vector<BVHNode> ConstructBVH();
 	void TransformForClassical();
 	void TransformForRaymarching();
 };

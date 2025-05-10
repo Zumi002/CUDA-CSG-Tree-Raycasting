@@ -17,7 +17,7 @@ struct Ray
         direction.y *= invLen;
         direction.z *= invLen;
     }
-    inline __device__ float3 computePosition(const float& t) const {
+    inline __device__ float3 computePosition(float t) const {
         return origin + t * direction;
     }
 };
@@ -33,9 +33,6 @@ struct RayHitMinimal
         t(t), hit(hit), primitiveIdx(primitiveIdx){}
     inline __device__ RayHitMinimal()
     {
-        t = -1;
-        hit = CSG::CSGRayHit::Miss;
-        primitiveIdx = -1;
     }
         
 };

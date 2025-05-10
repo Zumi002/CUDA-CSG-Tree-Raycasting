@@ -4,9 +4,9 @@
 
 #include "../CSGTree.cuh"
 
-class BVHNode
+struct BVHNode
 {
-public:
+
 	float minX = 0,
 		minY = 0,
 		minZ = 0;
@@ -34,7 +34,7 @@ public:
 		else if (type == 4)
 		{
 			//to do
-			float maxR = std::max(params.cylinderParameters.height / 2, params.cylinderParameters.radius);
+			float maxR = fmax(params.cylinderParameters.height / 2, params.cylinderParameters.radius);
 			float x = pos.x;
 			float y = pos.y;
 			float z = pos.z;
@@ -66,13 +66,13 @@ public:
 
 	__host__ __device__ BVHNode(BVHNode Left, BVHNode right)
 	{
-		minX = std::min(Left.minX, right.minX);
-		minY = std::min(Left.minY, right.minY);
-		minZ = std::min(Left.minZ, right.minZ);
+		minX = fmin(Left.minX, right.minX);
+		minY = fmin(Left.minY, right.minY);
+		minZ = fmin(Left.minZ, right.minZ);
 
-		maxX = std::max(Left.maxX, right.maxX);
-		maxY = std::max(Left.maxY, right.maxY);
-		maxZ = std::max(Left.maxZ, right.maxZ);
+		maxX = fmax(Left.maxX, right.maxX);
+		maxY = fmax(Left.maxY, right.maxY);
+		maxZ = fmax(Left.maxZ, right.maxZ);
 	}
 
 	__host__ __device__ BVHNode()

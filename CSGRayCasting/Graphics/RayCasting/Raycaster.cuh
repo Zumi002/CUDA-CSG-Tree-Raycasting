@@ -6,21 +6,29 @@
 #include "../RenderManager/Camera/Camera.h"
 #include "Utils/RayHit.cuh"
 #include "Utils/CudaCamera.cuh"
+#include <cudaProfiler.h>
+#include <cuda_profiler_api.h>
 
 #define BLOCKXSIZE 8
 #define BLOCKYSIZE 4
 
-#define BLOCKXSIZERAYMARCH 32
-#define BLOCKYSIZERAYMARCH 32
+#define BLOCKXSIZERAYMARCH 16
+#define BLOCKYSIZERAYMARCH 16
 
 class Raycaster
 {
 	int width, height;
+	dim3 blockDimSingle;
+	dim3 gridDimSingle;
+
 	dim3 blockDim;
 	dim3 gridDim;
 
 	CudaCSGTree cudaTree;
 	RayHit* devHits;
+	CudaCamera* devCamera;
+	
+	BVHNode* devBvhNodes;
 	int* devParts;
 	int* Parts;
 	int alg = 0;
@@ -31,10 +39,12 @@ class Raycaster
 	bool alloced = false;
 	bool allocedTree = false;
 	bool allocedClassicalAdds = false;
+	bool allocedSingleHitAdds = false;
 
 	void MapFromCamera(Camera cam);
 
 public:
+	Raycaster();
 	void ChangeTree(CSGTree& tree);
 	void ChangeSize(int newWidth, int newHright);
 	void ChangeSize(int newWidth, int newHeight, CSGTree& tree);
@@ -45,5 +55,6 @@ public:
 	void ChangeAlg(CSGTree& tree, int alg);
 	void CleanUpClassical();
 	void SetupClassical(CSGTree& tree);
-
+	void SetupSingleHit(CSGTree& tree);
+	void CleanUpSingleHit();
 };

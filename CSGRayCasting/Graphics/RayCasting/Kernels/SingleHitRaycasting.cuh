@@ -14,34 +14,36 @@
 //
 
 //function checks if ray intersects with given node
-inline __device__ bool isBVHNodeHit(const Ray& ray, const BVHNode& node, RayHitMinimal& hitInfo, float& tmin);
+inline __device__ bool isBVHNodeHit(Ray ray, BVHNode node, RayHitMinimal& hitInfo, float tmin);
 
 //kernel called once per pixel, returns ray intersection data in hits array
 __global__ void RaycastKernel(
 	CudaCamera cam,
-	CSGNode* nodes,
-	CudaPrimitivePos* primitivePos,
-	Parameters* primitiveParameters,
-	RayHit* hits,
+	CSGNode* __restrict__ nodes,
+	BVHNode* __restrict__ bvhNodes,
+	CudaPrimitivePos* __restrict__ primitivePos,
+	Parameters* __restrict__ primitiveParameters,
+	RayHit* __restrict__ hits,
 	float width, float height
 );
 
 //decicdes which intersection method is called for given primitive node
 inline __device__ void hitPrimitive(
 	const Ray& ray,
-	const CudaPrimitivePos* primitvePos,
-	const Parameters* primitiveParameters,
+	const CudaPrimitivePos* __restrict__ primitvePos,
+	const Parameters* __restrict__ primitiveParameters,
 	const CSGNode& node,
-	RayHitMinimal& hitInfo, float& tmin
+	RayHitMinimal& hitInfo, float tmin
 );
 
 //CSG functions from paper [https://ceur-ws.org/Vol-1576/090.pdf]
 
 //main loop of state machine
 inline __device__ void CSGRayCast(
-	const CSGNode* nodes,
-	const CudaPrimitivePos* primitivePos,
-	const Parameters* primitiveParameters,
+	const CSGNode* __restrict__ nodes,
+	const CudaPrimitivePos* __restrict__ primitivePos,
+	const Parameters* __restrict__  primitiveParameters,
+	BVHNode* __restrict__ bvhNodes,
 	Ray& ray, RayHitMinimal& resultRayhit
 );
 
@@ -52,9 +54,10 @@ inline __device__ void GoTo(
 	CudaStack<float, MAXSTACKSIZE>& timeStack,
 	unsigned char& action,
 	CSGNode& node,
-	const CSGNode* nodes,
-	const CudaPrimitivePos* primitivePos,
-	const Parameters* primitiveParameters,
+	const CSGNode* __restrict__ nodes,
+	const CudaPrimitivePos* __restrict__ primitivePos,
+	const Parameters* __restrict__ primitiveParameters,
+	BVHNode* __restrict__ bvhNodes,
 	RayHitMinimal& leftRay,
 	RayHitMinimal& rightRay,
 	Ray& ray,
@@ -69,9 +72,9 @@ inline __device__ void Compute(
 	CudaStack<float, MAXSTACKSIZE>& timeStack,
 	unsigned char& action,
 	CSGNode& node,
-	const CSGNode* nodes,
-	const CudaPrimitivePos* primitivePos,
-	const Parameters* primitiveParameters,
+	const CSGNode* __restrict__ nodes,
+	const CudaPrimitivePos* __restrict__ primitivePos,
+	const Parameters* __restrict__ primitiveParameters,
 	RayHitMinimal& leftRay,
 	RayHitMinimal& rightRay,
 	float& tmin,
@@ -82,18 +85,19 @@ inline __device__ void Compute(
 inline __device__ int LookUpActions(unsigned char lHit, unsigned char rHit, int op);
 
 //returns parent node, or if not possible creates virtual node. If virutal node is created, tells state machine to end computations 
-inline __device__ CSGNode GetParent(const CSGNode* nodes, CSGNode& node, bool& run);
+inline __device__ CSGNode GetParent(const CSGNode* __restrict__ nodes, CSGNode& node, bool& run);
 
 //
 // ---- code ----
 //
 
 __global__ void RaycastKernel(
-	CudaCamera cam,
-	CSGNode* nodes,
-	CudaPrimitivePos* primitivePos,
-	Parameters* primitiveParameters,
-	RayHit* hits,
+	CudaCamera  cam,
+	CSGNode* __restrict__ nodes,
+	BVHNode* __restrict__ bvhNodes,
+	CudaPrimitivePos* __restrict__ primitivePos,
+	Parameters* __restrict__ primitiveParameters,
+	RayHit* __restrict__ hits,
 	float width, float height
 )
 {
@@ -118,9 +122,7 @@ __global__ void RaycastKernel(
 	Ray ray(rayOrigin, rayDirection);
 	RayHitMinimal hitInfo;
 
-	// For now, just test against the first sphere
-
-	CSGRayCast(nodes, primitivePos, primitiveParameters, ray, hitInfo);
+	CSGRayCast(nodes, primitivePos, primitiveParameters, bvhNodes, ray, hitInfo);
 	int pixelIdx = (y * (int)width + x);
 
 	RayHit detailedHitInfo;
@@ -139,11 +141,11 @@ __global__ void RaycastKernel(
 
 inline __device__ void hitPrimitive(
 	const Ray& ray,
-	const CudaPrimitivePos* primitvePos,
-	const Parameters* primitiveParameters,
+	const CudaPrimitivePos* __restrict__ primitvePos,
+	const Parameters* __restrict__ primitiveParameters,
 	const CSGNode& node,
 	RayHitMinimal& hitInfo,
-	float& tmin
+	float tmin
 )
 {
 	hitInfo.primitiveIdx = node.primitiveIdx;
@@ -168,9 +170,10 @@ inline __device__ void hitPrimitive(
 }
 
 inline __device__ void CSGRayCast(
-	const CSGNode* nodes,
-	const CudaPrimitivePos* primitivePos,
-	const Parameters* primitiveParameters,
+	const CSGNode* __restrict__ nodes,
+	const CudaPrimitivePos* __restrict__ primitivePos,
+	const Parameters* __restrict__ primitiveParameters,
+	BVHNode* __restrict__ bvhNodes,
 	Ray& ray, RayHitMinimal& resultRayhit
 )
 {
@@ -205,6 +208,7 @@ inline __device__ void CSGRayCast(
 				nodes,
 				primitivePos,
 				primitiveParameters,
+				bvhNodes,
 				leftRay,
 				rightRay,
 				ray,
@@ -237,9 +241,10 @@ inline __device__ void GoTo(
 	CudaStack<float, MAXSTACKSIZE>& timeStack,
 	unsigned char& action,
 	CSGNode& node,
-	const CSGNode* nodes,
-	const CudaPrimitivePos* primitivePos,
-	const Parameters* primitiveParameters,
+	const CSGNode* __restrict__ nodes,
+	const CudaPrimitivePos* __restrict__ primitivePos,
+	const Parameters* __restrict__ primitiveParameters,
+	BVHNode* __restrict__ bvhNodes,
 	RayHitMinimal& leftRay,
 	RayHitMinimal& rightRay,
 	Ray& ray,
@@ -259,8 +264,8 @@ inline __device__ void GoTo(
 		node.type == CSGTree::NodeType::Difference ||
 		node.type == CSGTree::NodeType::Intersection)
 	{
-		bool gotoL = isBVHNodeHit(ray, nodes[node.left].bvhNode, leftRay, tmin);
-		bool gotoR = isBVHNodeHit(ray, nodes[node.right].bvhNode, rightRay, tmin);
+		bool gotoL = isBVHNodeHit(ray, bvhNodes[node.left], leftRay, tmin);
+		bool gotoR = isBVHNodeHit(ray, bvhNodes[node.right], rightRay, tmin);
 		CSGNode tmpNode = nodes[node.left];
 		if (gotoL && (tmpNode.primitiveIdx != -1))
 		{
@@ -322,9 +327,9 @@ inline __device__ void Compute(
 	CudaStack<float, MAXSTACKSIZE>& timeStack,
 	unsigned char& action,
 	CSGNode& node,
-	const CSGNode* nodes,
-	const CudaPrimitivePos* primitivePos,
-	const Parameters* primitiveParameters,
+	const CSGNode* __restrict__ nodes,
+	const CudaPrimitivePos* __restrict__ primitivePos,
+	const Parameters* __restrict__ primitiveParameters,
 	RayHitMinimal& leftRay,
 	RayHitMinimal& rightRay,
 	float& tmin,
@@ -378,58 +383,60 @@ inline __device__ void Compute(
 	else
 	{
 		rightRay = RayHitMinimal();
+		rightRay.hit = CSG::CSGRayHit::Miss;
 		leftRay = RayHitMinimal();
+		leftRay.hit = CSG::CSGRayHit::Miss;
 		action = actionStack.pop();
 		node = GetParent(nodes, node, run);
 	}
 }
 
-
-inline __device__ int LookUpActions(unsigned char lHit, unsigned char rHit, int op)
-{
-	static int unionTable[3][3] = {
+__constant__ int unionTable[3][3] = {
 	{{CSG::HitActions::RetLIfCloser | CSG::HitActions::RetRIfCloser},{CSG::HitActions::RetRIfCloser | CSG::HitActions::LoopL},{CSG::HitActions::RetL}},
 	{{CSG::HitActions::RetLIfCloser | CSG::HitActions::LoopR},{CSG::HitActions::LoopLIfCloser | CSG::HitActions::LoopRIfCloser},{CSG::HitActions::RetL}},
 	{{CSG::HitActions::RetR},{CSG::HitActions::RetR},{CSG::HitActions::MissAction}} };
-	static int intersectionTable[3][3] = {
-	{{CSG::HitActions::LoopLIfCloser | CSG::HitActions::LoopRIfCloser},{CSG::HitActions::RetLIfCloser | CSG::HitActions::LoopR},{CSG::HitActions::MissAction}},
-	{{CSG::HitActions::RetRIfCloser | CSG::HitActions::LoopL},{CSG::HitActions::RetLIfCloser | CSG::HitActions::RetRIfCloser},{CSG::HitActions::MissAction}},
-	{{CSG::HitActions::MissAction},{CSG::HitActions::MissAction},{CSG::HitActions::MissAction}} };
-	static int differenceTable[3][3] = {
-	{{CSG::HitActions::RetLIfCloser | CSG::HitActions::LoopR},{CSG::HitActions::LoopLIfCloser | CSG::HitActions::LoopRIfCloser},{CSG::HitActions::RetL}},
-	{{CSG::HitActions::RetLIfCloser | CSG::HitActions::RetRIfCloser | CSG::HitActions::FlipR},{CSG::HitActions::RetRIfCloser | CSG::HitActions::FlipR | CSG::HitActions::LoopL},{CSG::HitActions::RetL}},
-	{{CSG::HitActions::MissAction},{CSG::HitActions::MissAction},{CSG::HitActions::MissAction}} };
+__constant__ int intersectionTable[3][3] = {
+{{CSG::HitActions::LoopLIfCloser | CSG::HitActions::LoopRIfCloser},{CSG::HitActions::RetLIfCloser | CSG::HitActions::LoopR},{CSG::HitActions::MissAction}},
+{{CSG::HitActions::RetRIfCloser | CSG::HitActions::LoopL},{CSG::HitActions::RetLIfCloser | CSG::HitActions::RetRIfCloser},{CSG::HitActions::MissAction}},
+{{CSG::HitActions::MissAction},{CSG::HitActions::MissAction},{CSG::HitActions::MissAction}} };
+__constant__ int differenceTable[3][3] = {
+{{CSG::HitActions::RetLIfCloser | CSG::HitActions::LoopR},{CSG::HitActions::LoopLIfCloser | CSG::HitActions::LoopRIfCloser},{CSG::HitActions::RetL}},
+{{CSG::HitActions::RetLIfCloser | CSG::HitActions::RetRIfCloser | CSG::HitActions::FlipR},{CSG::HitActions::RetRIfCloser | CSG::HitActions::FlipR | CSG::HitActions::LoopL},{CSG::HitActions::RetL}},
+{{CSG::HitActions::MissAction},{CSG::HitActions::MissAction},{CSG::HitActions::MissAction}} };
+
+inline __device__ int LookUpActions(unsigned char lHit, unsigned char rHit, int op)
+{
 
 	if (lHit & CSG::CSGRayHit::Enter)
 		lHit = 0;
-	if (lHit & CSG::CSGRayHit::Exit)
+	else if (lHit & CSG::CSGRayHit::Exit)
 		lHit = 1;
-	if (lHit & CSG::CSGRayHit::Miss)
+	else if (lHit & CSG::CSGRayHit::Miss)
 		lHit = 2;
 
 	if (rHit & CSG::CSGRayHit::Enter)
 		rHit = 0;
-	if (rHit & CSG::CSGRayHit::Exit)
+	else if (rHit & CSG::CSGRayHit::Exit)
 		rHit = 1;
-	if (rHit & CSG::CSGRayHit::Miss)
+	else if (rHit & CSG::CSGRayHit::Miss)
 		rHit = 2;
 
 	if (op == CSGTree::NodeType::Union)
 	{
 		return unionTable[lHit][rHit];
 	}
-	if (op == CSGTree::NodeType::Intersection)
+	else if (op == CSGTree::NodeType::Intersection)
 	{
 		return intersectionTable[lHit][rHit];
 	}
-	if (op == CSGTree::NodeType::Difference)
+	else if (op == CSGTree::NodeType::Difference)
 	{
 		return differenceTable[lHit][rHit];
 	}
 	return -1;
 }
 
-inline __device__ CSGNode GetParent(const CSGNode* nodes, CSGNode& node, bool& run)
+inline __device__ CSGNode GetParent(const CSGNode* __restrict__ nodes, CSGNode& node, bool& run)
 {
 	if (node.parent >= 0)
 	{
@@ -439,7 +446,7 @@ inline __device__ CSGNode GetParent(const CSGNode* nodes, CSGNode& node, bool& r
 	return CSGNode(0, 0, 0, 0, 0);
 }
 
-inline __device__ bool isBVHNodeHit(const Ray& ray, const BVHNode& node, RayHitMinimal& hitInfo, float& tmin)
+inline __device__ bool isBVHNodeHit(Ray ray, BVHNode node, RayHitMinimal& hitInfo, float tmin)
 {
 
 

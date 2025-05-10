@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cuda_runtime.h>
+
 #define M_DEGTORAD 0.017453292519943295769236907684886;
 
 struct SphereParameters
@@ -142,7 +144,7 @@ struct Primitive
 	
 };
 
-struct CudaPrimitivePos
+struct  __align__(16)  CudaPrimitivePos
 {
 	float x;
 	float y;
@@ -154,6 +156,8 @@ struct CudaPrimitivePos
 		y = Y;
 		z = Z;
 	}
+
+	__device__ CudaPrimitivePos() {}
 };
 
 struct CudaPrimitiveColor

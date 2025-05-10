@@ -2,9 +2,9 @@
 
 #include <cuda_runtime.h>
 
-struct RayHit {
-    bool hit;
+struct __align__(32) RayHit {
     float3 position;
     float3 normal;
     int primitiveIdx;
+    bool hit;
 };

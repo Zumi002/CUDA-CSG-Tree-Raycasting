@@ -8,51 +8,51 @@
 //
 
 //functions which gets intersection data with given sphere
-inline __device__ bool sphereHit(
-	const Ray& ray,
-	const CudaPrimitivePos& shperePos,
-	const Parameters& shpereParams,
-	RayHitMinimal& hitInfo, float& tmin
+ __device__ bool sphereHit(
+	Ray ray,
+	CudaPrimitivePos shperePos,
+	Parameters shpereParams,
+	RayHitMinimal& hitInfo, float tmin
 );
 
 //functions which gets details about given intersection data  
-inline __device__ void sphereHitDetails(
-	const Ray& ray,
-	const CudaPrimitivePos& shperePos,
-	const Parameters& shpereParams,
-	const RayHitMinimal& hitInfo,
+ __device__ void sphereHitDetails(
+	Ray ray,
+	CudaPrimitivePos shperePos,
+	Parameters shpereParams,
+	RayHitMinimal hitInfo,
 	RayHit& detailedHitInfo
 );
 
 //same for cylinder
-inline __device__ bool cylinderHit(
-	const Ray& ray,
-	const CudaPrimitivePos& cylinderPos,
-	const Parameters& cylinderParams,
-	RayHitMinimal& hitInfo, float& tmin
+ __device__ bool cylinderHit(
+	Ray ray,
+	CudaPrimitivePos cylinderPos,
+	Parameters cylinderParams,
+	RayHitMinimal& hitInfo, float tmin
 );
 
-inline __device__ void cylinderHitDetails(
-	const Ray& ray,
-	const CudaPrimitivePos& cylinderPos,
-	const Parameters& cylinderParams,
-	const RayHitMinimal& hitInfo,
+ __device__ void cylinderHitDetails(
+	Ray ray,
+	CudaPrimitivePos cylinderPos,
+	Parameters cylinderParams,
+	RayHitMinimal hitInfo,
 	RayHit& detailedHitInfo
 );
 
 //same for cube
-inline __device__ bool cubeHit(
-	const Ray& ray,
-	const CudaPrimitivePos& cubePos,
-	const Parameters& cubeParams,
-	RayHitMinimal& hitInfo, float& tmin
+ __device__ bool cubeHit(
+	Ray ray,
+	CudaPrimitivePos cubePos,
+	Parameters cubeParams,
+	RayHitMinimal& hitInfo, float tmin
 );
 
-inline __device__ void cubeHitDetails(
-	const Ray& ray,
-	const CudaPrimitivePos& cubePos,
-	const Parameters& cubeParams,
-	const RayHitMinimal& hitInfo,
+ __device__ void cubeHitDetails(
+	Ray ray,
+	CudaPrimitivePos cubePos,
+	Parameters cubeParams,
+	RayHitMinimal hitInfo,
 	RayHit& detailedHitInfo
 );
 
@@ -60,11 +60,11 @@ inline __device__ void cubeHitDetails(
 // ---- code ----
 //
 
-inline __device__ bool sphereHit(
-	const Ray& ray,
-	const CudaPrimitivePos& shperePos,
-	const Parameters& shpereParams,
-	RayHitMinimal& hitInfo, float& tmin
+ __device__ bool sphereHit(
+	Ray ray,
+	CudaPrimitivePos shperePos,
+	Parameters shpereParams,
+	RayHitMinimal& hitInfo, float tmin
 )
 {
 	hitInfo.hit = CSG::CSGRayHit::Miss;
@@ -75,26 +75,23 @@ inline __device__ bool sphereHit(
 	);
 
 	float b = dot(oc, ray.direction);
-	float c = dot(oc, oc) - shpereParams.sphereParameters.radius * shpereParams.sphereParameters.radius;
-	float discriminant = b * b - c;
+	float discriminant = b * b - dot(oc, oc) + shpereParams.sphereParameters.radius * shpereParams.sphereParameters.radius;
 
 	if (discriminant < 0) return false;
 
-	float temp = (-b - sqrtf(discriminant));
-	if (temp <= tmin) {
-		temp = (-b + sqrtf(discriminant));
-		if (temp <= tmin)
+	b = (-b - sqrtf(discriminant));
+	if (b <= tmin) {
+		b += 2 * sqrtf(discriminant);
+		if (b <= tmin)
 		{
-			hitInfo.t = -1;
 			hitInfo.hit = CSG::CSGRayHit::Miss;
-			hitInfo.primitiveIdx = -1;
 			return false;
 		}
 	}
 
-	hitInfo.t = temp;
+	hitInfo.t = b;
 
-	float3 normal = ray.computePosition(temp);
+	float3 normal = ray.computePosition(b);
 
 	normal =
 		make_float3(
@@ -112,11 +109,11 @@ inline __device__ bool sphereHit(
 	return true;
 }
 
-inline __device__  void sphereHitDetails(
-	const Ray& ray,
-	const CudaPrimitivePos& shperePos,
-	const Parameters& shpereParams,
-	const RayHitMinimal& hitInfo,
+ __device__  void sphereHitDetails(
+	Ray ray,
+	CudaPrimitivePos shperePos,
+	Parameters shpereParams,
+	RayHitMinimal hitInfo,
 	RayHit& detailedHitInfo
 )
 {
@@ -136,24 +133,23 @@ inline __device__  void sphereHitDetails(
 		detailedHitInfo.normal = -detailedHitInfo.normal;
 }
 
-inline __device__ bool cylinderHit(
-	const Ray& ray,
-	const CudaPrimitivePos& cylinderPos,
-	const Parameters& cylinderParams,
-	RayHitMinimal& hitInfo, float& tmin
+ __device__ bool cylinderHit(
+	Ray ray,
+	CudaPrimitivePos cylinderPos,
+	Parameters cylinderParams,
+	RayHitMinimal& hitInfo, float tmin
 )
 {
 	hitInfo.hit = CSG::CSGRayHit::Miss;
-	CylinderParameters params = cylinderParams.cylinderParameters;
-	float3 V = make_float3(params.axisX, params.axisY, params.axisZ);
-	float3 C = make_float3(cylinderPos.x, cylinderPos.y, cylinderPos.z) - (params.height / 2) * V;
+	float3 V = make_float3(cylinderParams.cylinderParameters.axisX, cylinderParams.cylinderParameters.axisY, cylinderParams.cylinderParameters.axisZ);
+	float3 C = make_float3(cylinderPos.x, cylinderPos.y, cylinderPos.z) - (cylinderParams.cylinderParameters.height / 2) * V;
 	float3 OC = ray.origin - C;
 
-	float aHelp = dot(ray.direction, V);
-	float a = fmax(1 - aHelp * aHelp, 0.00001f);
+	float a= dot(ray.direction, V);
+	a = fmax(1 - a * a, 0.00001f);
 
-	float cHelp = dot(OC, V);
-	float c = dot(OC, OC) - cHelp * cHelp - params.radius * params.radius;
+	float c = dot(OC, V);
+	c = dot(OC, OC) - c * c - cylinderParams.cylinderParameters.radius * cylinderParams.cylinderParameters.radius;
 
 	float b = (dot(ray.direction, OC) - dot(ray.direction, V) * dot(OC, V));
 	float discriminant = b * b - a * c;
@@ -167,7 +163,7 @@ inline __device__ bool cylinderHit(
 
 
 
-	if ((m1 < 0 && m2 < 0) || (m1 > params.height && m2 > params.height))
+	if ((m1 < 0 && m2 < 0) || (m1 > cylinderParams.cylinderParameters.height && m2 > cylinderParams.cylinderParameters.height))
 		return false;
 
 	float temp = t1;
@@ -190,7 +186,7 @@ inline __device__ bool cylinderHit(
 			useSurfNormal = 1;
 		}
 	}
-	if (m > params.height)
+	if (m > cylinderParams.cylinderParameters.height)
 	{
 		float den = dot(ray.direction, V);
 		if (fabsf(den) < 0.0001f)
@@ -199,7 +195,7 @@ inline __device__ bool cylinderHit(
 		}
 		else
 		{
-			float3 OCmMax = ray.origin - make_float3(cylinderPos.x, cylinderPos.y, cylinderPos.z) - (params.height / 2) * V;
+			float3 OCmMax = ray.origin - make_float3(cylinderPos.x, cylinderPos.y, cylinderPos.z) - (cylinderParams.cylinderParameters.height / 2) * V;
 			temp = dot(-OCmMax, V) / den;
 			surfNormal = V;
 			useSurfNormal = 2;
@@ -225,7 +221,7 @@ inline __device__ bool cylinderHit(
 				useSurfNormal = 1;
 			}
 		}
-		if (m > params.height)
+		if (m > cylinderParams.cylinderParameters.height)
 		{
 			float den = dot(ray.direction, V);
 			if (fabsf(den) < 0.0001f)
@@ -234,7 +230,7 @@ inline __device__ bool cylinderHit(
 			}
 			else
 			{
-				float3 OCmMax = ray.origin - make_float3(cylinderPos.x, cylinderPos.y, cylinderPos.z) - (params.height / 2) * V;
+				float3 OCmMax = ray.origin - make_float3(cylinderPos.x, cylinderPos.y, cylinderPos.z) - (cylinderParams.cylinderParameters.height / 2) * V;
 				temp = dot(-OCmMax, V) / den;
 				surfNormal = V;
 				useSurfNormal = 2;
@@ -253,7 +249,6 @@ inline __device__ bool cylinderHit(
 	if (useSurfNormal)
 	{
 		normal = surfNormal;
-
 	}
 	else
 	{
@@ -276,11 +271,11 @@ inline __device__ bool cylinderHit(
 	hitInfo.primitiveType = CSGTree::NodeType::Cylinder;
 }
 
-inline __device__ void cylinderHitDetails(
-	const Ray& ray,
-	const CudaPrimitivePos& cylinderPos,
-	const Parameters& cylinderParams,
-	const RayHitMinimal& hitInfo,
+ __device__ void cylinderHitDetails(
+	Ray ray,
+	CudaPrimitivePos cylinderPos,
+	Parameters cylinderParams,
+	RayHitMinimal hitInfo,
 	RayHit& detailedHitInfo
 )
 {
@@ -318,11 +313,11 @@ inline __device__ void cylinderHitDetails(
 }
 
 //with help [https://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms]
-inline __device__ bool cubeHit(
-	const Ray& ray,
-	const CudaPrimitivePos& cubePos,
-	const Parameters& cubeParams,
-	RayHitMinimal& hitInfo, float& tmin
+ __device__ bool cubeHit(
+	Ray ray,
+	CudaPrimitivePos cubePos,
+	Parameters cubeParams,
+	RayHitMinimal& hitInfo, float tmin
 )
 {
 	hitInfo.hit = CSG::CSGRayHit::Miss;
@@ -383,11 +378,11 @@ inline __device__ bool cubeHit(
 	return true;
 }
 
-inline __device__ void cubeHitDetails(
-	const Ray& ray,
-	const CudaPrimitivePos& cubePos,
-	const Parameters& cubeParams,
-	const RayHitMinimal& hitInfo,
+ __device__ void cubeHitDetails(
+	Ray ray,
+	CudaPrimitivePos cubePos,
+	Parameters cubeParams,
+	RayHitMinimal hitInfo,
 	RayHit& detailedHitInfo
 )
 {
