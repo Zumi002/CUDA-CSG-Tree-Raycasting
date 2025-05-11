@@ -9,7 +9,7 @@
 #define NOT_INTERSECTED FLT_MAX
 #define DEBUG_PIXEL_X 300
 #define DEBUG_PIXEL_Y 300
-#define CLASSICSHAREDPRIMITIVES 256
+#define CLASSICSHAREDPRIMITIVES 196
 //#define CLASSICRAYCASTING_DEBUG
 
 //
@@ -777,101 +777,115 @@ __global__ void CalculateInterscetionShared(
 	Parameters* sharedParameters = (Parameters*)(sharedPrimitivePos + CLASSICSHAREDPRIMITIVES);
 	short* sharedTypes = (short*)(sharedParameters + CLASSICSHAREDPRIMITIVES);
 
-	for (int k = shape_count - 1; k < 2 * shape_count - 1; k++)
+	for (int shapeProccessed = shape_count - 1; shapeProccessed < 2*shape_count-1; shapeProccessed += CLASSICSHAREDPRIMITIVES)
 	{
-		float t1 = NOT_INTERSECTED, t2 = NOT_INTERSECTED;
-		if (nodes[k].type == CSGTree::NodeType::Sphere)
+		int limit = 2 * shape_count - 1 - shapeProccessed < CLASSICSHAREDPRIMITIVES ? 2 * shape_count - 1 - shapeProccessed : CLASSICSHAREDPRIMITIVES;
+		for (int i = threadIdx.x + blockDim.x * threadIdx.y; i < limit; i += blockDim.x * blockDim.y)
 		{
-			float3 spherePosition = make_float3(primitivePos[nodes[k].primitiveIdx].x, primitivePos[nodes[k].primitiveIdx].y, primitivePos[nodes[k].primitiveIdx].z);
-			float radius = primitiveParameters[nodes[k].primitiveIdx].sphereParameters.radius;
-			IntersectionPointSphere(spherePosition, radius, camera_pos, ray, t1, t2);
+			short primtiveIdx = nodes[shapeProccessed + i].primitiveIdx;
+			sharedTypes[i] = nodes[shapeProccessed + i].type;
+			sharedPrimitivePos[i] = primitivePos[primtiveIdx];
+            sharedParameters[i] = primitiveParameters[primtiveIdx];
 		}
-		else if (nodes[k].type == CSGTree::NodeType::Cube)
+		__syncthreads();
+		for (int k = 0; k < limit; k++)
 		{
-			if (!IntersectionPointCube(primitivePos[nodes[k].primitiveIdx], primitiveParameters[nodes[k].primitiveIdx], camera_pos, ray, t1, t2))
+			float t1 = NOT_INTERSECTED, t2 = NOT_INTERSECTED;
+			if (sharedTypes[k] == CSGTree::NodeType::Sphere)
 			{
-				t1 = NOT_INTERSECTED;
-				t2 = NOT_INTERSECTED;
+				float3 spherePosition = make_float3(sharedPrimitivePos[k].x, sharedPrimitivePos[k].y, sharedPrimitivePos[k].z);
+				IntersectionPointSphere(spherePosition, sharedParameters[k].sphereParameters.radius, camera_pos, ray, t1, t2);
+			}
+			else if (sharedTypes[k] == CSGTree::NodeType::Cube)
+			{
+				if (!IntersectionPointCube(sharedPrimitivePos[k], sharedParameters[k], camera_pos, ray, t1, t2))
+				{
+					t1 = NOT_INTERSECTED;
+					t2 = NOT_INTERSECTED;
+				}
+
+			}
+			else if (sharedTypes[k] == CSGTree::NodeType::Cylinder)
+			{
+				if (!IntersectionPointCylinder(sharedPrimitivePos[k], sharedParameters[k], camera_pos, ray, t1, t2))
+				{
+					t1 = NOT_INTERSECTED;
+					t2 = NOT_INTERSECTED;
+				}
 			}
 
+			int m = shapeProccessed + k - shape_count + 1;
+
+
+			sphereIntersections[2 * m] = t1;
+			sphereIntersections[2 * m + 1] = t2;
+			sphereIntersectionsCopy[2 * m] = t1;
+			sphereIntersectionsCopy[2 * m + 1] = t2;
 		}
-		else if (nodes[k].type == CSGTree::NodeType::Cylinder)
-		{
-			if (!IntersectionPointCylinder(primitivePos[nodes[k].primitiveIdx], primitiveParameters[nodes[k].primitiveIdx], camera_pos, ray, t1, t2))
-			{
-				t1 = NOT_INTERSECTED;
-				t2 = NOT_INTERSECTED;
-			}
-		}
-
-		int m = k - shape_count + 1;
-
-
-		sphereIntersections[2 * m] = t1;
-		sphereIntersections[2 * m + 1] = t2;
-		sphereIntersectionsCopy[2 * m] = t1;
-		sphereIntersectionsCopy[2 * m + 1] = t2;
+		__syncthreads();
 	}
 
+	int4* sharedParts = (int4*)(shared);
 
-
-
-	for (int i = shape_count - 2; i >= 0; i--)
+	for (int nodesProccessed = shape_count - 2; nodesProccessed >= 0; nodesProccessed -= CLASSICSHAREDPRIMITIVES)
 	{
-		int nodeIndex = i;
-
-
-
-		//punkty znajduja sie w lewym od indeksu a do b, w prawym od c do d
-		int p1 = parts[4 * nodeIndex];
-		int k1 = parts[4 * nodeIndex + 1];
-		int p2 = parts[4 * nodeIndex + 2];
-		int k2 = parts[4 * nodeIndex + 3];
-
-#ifdef CLASSICRAYCASTING_DEBUG
-		if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y)
+		int limit = nodesProccessed < CLASSICSHAREDPRIMITIVES ? nodesProccessed : CLASSICSHAREDPRIMITIVES;
+		for (int i = threadIdx.x + blockDim.x * threadIdx.y; i <= limit; i += blockDim.x * blockDim.y)
 		{
-			printf("Node %d\n", nodeIndex);
-			if (dev_tree.nodes[nodeIndex].type == CSGTree::NodeType::Difference)
-			{
-				printf("Difference\n");
-			}
+			int index = nodesProccessed - i;
+			sharedTypes[i] = nodes[index].type;
+			sharedParts[i] = ((int4*)(void*)parts)[index];
 
-			else if (dev_tree.nodes[nodeIndex].type == CSGTree::NodeType::Intersection)
+		}
+		__syncthreads();
+		for (int k  = 0; k <= limit; k++)
+		{
+			#ifdef CLASSICRAYCASTING_DEBUG
+			if (DEBUG_PIXEL_X == x && DEBUG_PIXEL_Y == y)
 			{
-				printf("Intersection\n");
-			}
+				printf("Node %d\n", nodeIndex);
+				if (dev_tree.nodes[nodeIndex].type == CSGTree::NodeType::Difference)
+				{
+					printf("Difference\n");
+				}
 
+				else if (dev_tree.nodes[nodeIndex].type == CSGTree::NodeType::Intersection)
+				{
+					printf("Intersection\n");
+				}
+
+				else
+				{
+					printf("Union\n");
+				}
+				printf("Operation: %d, p1: %d k1: %d p2: %d k2: %d\n", dev_tree.nodes[nodeIndex].type, p1, k1, p2, k2);
+				for (int i = 0; i < 2 * shape_count - 1; i++)
+				{
+					printf("%f %f ", sphereIntersections[2 * i], sphereIntersections[2 * i + 1]);
+				}
+				printf("\n");
+				printf("\n");
+			}
+			#endif // CLASSICRAYCASTING_DEBUG
+
+
+
+
+			if (sharedTypes[k] == CSGTree::NodeType::Difference)
+			{
+				SubstractIntervals(sphereIntersections, tempArray, sharedParts[k].x, sharedParts[k].z, sharedParts[k].y, sharedParts[k].w, false);
+			}
+			else if (sharedTypes[k] == CSGTree::NodeType::Intersection)
+			{
+				CommonPartIntervals(sphereIntersections, tempArray, sharedParts[k].x, sharedParts[k].z, sharedParts[k].y, sharedParts[k].w,  false);
+			}
 			else
 			{
-				printf("Union\n");
+				AddIntervals(sphereIntersections, tempArray, sharedParts[k].x, sharedParts[k].z, sharedParts[k].y, sharedParts[k].w, false);
 			}
-			printf("Operation: %d, p1: %d k1: %d p2: %d k2: %d\n", dev_tree.nodes[nodeIndex].type, p1, k1, p2, k2);
-			for (int i = 0; i < 2 * shape_count - 1; i++)
-			{
-				printf("%f %f ", sphereIntersections[2 * i], sphereIntersections[2 * i + 1]);
-			}
-			printf("\n");
-			printf("\n");
+
 		}
-#endif // CLASSICRAYCASTING_DEBUG
-
-
-
-
-		if (nodes[nodeIndex].type == CSGTree::NodeType::Difference)
-		{
-			SubstractIntervals(sphereIntersections, tempArray, p1, p2, k1, k2, false);
-		}
-		else if (nodes[nodeIndex].type == CSGTree::NodeType::Intersection)
-		{
-			CommonPartIntervals(sphereIntersections, tempArray, p1, p2, k1, k2, false);
-		}
-		else
-		{
-			AddIntervals(sphereIntersections, tempArray, p1, p2, k1, k2, false);
-		}
-
+		__syncthreads();
 	}
 #ifdef CLASSICRAYCASTING_DEBUG
 

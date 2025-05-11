@@ -62,8 +62,9 @@ void Application::Run()
 		float fps = 1000.0f / (newTime - oldTime);
 		oldTime = newTime;
 		cyclicFloatBuffer.add(fps);
-		if (cyclicFloatBuffer.pos == 0)
-			renderer->fps = cyclicFloatBuffer.average();
+		renderer->fps = fps;
+		if(cyclicFloatBuffer.pos % 5 == 0)
+		renderer->avgFps = cyclicFloatBuffer.average();
 		checkGLError();
 		SDL_GL_SwapWindow(window);
 	}

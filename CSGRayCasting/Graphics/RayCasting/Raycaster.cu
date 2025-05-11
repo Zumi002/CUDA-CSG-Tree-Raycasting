@@ -7,7 +7,7 @@ Raycaster::Raycaster()
         cudaFuncAttributeMaxDynamicSharedMemorySize,
         65536));
 
-    gpuErrchk(cudaFuncSetAttribute(CalculateInterscetion,
+    gpuErrchk(cudaFuncSetAttribute(CalculateInterscetionShared,
         cudaFuncAttributeMaxDynamicSharedMemorySize,
         65536));
 
@@ -58,7 +58,7 @@ void Raycaster::Raycast(float4* devPBO, Camera cam, DirectionalLight light)
     if (alg == 0)
         RaycastKernel << <gridDimSingle, blockDimSingle >> > (cudaCamera, cudaTree.nodes, devBvhNodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, width, height);
     else if (alg == 1)
-        CalculateInterscetion << <gridDim, blockDim >> > (width, height, shapeCount, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devParts, cudaCamera, devHits);
+        CalculateInterscetionShared << <gridDim, blockDim, 65536>> > (width, height, shapeCount, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devParts, cudaCamera, devHits);
     else if (alg == 2)
     {
         if (nodeCount <= RAYMARCHSHAREDNODES)

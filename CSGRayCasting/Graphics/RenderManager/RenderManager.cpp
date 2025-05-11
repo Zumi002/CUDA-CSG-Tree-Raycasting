@@ -97,7 +97,7 @@ void RenderManager::RenderImGui()
 
 	ImGui::Begin("CSG RayCasting",0,ImGuiWindowFlags_::ImGuiWindowFlags_AlwaysAutoResize);
 
-	ImGui::Text("FPS: %.1f", fps);
+	ImGui::Text("FPS: %.1f, avg. %.1f", fps, avgFps);
 	if (!isInTestMode)
 	{
 		if (ImGui::Button("Load CSGTree..."))

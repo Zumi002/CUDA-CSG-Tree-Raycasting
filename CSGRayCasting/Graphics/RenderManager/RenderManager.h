@@ -57,6 +57,7 @@ class RenderManager
 	void SetActiveCamera();
 	public:
 		float fps = 0;
+		float avgFps = 0;
 		Camera* activeCam;
 		std::vector<Camera*> cameras;
 		RenderManager(SDL_Window* window, ImGui::FileBrowser* FileDialog, DirectionalLight* Light);
