@@ -58,22 +58,22 @@ void Raycaster::Raycast(float4* devPBO, Camera cam, DirectionalLight light)
     if (alg == 0)
         RaycastKernel << <gridDimSingle, blockDimSingle >> > (cudaCamera, cudaTree.nodes, devBvhNodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, width, height);
     else if (alg == 1)
-        CalculateInterscetionShared << <gridDim, blockDim, 65536>> > (width, height, shapeCount, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devParts, cudaCamera, devHits);
+        CalculateInterscetionShared << <gridDimClassic, blockDimClassic, 8192>> > (width, height, shapeCount, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devParts, cudaCamera, devHits);
     else if (alg == 2)
     {
         if (nodeCount <= RAYMARCHSHAREDNODES)
         {
-            RaymarchingKernelShared << <gridDim, blockDim >> > (cudaCamera, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, nodeCount, width, height);
+            RaymarchingKernelShared << <gridDimRayMarch, blockDimRayMarch >> > (cudaCamera, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, nodeCount, width, height);
         }
         else
         {
-            RaymarchingKernel << <gridDim, blockDim>> > (cudaCamera, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, nodeCount, width, height);
+            RaymarchingKernel << <gridDimRayMarch, blockDimRayMarch >> > (cudaCamera, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, nodeCount, width, height);
         }
     }
     cudaDeviceSynchronize();
     cuProfilerStop();
 
-    LightningKernel << <gridDim, blockDim >> > (cudaCamera, devHits, cudaTree.primitiveColor, devPBO, light.getLightDir(), width, height);
+    LightningKernel << <gridDimLighting, blockDimLighting >> > (cudaCamera, devHits, cudaTree.primitiveColor, devPBO, light.getLightDir(), width, height);
     cudaDeviceSynchronize();
 }
 
@@ -152,8 +152,12 @@ void Raycaster::ChangeAlg(CSGTree& tree, int newAlg)
 
     blockDimSingle = dim3(BLOCKXSIZE, BLOCKYSIZE);
     gridDimSingle = dim3((width + blockDimSingle.x - 1) / blockDimSingle.x, (height + blockDimSingle.y - 1) / blockDimSingle.y);
-    blockDim = dim3(BLOCKXSIZERAYMARCH, BLOCKYSIZERAYMARCH);
-    gridDim = dim3((width + blockDim.x - 1) / blockDim.x, (height + blockDim.y - 1) / blockDim.y);
+    blockDimClassic = dim3(BLOCKXSIZECLASSIC, BLOCKYSIZECLASSIC);
+    gridDimClassic = dim3((width + blockDimClassic.x - 1) / blockDimClassic.x, (height + blockDimClassic.y - 1) / blockDimClassic.y);
+    blockDimRayMarch = dim3(BLOCKXSIZERAYMARCH, BLOCKYSIZERAYMARCH);
+    gridDimRayMarch = dim3((width + blockDimRayMarch.x - 1) / blockDimRayMarch.x, (height + blockDimRayMarch.y - 1) / blockDimRayMarch.y);
+    blockDimLighting = dim3(BLOCKXSIZELIGHTING, BLOCKYSIZELIGHTING);
+    gridDimLighting = dim3((width + blockDimLighting.x - 1) / blockDimLighting.x, (height + blockDimLighting.y - 1) / blockDimLighting.y);
 }
 
 void Raycaster::MapFromCamera(Camera cam)
