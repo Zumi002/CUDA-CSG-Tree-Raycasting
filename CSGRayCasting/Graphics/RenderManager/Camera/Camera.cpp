@@ -83,7 +83,7 @@ void Camera::LoadCameraSetting(const std::string& file_name)
 void Camera::SaveCameraSetting(const std::string& file_name) const
 {
 	if (std::filesystem::exists(file_name) && !overwriteFile) {
-		std::cout << "File already exists and overwriteFile is set to false!" << std::endl;
+		//std::cout << "File already exists and overwriteFile is set to false!" << std::endl;
 		return;
 	}
 	std::ofstream file(file_name);

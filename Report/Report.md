@@ -189,6 +189,12 @@ User can open CSG tree using `--file <path to tree file>` argument when lauching
 
 ## Execution configuration and user guide
 
+## Profiling and optimizations
+
+## Tesing methodologies
+
+## Tests description
+
 ## Description of the results
 
 ## Remarks
