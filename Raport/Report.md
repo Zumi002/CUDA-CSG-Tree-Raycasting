@@ -14,7 +14,7 @@
 <br>
 
 ## Report goals
-###### This report aims to:
+### This report aims to:
 - Compare performance and visual quality between three algorithms for rendering Constructive Solid Geometry (CSG) trees in real time using CUDA.
 - Explain how each algorithm works, including implementation details and computational efficiency.
 - Provide best practises on how to construct efficient CSG trees
