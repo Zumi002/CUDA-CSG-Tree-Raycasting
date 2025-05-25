@@ -1,15 +1,15 @@
-##### **Course: _Research project - GPU algorithms_**
+#### **Course: _Research project - GPU algorithms_**
 
-#####  **Coordinator:** *Krzysztof Kaczmarski*
+####  **Coordinator:** *Krzysztof Kaczmarski*
 
 <br>
 
-##### **Authors:** *Marcin Cieszyński*, *Jakub Pietrzak*
-##### **Date:**  25.05.2025
-##### **Description:** Comparison of algorithms to render CSG trees in realtime.
-##### **Code repository:** [Github](https://github.com/Zumi002/CUDA-CSG-Tree-Raycasting/tree/CSGComparison)
-##### **Code license:** [MIT License](https://github.com/Zumi002/CUDA-CSG-Tree-Raycasting/tree/CSGComparison?tab=License-1-ov-file)
-##### **Input files:** Example CSG trees provided in [Test folder](https://github.com/Zumi002/CUDA-CSG-Tree-Raycasting/tree/CSGComparison/Test)
+#### **Authors:** *Marcin Cieszyński*, *Jakub Pietrzak*
+#### **Date:**  25.05.2025
+#### **Description:** Comparison of algorithms to render CSG trees in realtime.
+#### **Code repository:** [Github](https://github.com/Zumi002/CUDA-CSG-Tree-Raycasting/tree/CSGComparison)
+#### **Code license:** [MIT License](https://github.com/Zumi002/CUDA-CSG-Tree-Raycasting/tree/CSGComparison?tab=License-1-ov-file)
+#### **Input files:** Example CSG trees provided in [Test folder](https://github.com/Zumi002/CUDA-CSG-Tree-Raycasting/tree/CSGComparison/Test)
 
 <br>
 
@@ -42,7 +42,7 @@ Our motivation is to develop and analyze GPU-based methods that can:
 - Be integrated into real-time applications such as CAD tools, 3D modeling software, or games.
 - Take full advantage of GPU parallelism.
 ## Computational method
-#### Constructive Solid Geometry (CSG)
+### Constructive Solid Geometry (CSG)
 **Constructive Solid Geometry (CSG)** is a modeling technique used to build complex 3D shapes by combining simpler primitives using boolean operations. CSG represents scenes as trees, where:
 - **Leaves** are basic 3D primitives such as spheres.
 - **Internal nodes** represent boolean operations such as:
@@ -60,11 +60,11 @@ In our implementation, we support three basic primitives:
 - **Cylinder**
 
 Each primitive is defined **implicitly**, via a mathematical function that describes whether a point lies inside or outside the shape.
-#### Rendering approaches
+### Rendering approaches
 
 This project compares three computational approaches to rendering CSG scenes on the GPU: traditional raycasting, single-hit CSG traversal based on recent research, and raymarching with signed distance fields (SDFs).
 
-##### 1. Traditional raycasting of CSG trees
+#### 1. Traditional raycasting of CSG trees
 
 In the classic raycasting approach, each ray is tested against every primitive in the scene to compute **all intersection points** along its path. These intersections are stored in an array, and then the CSG tree is traversed in the correct order to evaluate the final surface hit using the boolean operations defined in the tree.
 For a given set of intersection points along a ray, the boolean operations are applied as follows:
@@ -76,7 +76,7 @@ For a given set of intersection points along a ray, the boolean operations are a
 
 This method provides **high accuracy** and **correct surface reconstruction**, handling even deeply nested or complex boolean expressions reliably. However, it comes at a cost: storing **all intersections per ray** and intermediate results is **memory-intensive** and inefficient on the GPU. This makes the approach **memory-bound**, which limits its scalability for large scenes or real-time applications.
 
-##### 2. Single-hit CSG traversal
+#### 2. Single-hit CSG traversal
 
 This approach is based on **Andrew Kensler’s** method (_Ray Tracing CSG Objects Using Single Hit Intersections_), which avoids storing all ray-primitive intersections. Instead of collecting every hit along the ray, it tracks only the **first valid intersection** with a primitive or sub-tree and determines whether additional hits are needed to resolve the final result.
 
@@ -90,7 +90,7 @@ An additional optimization described in their paper involves using a **Bounding 
 
 On top of that, the authors describe a technique for **transforming CSG trees into a more GPU-friendly form**, improving traversal performance significantly — sometimes by multiple times. However, in our project we chose **not to implement this optimization**, to ensure all algorithms are compared under the same conditions and assumptions.
 
-##### 3. Raymarching with signed distance fields
+#### 3. Raymarching with signed distance fields
 
 The third approach is **raymarching using signed distance fields (SDFs)**, a widely used technique in procedural graphics. Instead of explicitly computing intersections, this method steps along the ray using a distance estimate to the nearest surface, derived from implicit functions.
 
@@ -154,7 +154,7 @@ The supported primitives and their required parameters are:
 
 
 We also support optional **tab indentation** to visually distinguish tree levels and improve readability, though it’s not required for parsing.
-##### Example
+#### Example
 
 Here's a sample CSG tree definition:
 ```
