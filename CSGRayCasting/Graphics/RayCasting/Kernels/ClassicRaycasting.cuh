@@ -523,7 +523,7 @@ inline __device__ void CommonPartIntervals(float* sphereIntersections, float* te
 	}
 }
 
-
+template <const int primitiveCount>
 __global__ void CalculateInterscetion(
 	int width, int height,
 	int shape_count,
@@ -544,10 +544,9 @@ __global__ void CalculateInterscetion(
 
 
 	float t1 = NOT_INTERSECTED, t2 = NOT_INTERSECTED;
-	const int sphereCount = 300;
-	float sphereIntersections[2 * sphereCount]; // 2 floats for each sphere
-	float sphereIntersectionsCopy[2 * sphereCount]; // 2 floats for each sphere
-	float tempArray[2 * sphereCount]; // 2 floats for each sphere
+	float sphereIntersections[2 * primitiveCount]; // 2 floats for each sphere
+	float sphereIntersectionsCopy[2 * primitiveCount]; // 2 floats for each sphere
+	float tempArray[2 * primitiveCount]; // 2 floats for each sphere
 
 	float3 camera_pos = cam.position;
 	//float3 light_pos = make_float3(light_pos_ptr[0], light_pos_ptr[1], light_pos_ptr[2]);
@@ -735,6 +734,7 @@ __global__ void CalculateInterscetion(
 	hits[pixelIdx] = detailedHitInfo;
 }
 
+template <const int primitiveCount>
 __global__ void CalculateInterscetionShared(
 	int width, int height,
 	int shape_count,
@@ -755,10 +755,9 @@ __global__ void CalculateInterscetionShared(
 
 
 	float t1 = NOT_INTERSECTED, t2 = NOT_INTERSECTED;
-	const int sphereCount = 300;
-	float sphereIntersections[2 * sphereCount]; // 2 floats for each sphere
-	float sphereIntersectionsCopy[2 * sphereCount]; // 2 floats for each sphere
-	float tempArray[2 * sphereCount]; // 2 floats for each sphere
+	float sphereIntersections[2 * primitiveCount]; // 2 floats for each sphere
+	float sphereIntersectionsCopy[2 * primitiveCount]; // 2 floats for each sphere
+	float tempArray[2 * primitiveCount]; // 2 floats for each sphere
 
 	float3 camera_pos = cam.position;
 

@@ -25,12 +25,14 @@ int HandleCommandLineArguments(Application& app, int argc, char* argv[])
     std::string file;
     std::string camera;
     int test = -1; // -1 - no test selected
+    std::string resultFileName;
 
     cliApp.add_option("-f,--file", file, "Path to CSG tree file to load");
     cliApp.add_option("-c,--camera", camera, "Path to camera settings file to load");
     cliApp.add_option("-t,--test", test, "Test algorithm number (0-2)\n0 - Single Hit Algorithm"\
         "\n1 - Classic Algorithm\n2 - Raymarching Algorithm")
         ->check(CLI::Range(0, 2));
+    cliApp.add_option("-r,--result", resultFileName, "Path to file where to save benchmark results");
 
     try {
         (cliApp).parse(argc, argv);
@@ -60,6 +62,11 @@ int HandleCommandLineArguments(Application& app, int argc, char* argv[])
             return EXIT_FAILURE;
         }
         app.SetTestMode(test);
+    }
+
+    if (!resultFileName.empty())
+    {
+        app.SetResults(resultFileName);
     }
 
     return 0;

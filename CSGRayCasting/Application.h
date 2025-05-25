@@ -5,6 +5,8 @@
 #include <glad/glad.h>
 #include <fstream>
 #include <iostream>
+#include <filesystem>
+#include <algorithm>
 
 #include "Graphics/RenderManager/RenderManager.h"
 #include "Graphics/RayCasting/CSGTree/CSGTree.cuh"
@@ -12,8 +14,12 @@
 #include "Utils/CyclicBuffer.h"
 #include "Graphics/RenderManager/Camera/OrbitalCamera.h"
 #include "Graphics/RenderManager/Camera/FreeRoamCamera.h"
+#include "Utils/CSVResults.h"
 
 #define MAX_TEST_TIME 20.f
+
+using Clock = std::chrono::high_resolution_clock;
+using TimePoint = std::chrono::time_point<Clock>;
 
 class Application
 {
@@ -38,6 +44,12 @@ class Application
 	ImGui::FileBrowser fileDialog;
 
 	CyclicFloatBuffer<30> cyclicFloatBuffer;
+	
+	BenchmarkResults* result;
+	CSVResults* csvResults;
+	bool saveResults = false;
+	std::vector<float> fpsSamples;
+	TimePoint lastFrame;
 
 	Uint32 oldTime;
 
@@ -55,4 +67,5 @@ class Application
 		void CleanUp();
 		void LoadCameraSettings(const std::string& fileName);
 		void SetTestMode(int alg);
+		void SetResults(const std::string& fileName);
 };

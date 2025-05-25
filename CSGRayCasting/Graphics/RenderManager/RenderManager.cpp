@@ -255,3 +255,8 @@ void RenderManager::SelectCamera(int cameraIndex)
 	cameraIdx = cameraIndex;
 	SetActiveCamera();
 }
+
+int RenderManager::GetRenderingAlgIndex()
+{
+	return renderingAlg;
+}

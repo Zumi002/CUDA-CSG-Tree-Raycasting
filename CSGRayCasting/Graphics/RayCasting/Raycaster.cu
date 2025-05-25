@@ -3,21 +3,47 @@
 
 Raycaster::Raycaster()
 {
+    int sharedMemPerBlock;
+    cudaDeviceGetAttribute(&sharedMemPerBlock, cudaDevAttrMaxSharedMemoryPerBlock, 0);
     gpuErrchk(cudaFuncSetAttribute(RaycastKernel,
         cudaFuncAttributeMaxDynamicSharedMemorySize,
-        65536));
+        sharedMemPerBlock));
 
-    gpuErrchk(cudaFuncSetAttribute(CalculateInterscetionShared,
+    gpuErrchk(cudaFuncSetAttribute(CalculateInterscetionShared<32>,
         cudaFuncAttributeMaxDynamicSharedMemorySize,
-        65536));
+        sharedMemPerBlock));
+
+    gpuErrchk(cudaFuncSetAttribute(CalculateInterscetionShared<64>,
+        cudaFuncAttributeMaxDynamicSharedMemorySize,
+        sharedMemPerBlock));
+
+    gpuErrchk(cudaFuncSetAttribute(CalculateInterscetionShared<128>,
+        cudaFuncAttributeMaxDynamicSharedMemorySize,
+        sharedMemPerBlock));
+
+    gpuErrchk(cudaFuncSetAttribute(CalculateInterscetionShared<256>,
+        cudaFuncAttributeMaxDynamicSharedMemorySize,
+        sharedMemPerBlock));
+
+    gpuErrchk(cudaFuncSetAttribute(CalculateInterscetionShared<512>,
+        cudaFuncAttributeMaxDynamicSharedMemorySize,
+        sharedMemPerBlock));
+
+    gpuErrchk(cudaFuncSetAttribute(CalculateInterscetionShared<1024>,
+        cudaFuncAttributeMaxDynamicSharedMemorySize,
+        sharedMemPerBlock));
+
+    gpuErrchk(cudaFuncSetAttribute(CalculateInterscetionShared<2048>,
+        cudaFuncAttributeMaxDynamicSharedMemorySize,
+        sharedMemPerBlock));
 
     gpuErrchk(cudaFuncSetAttribute(RaymarchingKernel,
         cudaFuncAttributeMaxDynamicSharedMemorySize,
-        65536));
+        sharedMemPerBlock));
 
     gpuErrchk(cudaFuncSetAttribute(LightningKernel,
         cudaFuncAttributeMaxDynamicSharedMemorySize,
-        65536));
+        sharedMemPerBlock));
 }
 
 void Raycaster::ChangeTree(CSGTree& tree)
@@ -58,7 +84,36 @@ void Raycaster::Raycast(float4* devPBO, Camera cam, DirectionalLight light)
     if (alg == 0)
         RaycastKernel << <gridDimSingle, blockDimSingle >> > (cudaCamera, cudaTree.nodes, devBvhNodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, width, height);
     else if (alg == 1)
-        CalculateInterscetionShared << <gridDimClassic, blockDimClassic, 8192>> > (width, height, shapeCount, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devParts, cudaCamera, devHits);
+    {
+        if (shapeCount <= 32)
+        {
+            CalculateInterscetionShared<32><< <gridDimClassic, blockDimClassic, 8192 >> > (width, height, shapeCount, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devParts, cudaCamera, devHits);
+        }
+        else if (shapeCount <= 64)
+        {
+            CalculateInterscetionShared<64> << <gridDimClassic, blockDimClassic, 8192 >> > (width, height, shapeCount, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devParts, cudaCamera, devHits);
+        }
+        else if (shapeCount <= 128)
+        {
+            CalculateInterscetionShared<128> << <gridDimClassic, blockDimClassic, 8192 >> > (width, height, shapeCount, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devParts, cudaCamera, devHits);
+        }
+        else if (shapeCount <= 256)
+        {
+            CalculateInterscetionShared<256> << <gridDimClassic, blockDimClassic, 8192 >> > (width, height, shapeCount, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devParts, cudaCamera, devHits);
+        }
+        else if (shapeCount <= 512)
+        {
+            CalculateInterscetionShared<512> << <gridDimClassic, blockDimClassic, 8192 >> > (width, height, shapeCount, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devParts, cudaCamera, devHits);
+        }
+        else if (shapeCount <= 1024)
+        {
+            CalculateInterscetionShared<1024> << <gridDimClassic, blockDimClassic, 8192 >> > (width, height, shapeCount, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devParts, cudaCamera, devHits);
+        }
+        else if (shapeCount <= 2048)
+        {
+            CalculateInterscetionShared<2048> << <gridDimClassic, blockDimClassic, 8192 >> > (width, height, shapeCount, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devParts, cudaCamera, devHits);
+        }
+    }
     else if (alg == 2)
     {
         if (nodeCount <= RAYMARCHSHAREDNODES)

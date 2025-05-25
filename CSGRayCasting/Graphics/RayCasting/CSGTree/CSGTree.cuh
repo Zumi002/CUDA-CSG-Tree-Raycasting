@@ -44,6 +44,8 @@ struct CSGTree
 		Cube
 	};
 
+	std::string treeName;
+
 	//node 0 is root of tree
 	std::vector<CSGNode> nodes;
 

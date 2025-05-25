@@ -24,6 +24,7 @@ void Application::CreateAppWindow(const std::string windowName)
 	window = SDL_CreateWindow(windowName.c_str(), 100, 100,
 		screenWidth, screenHeight,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	
 
 	renderer = new RenderManager(window, &fileDialog, &light);
 	orbitalCamera = new OrbitalCamera();
@@ -37,14 +38,15 @@ void Application::CreateAppWindow(const std::string windowName)
 	fileDialog.SetTitle("Load CSG Tree");
 	fileDialog.SetTypeFilters({ ".txt" });
 
-	oldTime = SDL_GetTicks();
+	lastFrame = Clock::now();
 
-	SDL_GL_SetSwapInterval(1);
+	SDL_GL_SetSwapInterval(0);
 }
 
 void Application::Run()
 {
 	checkGLError();
+	lastFrame = Clock::now();
 	while (!quit)
 	{
 		if (isInTestMode)
@@ -58,15 +60,50 @@ void Application::Run()
 		}
 		Input();
 		renderer->Render();
-		Uint32 newTime = SDL_GetTicks();
-		float fps = 1000.0f / (newTime - oldTime);
-		oldTime = newTime;
+		TimePoint now = Clock::now();
+		std::chrono::duration<float> frameDuration = now - lastFrame;
+		lastFrame = now;
+		float fps = 1.0f / frameDuration.count();
 		cyclicFloatBuffer.add(fps);
 		renderer->fps = fps;
-		if(cyclicFloatBuffer.pos % 5 == 0)
+		if(cyclicFloatBuffer.pos == 0)
 		renderer->avgFps = cyclicFloatBuffer.average();
 		checkGLError();
 		SDL_GL_SwapWindow(window);
+		if (isInTestMode)
+		{
+			elapsed = std::chrono::duration<float>(now - start).count();
+			if (elapsed > MAX_TEST_TIME)
+			{
+				quit = true;
+			}
+		}
+		if (saveResults)
+		{
+			fpsSamples.emplace_back(fps);
+		}
+	}
+	if (saveResults)
+	{
+		std::sort(fpsSamples.begin(), fpsSamples.end());
+		int onePercent = (int)((float)fpsSamples.size() * 0.01);
+		float onePercentSum = 0;
+		for (int i = 0; i < onePercent; i++)
+		{
+			onePercentSum += fpsSamples[i];
+		}
+
+		float sum = 0;
+		for (int i = 0; i < fpsSamples.size(); i++)
+		{
+			sum += fpsSamples[i];
+		}
+
+		result = new BenchmarkResults(tree.treeName);
+		result->FPS[renderer->GetRenderingAlgIndex()][0] = onePercent > 0 ? onePercentSum/onePercent : 0;
+		result->FPS[renderer->GetRenderingAlgIndex()][1] = fpsSamples.size() > 0 ? sum / fpsSamples.size() : 0;
+
+		csvResults->SaveResult(*result, renderer->GetRenderingAlgIndex());
 	}
 }
 
@@ -99,6 +136,8 @@ bool Application::LoadCSGTree(const std::string& fileName)
 
 		CSGTree tmpTree = CSGTree::Parse(buffer.str());
 		tree = tmpTree;
+		std::filesystem::path path = fileName;
+		tree.treeName = path.stem().string();
 
 		renderer->SetTreeToRender(tree);
 
@@ -157,6 +196,11 @@ void Application::CleanUp()
 	renderer->CleanUp();
 	delete renderer;
 	delete inputManager;
+	if (saveResults)
+	{
+		delete csvResults;
+		delete result;
+	}
 	SDL_DestroyWindow(window);
 }
 
@@ -174,8 +218,22 @@ void Application::SetTestMode(int alg)
 void Application::TestModeCameraManipulation()
 {
 	OrbitalCamera* orbitalCamera = (OrbitalCamera*)(renderer->activeCam);
-	orbitalCamera->radius = 10 * (1.5f + sinf(elapsed / 3));
+	orbitalCamera->radius = 2*(1.5f + sinf(elapsed / 3));
 	orbitalCamera->SetOrbitRotation(360*(1.0+sinf(elapsed / 5)), 90*cosf(elapsed / 4));
 	orbitalCamera->MoveCamera();
+}
+
+void Application::SetResults(const std::string& fileName)
+{
+	csvResults = new CSVResults(fileName);
+	if (csvResults->error)
+	{
+		quit = true;
+	}
+	else if(isInTestMode)
+	{
+		saveResults = true;
+		fpsSamples.reserve(40000);
+	}
 }
 

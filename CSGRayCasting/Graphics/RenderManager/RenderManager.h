@@ -66,6 +66,7 @@ class RenderManager
 		void CleanUp();
 		void SetTestMode(int alg);
 		void SelectCamera(int cameraIndex);
+		int GetRenderingAlgIndex();
 };
 
 
