@@ -189,6 +189,41 @@ User can open CSG tree using `--file <path to tree file>` argument when lauching
 
 ## Execution configuration and user guide
 
+The application can be launched either through the console with arguments or via its interactive graphical interface.
+
+#### Console Mode – Testing and Batch Execution
+
+To run tests in headless mode, use the `--file <path-to-tree-file>` argument along with `--test <0-2>`, where the test number corresponds to the desired algorithm:
+
+- `0` – **Single Hit Algorithm**
+- `1` – **Classic Algorithm**
+- `2` – **Raymarching Algorithm**
+
+Example:
+
+`./CSGRayCasting.exe --file Trees/ExampleTree.txt --test 1`
+
+If you want to save the results to a CSV file (e.g., for performance benchmarking or comparison), provide the `--result <path-to-result-file>` argument. This will either create a new CSV file or append results to an existing one:
+
+`./CSGRayCasting.exe --file Trees/ExampleTree.txt --test 0 --result results.csv`
+
+#### Interactive Mode – GUI
+
+For interactive exploration and testing, simply run the application without the `--test` flag. The built-in GUI allows you to:
+
+- Load different CSG trees at runtime (`Load CSGTree...`)
+- Switch between rendering algorithms
+- Adjust camera mode (Freeroam / Orbital), movement speed, and sensitivity
+- Modify light direction
+- View current FPS
+
+<p align="center">
+<img src="Images/GUI.png">
+</p>
+
+This makes it easy to experiment with different configurations and immediately see the impact of changes in real time.
+
+
 ## Profiling and optimizations
 
 ## Tesing methodologies
