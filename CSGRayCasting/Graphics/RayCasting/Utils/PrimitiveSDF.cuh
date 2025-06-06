@@ -52,9 +52,9 @@ __device__ float CubeSD(
 {
     float3 pc = p - make_float3(cubePosition.x, cubePosition.y, cubePosition.z);
     float3 q = abs(pc) - 
-        0.5f* make_float3(cubeParameters.cubeParameters.size,
-            cubeParameters.cubeParameters.size, 
-            cubeParameters.cubeParameters.size);
+        0.5f* make_float3(cubeParameters.cubeParameters.sizeX,
+            cubeParameters.cubeParameters.sizeY, 
+            cubeParameters.cubeParameters.sizeZ);
     return length(max(q, make_float3(0.0, 0.0, 0.0))) +
             fmin(fmax(q.x, fmax(q.y, q.z)), 0.0f); 
 }

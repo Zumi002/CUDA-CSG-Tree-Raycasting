@@ -20,7 +20,9 @@ struct CylinderParameters
 
 struct CubeParameters
 {
-	float size;
+	float sizeX;
+	float sizeY;
+	float sizeZ;
 };
 
 union Parameters
@@ -29,9 +31,11 @@ union Parameters
 	CylinderParameters cylinderParameters;
 	CubeParameters cubeParameters;
 
-	void makeCube(float size)
+	void makeCube(float sizeX, float sizeY, float sizeZ)
 	{
-		cubeParameters.size = size;
+		cubeParameters.sizeX = sizeX;
+		cubeParameters.sizeY = sizeY;
+		cubeParameters.sizeZ = sizeZ;
 	}
 
 	void makeSphere(float radius)
@@ -92,6 +96,20 @@ struct Primitive
 		g = G;
 		b = B;
 		params.sphereParameters.radius = Radius;
+	}
+
+	Primitive(int Id, float X, float Y, float Z, float R, float G, float B, float SizeX, float SizeY, float SizeZ)
+	{
+		id = Id;
+		x = X;
+		y = Y;
+		z = Z;
+		r = R;
+		g = G;
+		b = B;
+		params.cubeParameters.sizeX = SizeX;
+		params.cubeParameters.sizeY = SizeY;
+		params.cubeParameters.sizeZ = SizeZ;
 	}
 
 	Primitive(int Id, float X, float Y, float Z, float R, float G, float B, float Radius, float height, double rotX, double rotY, double rotZ)
@@ -200,10 +218,15 @@ struct Primitives
 
 	void addCube(int Id, float X, float Y, float Z, float R, float G, float B, float Size)
 	{
+		addCube(Id, X, Y, Z, R, G, B, Size, Size, Size);
+	}
+
+	void addCube(int Id, float X, float Y, float Z, float R, float G, float B, float SizeX, float SizeY, float SizeZ)
+	{
 		primitivePos.push_back(CudaPrimitivePos(X, Y, Z));
 		primitiveColor.push_back(CudaPrimitiveColor(R, G, B));
 		Parameters params = Parameters();
-		params.makeCube(Size);
+		params.makeCube(SizeX, SizeY, SizeZ);
 		primitiveParameters.push_back(params);
 	}
 };

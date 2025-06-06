@@ -327,10 +327,10 @@
 	// lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
 	// r.org is origin of ray
 
-	float3 axis = make_float3(1, 1, 1);
+	float3 move = 0.5f * make_float3(cubeParams.cubeParameters.sizeX, cubeParams.cubeParameters.sizeY, cubeParams.cubeParameters.sizeZ);
 	float3 C = make_float3(cubePos.x, cubePos.y, cubePos.z);
-	float3 lb = C - cubeParams.cubeParameters.size / 2 * axis;
-	float3 rt = C + cubeParams.cubeParameters.size / 2 * axis;
+	float3 lb = C - move;
+	float3 rt = C + move;
 	float t1 = (lb.x - ray.origin.x) / ray.direction.x;
 	float t2 = (rt.x - ray.origin.x) / ray.direction.x;
 	float t3 = (lb.y - ray.origin.y) / ray.direction.y;
@@ -364,9 +364,8 @@
 
 	hitInfo.t = tempmin;
 	float3 PC = ray.computePosition(tempmin) - C;
-	float bias = 1.00001f;
-	float halfSize = cubeParams.cubeParameters.size / 2;
-	float3 normal = make_float3((float)(int)(PC.x / halfSize * bias), (float)(int)(PC.y / halfSize * bias), (float)(int)(PC.z / halfSize * bias));
+	float bias = 1.0001f;
+	float3 normal = make_float3((float)(int)(PC.x / move.x * bias), (float)(int)(PC.y / move.y * bias), (float)(int)(PC.z / move.z * bias));
 
 
 	if (dot(normal, ray.direction) <= 0)
@@ -394,9 +393,8 @@
 
 
 	float3 PC = detailedHitInfo.position - C;
-	float bias = 1.00001;
-	float halfSize = cubeParams.cubeParameters.size / 2;
-	float3 normal = make_float3((float)(int)(PC.x / halfSize * bias), (float)(int)(PC.y / halfSize * bias), (float)(int)(PC.z / halfSize * bias));
+	float bias = 1.0001f;
+	float3 normal = make_float3((float)(int)(PC.x / (cubeParams.cubeParameters.sizeX / 2) * bias), (float)(int)(PC.y / (cubeParams.cubeParameters.sizeY / 2) * bias), (float)(int)(PC.z / (cubeParams.cubeParameters.sizeZ / 2) * bias));
 
 	detailedHitInfo.normal = normalize(normal);
 

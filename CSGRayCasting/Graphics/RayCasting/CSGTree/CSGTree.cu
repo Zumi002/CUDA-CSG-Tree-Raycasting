@@ -129,10 +129,22 @@ CSGTree CSGTree::Parse(const std::string& text)
             float g = color(splited[i + 4].substr(2, 2));
             float b = color(splited[i + 4].substr(4, 2));
 
-            float size = std::stof(splited[i + 5]);
+            float sizeX = std::stof(splited[i + 5]);
 
-            tree.primitives.addCube(primitivesCount, x, y, z, r, g, b, size);
-            i += 5;
+            if (i + 6 < splited.size() && std::isdigit(splited[i + 6][0]))
+            {
+                float sizeY = std::stof(splited[i + 6]);
+                float sizeZ = std::stof(splited[i + 7]);
+
+                tree.primitives.addCube(primitivesCount, x, y, z, r, g, b, sizeX, sizeY, sizeZ);
+                i += 7;
+            }
+            else
+            {
+                tree.primitives.addCube(primitivesCount, x, y, z, r, g, b, sizeX, sizeX, sizeX);
+                i += 5;
+            }
+
             primitivesCount++;
         }
         else

@@ -108,10 +108,10 @@ inline __device__ bool IntersectionPointCube(
 	float& t1, float& t2
 )
 {
-	float3 axis = make_float3(1, 1, 1);
+	float3 move = 0.5f * make_float3(cubeParams.cubeParameters.sizeX, cubeParams.cubeParameters.sizeY, cubeParams.cubeParameters.sizeZ);
 	float3 C = make_float3(cubePosition.x, cubePosition.y, cubePosition.z);
-	float3 l = C - cubeParams.cubeParameters.size / 2 * axis;
-	float3 h = C + cubeParams.cubeParameters.size / 2 * axis;
+	float3 l = C - move;
+	float3 h = C + move;
 	float3 o = rayOrigin;
 	float3 r = rayDirection;
 

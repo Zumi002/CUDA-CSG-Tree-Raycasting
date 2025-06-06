@@ -1,0 +1,3 @@
+Union
+	Cube 2 0 0 FF0056 2 4 0.2
+	Cube -2 0 0 FF0056 2

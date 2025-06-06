@@ -165,8 +165,6 @@ inline __device__ void hitPrimitive(
 	{
 		hitInfo = RayHitMinimal();
 	}
-
-
 }
 
 inline __device__ void CSGRayCast(
@@ -185,7 +183,9 @@ inline __device__ void CSGRayCast(
 	float tmin = 0;
 	CSGNode node = CSGNode(0, 0, 0, 0, 0);
 	RayHitMinimal leftRay;
+	leftRay.hit = CSG::CSGRayHit::Miss;
 	RayHitMinimal rightRay;
+	rightRay.hit = CSG::CSGRayHit::Miss;
 	actionStack.push(CSG::CSGActions::Compute);
 	unsigned char action = CSG::CSGActions::GotoLft;
 	bool run = true;

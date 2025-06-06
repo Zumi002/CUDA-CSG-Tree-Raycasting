@@ -49,18 +49,20 @@ struct BVHNode
 		}
 		else if (type == 5)
 		{
-			float halfSize = params.cubeParameters.size / 2;
+			float moveX = 0.5f * params.cubeParameters.sizeX;
+			float moveY = 0.5f * params.cubeParameters.sizeY;
+			float moveZ = 0.5f * params.cubeParameters.sizeZ;
 			float x = pos.x;
 			float y = pos.y;
 			float z = pos.z;
 
-			minX = x - halfSize;
-			minY = y - halfSize;
-			minZ = z - halfSize;
+			minX = x - moveX;
+			minY = y - moveY;
+			minZ = z - moveZ;
 
-			maxX = x + halfSize;
-			maxY = y + halfSize;
-			maxZ = z + halfSize;
+			maxX = x + moveX;
+			maxY = y + moveY;
+			maxZ = z + moveZ;
 		}
 	}
 
