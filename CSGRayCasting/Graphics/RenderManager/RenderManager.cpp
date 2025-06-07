@@ -169,6 +169,11 @@ void RenderManager::Render()
 	{
 		CalculateRays();
 		RenderRaysData();
+		if (collectStatistics)
+		{
+			statistics->primitivesHit = raycaster.stats[0];
+			statistics->pixelsWithHit = raycaster.stats[1];
+		}
 	}
 	
 	RenderImGui();
@@ -259,4 +264,14 @@ void RenderManager::SelectCamera(int cameraIndex)
 int RenderManager::GetRenderingAlgIndex()
 {
 	return renderingAlg;
+}
+
+void RenderManager::CollectStatistics(AdditionalStatistics* statistics)
+{
+	if (collectStatistics == false)
+	{
+		raycaster.CollectStats();
+		collectStatistics = true;
+		this->statistics = statistics;
+	}
 }

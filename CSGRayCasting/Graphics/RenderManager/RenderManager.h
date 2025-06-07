@@ -18,6 +18,7 @@
 #include "../../imgui/imgui_impl_opengl3.h"
 #include "../../imgui/imgui_impl_sdl2.h"
 #include "../../imgui/imfilebrowser.h"
+#include "../../Utils/AdditionalStatistics.h"
 
 class RenderManager
 {
@@ -37,6 +38,7 @@ class RenderManager
 	bool treeSet = false;
 
 	bool isInTestMode = false;
+	bool collectStatistics = false;
 
 	int lastRenderingAlg = 0;
 	int renderingAlg = 0;
@@ -58,6 +60,7 @@ class RenderManager
 	public:
 		float fps = 0;
 		float avgFps = 0;
+		AdditionalStatistics* statistics;
 		Camera* activeCam;
 		std::vector<Camera*> cameras;
 		RenderManager(SDL_Window* window, ImGui::FileBrowser* FileDialog, DirectionalLight* Light);
@@ -67,6 +70,7 @@ class RenderManager
 		void SetTestMode(int alg);
 		void SelectCamera(int cameraIndex);
 		int GetRenderingAlgIndex();
+		void CollectStatistics(AdditionalStatistics* statistics);
 };
 
 

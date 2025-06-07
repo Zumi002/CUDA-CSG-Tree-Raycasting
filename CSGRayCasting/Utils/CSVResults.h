@@ -6,11 +6,13 @@
 #include <sstream>
 #include <exception>
 
+#include "AdditionalStatistics.h"
+
 struct BenchmarkResults
 {
     std::string treeName;
     float FPS[3][2]; // fps (alg1, alg2, alg3), (1% low, avgFPS)
-
+    float avgPrimitivesPerPixel;
     BenchmarkResults(){}
 
     BenchmarkResults(const std::string& treeName)
@@ -23,6 +25,7 @@ struct BenchmarkResults
                 FPS[i][j] = 0;
             }
         }
+        avgPrimitivesPerPixel = 0;
     }
 
 };
@@ -48,21 +51,26 @@ class CSVResults
             }
         }
 
-        void SaveResult(BenchmarkResults result, int alg)
+        void SaveResult(BenchmarkResults result, int alg, bool collectsStats)
         {
             std::ofstream file(filePath);
             file << "TreeName,1%low_SingleHit,AvgFPS_SingleHit,"
                 "1%low_ClassicRaycast,AvgFPS_ClassicRaycast,"
-                "1%low_Raymarch,AvgFPS_Raymarch\n";
+                "1%low_Raymarch,AvgFPS_Raymarch,AvgPrimitivesPerPixel\n";
 
             bool updated = false;
             file << std::fixed << std::setprecision(2);
-            for (auto& r : results) {
+            for (auto& r : results) 
+            {
                 
                 if (!updated && r.treeName == result.treeName)
                 {
                     r.FPS[alg][0] = result.FPS[alg][0];
                     r.FPS[alg][1] = result.FPS[alg][1];
+                    if (collectsStats)
+                    {
+                        r.avgPrimitivesPerPixel = result.avgPrimitivesPerPixel;
+                    }
                     updated = true;
                 }
                 file << r.treeName;
@@ -73,6 +81,7 @@ class CSVResults
                         file << "," << r.FPS[i][j];
                     }
                 }
+                file << "," << r.avgPrimitivesPerPixel;
                 file << "\n";
             }
             if (!updated)
@@ -85,6 +94,7 @@ class CSVResults
                         file << "," << result.FPS[i][j];
                     }
                 }
+                file << "," << result.avgPrimitivesPerPixel;
                 file << "\n";
             }
         }
@@ -116,7 +126,8 @@ class CSVResults
                 ss >> result.FPS[1][0]; ss.ignore();
                 ss >> result.FPS[1][1]; ss.ignore();
                 ss >> result.FPS[2][0]; ss.ignore();
-                ss >> result.FPS[2][1]; 
+                ss >> result.FPS[2][1]; ss.ignore();
+                ss >> result.avgPrimitivesPerPixel;
 
                 results.push_back(result);
             }

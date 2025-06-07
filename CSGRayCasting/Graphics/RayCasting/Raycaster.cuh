@@ -44,6 +44,7 @@ class Raycaster
 	BVHNode* devBvhNodes;
 	int* devParts;
 	int* Parts;
+	int* devStats;
 	int alg = 0;
 	int shapeCount = 0;
 	int nodeCount = 0;
@@ -54,8 +55,10 @@ class Raycaster
 	bool allocedClassicalAdds = false;
 	bool allocedSingleHitAdds = false;
 
-	void MapFromCamera(Camera cam);
+	bool collectStats = false;
 
+	void MapFromCamera(Camera cam);
+	void CalculateBlockSizes();
 public:
 	Raycaster();
 	void ChangeTree(CSGTree& tree);
@@ -70,4 +73,6 @@ public:
 	void SetupClassical(CSGTree& tree);
 	void SetupSingleHit(CSGTree& tree);
 	void CleanUpSingleHit();
+	void CollectStats();
+	int* stats;
 };

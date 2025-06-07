@@ -27,15 +27,6 @@ __global__ void RaycastKernel(
 	float width, float height
 );
 
-//decicdes which intersection method is called for given primitive node
-inline __device__ void hitPrimitive(
-	const Ray& ray,
-	const CudaPrimitivePos* __restrict__ primitvePos,
-	const Parameters* __restrict__ primitiveParameters,
-	const CSGNode& node,
-	RayHitMinimal& hitInfo, float tmin
-);
-
 //CSG functions from paper [https://ceur-ws.org/Vol-1576/090.pdf]
 
 //main loop of state machine
@@ -137,34 +128,6 @@ __global__ void RaycastKernel(
 			cubeHitDetails(ray, primitivePos[hitInfo.primitiveIdx], primitiveParameters[hitInfo.primitiveIdx], hitInfo, detailedHitInfo);
 	}
 	hits[pixelIdx] = detailedHitInfo;
-}
-
-inline __device__ void hitPrimitive(
-	const Ray& ray,
-	const CudaPrimitivePos* __restrict__ primitvePos,
-	const Parameters* __restrict__ primitiveParameters,
-	const CSGNode& node,
-	RayHitMinimal& hitInfo,
-	float tmin
-)
-{
-	hitInfo.primitiveIdx = node.primitiveIdx;
-	if (node.type == CSGTree::NodeType::Sphere)
-	{
-		sphereHit(ray, primitvePos[node.primitiveIdx], primitiveParameters[node.primitiveIdx], hitInfo, tmin);
-	}
-	else if (node.type == CSGTree::NodeType::Cylinder)
-	{
-		cylinderHit(ray, primitvePos[node.primitiveIdx], primitiveParameters[node.primitiveIdx], hitInfo, tmin);
-	}
-	else if (node.type == CSGTree::NodeType::Cube)
-	{
-		cubeHit(ray, primitvePos[node.primitiveIdx], primitiveParameters[node.primitiveIdx], hitInfo, tmin);
-	}
-	else
-	{
-		hitInfo = RayHitMinimal();
-	}
 }
 
 inline __device__ void CSGRayCast(

@@ -7,6 +7,15 @@
 // ---- headers ----
 //
 
+//decicdes which intersection method is called for given primitive node
+inline __device__ void hitPrimitive(
+	const Ray& ray,
+	const CudaPrimitivePos* __restrict__ primitvePos,
+	const Parameters* __restrict__ primitiveParameters,
+	const CSGNode& node,
+	RayHitMinimal& hitInfo, float tmin
+);
+
 //functions which gets intersection data with given sphere
  __device__ bool sphereHit(
 	Ray ray,
@@ -59,6 +68,34 @@
 //
 // ---- code ----
 //
+
+ inline __device__ void hitPrimitive(
+	 const Ray& ray,
+	 const CudaPrimitivePos* __restrict__ primitvePos,
+	 const Parameters* __restrict__ primitiveParameters,
+	 const CSGNode& node,
+	 RayHitMinimal& hitInfo,
+	 float tmin
+ )
+ {
+	 hitInfo.primitiveIdx = node.primitiveIdx;
+	 if (node.type == CSGTree::NodeType::Sphere)
+	 {
+		 sphereHit(ray, primitvePos[node.primitiveIdx], primitiveParameters[node.primitiveIdx], hitInfo, tmin);
+	 }
+	 else if (node.type == CSGTree::NodeType::Cylinder)
+	 {
+		 cylinderHit(ray, primitvePos[node.primitiveIdx], primitiveParameters[node.primitiveIdx], hitInfo, tmin);
+	 }
+	 else if (node.type == CSGTree::NodeType::Cube)
+	 {
+		 cubeHit(ray, primitvePos[node.primitiveIdx], primitiveParameters[node.primitiveIdx], hitInfo, tmin);
+	 }
+	 else
+	 {
+		 hitInfo.hit = CSG::CSGRayHit::Miss;
+	 }
+ }
 
  __device__ bool sphereHit(
 	Ray ray,

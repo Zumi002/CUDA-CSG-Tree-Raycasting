@@ -226,6 +226,96 @@ This makes it easy to experiment with different configurations and immediately s
 
 ## Profiling and optimizations
 
+#### Profiling tool - Nvidia Nsight Compute (NCU)
+
+<p align="center">
+<img src="Images/nsight-compute.png">
+</p>
+
+For profiling our CUDA kernels, we used **NVIDIA Nsight Compute (NCU)**. It is the latest profiling tool from NVIDIA, designed to replace the now-deprecated Visual Profiler. According to NVIDIA, Nsight Compute is significantly more powerful and provides a wider range of metrics and configuration options.
+
+Additionally, the Nsight suite includes:
+
+- **Nsight Systems**, for system-wide CPU and GPU performance analysis.
+
+- **Nsight Graphics**, focused on graphics APIs, typically used in game development.
+
+
+We chose **Nsight Compute**, as our primary interest was low-level performance of compute kernels, rather than CPU activity or graphics API usage.
+
+##### How to use NCU
+
+NCU supports two main modes:
+
+- **Interactive profiling**, where you can pause and manually inspect specific kernel launches.
+
+- **Non-interactive profiling**, which provides more flexibility and automation.
+
+Typically, kernels are profiled by replaying them multiple times with different metrics being collected on each pass. **NCU** can also profile entire instruction ranges or the full application. In our case, due to the use of **OpenGL interoperability**, we were forced to use full **application replay**, since other modes (**kernel** or **range**), as we believe, conflicted with OpenGL memory mapping and caused crashes. These errors were difficult to diagnose, as **NCU** only returned a generic **"Unknown error"** message. 
+
+Because of this limitation, we had to use the **non-interactive mode** of **NCU**. **Interactive profiling** only works with a single program execution, which wasn't feasible for full **application replay**. We configured **NCU** to automatically launch our  kernel several times, terminating the process afterward, each time collecting different metrics. This made the profiling process efficient without becoming too time-consuming.
+
+To improve the quality of profiling reports, we strongly recommend enabling the compiler flag `-lineinfo`. In Visual Studio, this can be found under **Generate Line Number Information**. This option allows Nsight Compute to display the **source code** of the kernel alongside the generated **SASS (assembly) code**. Without it, only the SASS is available.
+
+Enabling `-lineinfo` correlates the source code with the generated assembly and performance metrics. This provides valuable insight into which **lines of code are the most time-consuming**, what **types of memory accesses** are made from each line, how many **registers are used**, and much more. It makes it much easier to **identify and diagnose performance bottlenecks** at the source level. Note that in debug builds, `-lineinfo` is included by default.
+
+#### Examples of Optimizations Identified via Profiling
+
+##### Example 1 - finding simple errors
+In our stack implementation, we found a major source of memory stalls:
+
+<p align="center">
+<img src="Images/cudaStackCase1.png">
+</p>
+
+A similar issue was also observed in the `RayHitMinimal` struct, which is used to store intersection results for the `SingleHit` algorithm.
+
+<p align="center">
+<img src="Images/cudaStackCase2.png">
+</p>
+
+The `RayHitMinimal` instances were being stored in the stack, and the problem was caused by the use of a default constructor that initialized internal data. This resulted in **N simultaneous memory operations**, one per thread in the block, during stack creation. As all threads performed this initialization at the same time, it caused significant memory stalls.
+
+To fix this, we **removed the default constructor**, simplifying the struct and eliminating automatic initialization. We now manually set the required values at the point of use, only when necessary.
+
+This change **dramatically improved performance** of the `SingleHit` algorithm, especially for **smaller trees**, where execution time dropped from around **1.3 ms** to just **0.2 ms**.
+ 
+<p align="center">
+<img src="Images/cudaStackCase3.png">
+</p>
+>Rapotr 14 is after, and raport 13 is before this fix.
+
+##### Example 2 - comparing kernels with and without use of shared memory
+
+We decided to introduce shared memory in our kernels to further squeeze out performance. Specifically, we added a second kernel for the **Raymarching** algorithm that uses shared memory when the tree is small enough to fit entirely into it. This significantly reduces the number of global memory accesses. Below are the memory charts:
+<p align="center">
+<img src="Images/cudaSharedCase2.png">
+</p>
+> Memory chart for kernel **without** shared memory
+
+<p align="center">
+<img src="Images/cudaSharedCase1.png">
+</p>
+> Memory chart for kernel **with** shared memory
+
+Unfortunately, during this test, we used a relatively small tree—much smaller than the available shared memory. As a result, most global memory accesses were already hitting the **L1 cache**, so the benefits of shared memory were less visible in the memory charts.
+
+However, despite the cache coverage, we observed around a **7% performance improvement** in timing:
+
+<p align="center">
+<img src="Images/cudaSharedCase3.png">
+</p>
+
+This is a promising result even for a small tree, and we see **even greater gains for larger trees**, as long as they still fit within shared memory.
+
+#### Compiler options
+
+While optimizing, we shouldn't forget about the impact of **compiler settings**. One of our first decisions was to write all kernels and device functions in `.cuh` header files. This allows everything to be compiled as a **single translation unit**, which enables the compiler to perform much more aggressive optimizations.
+
+When you want to use device functions across multiple `.cu` files, you are required to enable the `-rdc` flag, which generates **relocatable device code**. This makes it possible to link device functions across translation units—but it comes at a performance cost. In our case, the overhead was significant: enabling `-rdc` reduced performance by **up to 75%**, dropping from around **40 FPS** to just **10 FPS**. To avoid this, we followed a common CUDA practice: writing kernel-related functions in header files (`.cuh`) so that they are included and compiled as part of the same translation unit, avoiding the need for `-rdc`, while still keeping the codebase reasonably modular.
+
+Since our application is not focused on scientific or high-precision calculations, we also enabled the `-use_fast_math` flag. This allows the compiler to replace standard math functions with faster, less precise versions (e.g., `__sinf` instead of `sinf`). In our case, this provided a **significant speed boost**, especially for the `SingleHit` algorithm, which saw up to a **25% performance increase** on a fairly large tree.
+
 ## Tesing methodologies
 
 ## Tests description

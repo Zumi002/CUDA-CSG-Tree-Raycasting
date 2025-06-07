@@ -4,6 +4,7 @@
 #include "ClassicRaycasting.cuh"
 #include "RayMarching.cuh"
 #include "LightingKernels.cuh"
+#include "../Utils/AdditionalStatisticsKernels.cuh"
 
 //macro from https://stackoverflow.com/questions/14038589/what-is-the-canonical-way-to-check-for-errors-using-the-cuda-runtime-api
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__); }

@@ -60,6 +60,7 @@ void Raycaster::ChangeTree(CSGTree& tree)
     gpuErrchk(cudaMemcpy(cudaTree.primitiveParams, tree.primitives.primitiveParameters.data(), tree.primitives.primitiveParameters.size() * sizeof(Parameters), cudaMemcpyHostToDevice));
     allocedTree = true;
     nodeCount = tree.nodes.size();
+    shapeCount = tree.primitives.primitivePos.size();
 }
 
 void Raycaster::ChangeSize(int newWidth, int newHeight)
@@ -69,6 +70,7 @@ void Raycaster::ChangeSize(int newWidth, int newHeight)
     height = newHeight;
     gpuErrchk(cudaMalloc(&devHits, width * height * sizeof(RayHit)));
     alloced = true;
+    CalculateBlockSizes();
 }
 
 void Raycaster::ChangeSize(int newWidth, int newHeight, CSGTree& tree)
@@ -125,6 +127,14 @@ void Raycaster::Raycast(float4* devPBO, Camera cam, DirectionalLight light)
             RaymarchingKernel << <gridDimRayMarch, blockDimRayMarch >> > (cudaCamera, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, nodeCount, width, height);
         }
     }
+
+    if (collectStats)
+    {
+        cudaMemset(devStats, 0, 2 * sizeof(int));
+        PrimitivePerPixelStatistic<<<gridDimRayMarch, blockDimRayMarch>>>(cudaCamera, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, width, height, shapeCount, devStats);
+        cudaMemcpy(stats, devStats, 2 * sizeof(int), cudaMemcpyDeviceToHost);
+    }
+
     cudaDeviceSynchronize();
     cuProfilerStop();
 
@@ -160,7 +170,6 @@ void Raycaster::CleanUpClassical()
         free(Parts);
         allocedClassicalAdds = false;
     }
-
 }
 
 void  Raycaster::SetupClassical(CSGTree& tree)
@@ -171,7 +180,6 @@ void  Raycaster::SetupClassical(CSGTree& tree)
         CreateParts(tree, Parts, 0);
         gpuErrchk(cudaMalloc(&devParts, tree.primitives.primitivePos.size() * 4 * sizeof(int)));
         gpuErrchk(cudaMemcpy(devParts, Parts, tree.primitives.primitivePos.size() * 4 * sizeof(int), cudaMemcpyHostToDevice));
-        shapeCount = tree.primitives.primitivePos.size();
         allocedClassicalAdds = true;
     }
 }
@@ -182,6 +190,12 @@ void Raycaster::CleanUp()
     CleanUpTexture();
     CleanUpClassical();
     CleanUpSingleHit();
+
+    if (collectStats)
+    {
+        gpuErrchk(cudaFree(devStats));
+        delete[] stats;
+    }
 }
 
 void Raycaster::ChangeAlg(CSGTree& tree, int newAlg)
@@ -194,8 +208,10 @@ void Raycaster::ChangeAlg(CSGTree& tree, int newAlg)
     {
         CleanUpClassical();
     }
+
     ChangeTree(tree);
     alg = newAlg;
+
     if (alg == 0)
     {
         SetupSingleHit(tree);
@@ -204,16 +220,10 @@ void Raycaster::ChangeAlg(CSGTree& tree, int newAlg)
     {
         SetupClassical(tree);
     }
-
-    blockDimSingle = dim3(BLOCKXSIZE, BLOCKYSIZE);
-    gridDimSingle = dim3((width + blockDimSingle.x - 1) / blockDimSingle.x, (height + blockDimSingle.y - 1) / blockDimSingle.y);
-    blockDimClassic = dim3(BLOCKXSIZECLASSIC, BLOCKYSIZECLASSIC);
-    gridDimClassic = dim3((width + blockDimClassic.x - 1) / blockDimClassic.x, (height + blockDimClassic.y - 1) / blockDimClassic.y);
-    blockDimRayMarch = dim3(BLOCKXSIZERAYMARCH, BLOCKYSIZERAYMARCH);
-    gridDimRayMarch = dim3((width + blockDimRayMarch.x - 1) / blockDimRayMarch.x, (height + blockDimRayMarch.y - 1) / blockDimRayMarch.y);
-    blockDimLighting = dim3(BLOCKXSIZELIGHTING, BLOCKYSIZELIGHTING);
-    gridDimLighting = dim3((width + blockDimLighting.x - 1) / blockDimLighting.x, (height + blockDimLighting.y - 1) / blockDimLighting.y);
+    CalculateBlockSizes();
 }
+
+
 
 void Raycaster::MapFromCamera(Camera cam)
 {
@@ -222,6 +232,18 @@ void Raycaster::MapFromCamera(Camera cam)
     cudaCamera.right = make_float3(cam.right[0], cam.right[1], cam.right[2]);
     cudaCamera.up = make_float3(cam.up[0], cam.up[1], cam.up[2]);
     cudaCamera.fov = cam.fov;
+}
+
+void Raycaster::CalculateBlockSizes()
+{
+    blockDimSingle = dim3(BLOCKXSIZE, BLOCKYSIZE);
+    gridDimSingle = dim3((width + blockDimSingle.x - 1) / blockDimSingle.x, (height + blockDimSingle.y - 1) / blockDimSingle.y);
+    blockDimClassic = dim3(BLOCKXSIZECLASSIC, BLOCKYSIZECLASSIC);
+    gridDimClassic = dim3((width + blockDimClassic.x - 1) / blockDimClassic.x, (height + blockDimClassic.y - 1) / blockDimClassic.y);
+    blockDimRayMarch = dim3(BLOCKXSIZERAYMARCH, BLOCKYSIZERAYMARCH);
+    gridDimRayMarch = dim3((width + blockDimRayMarch.x - 1) / blockDimRayMarch.x, (height + blockDimRayMarch.y - 1) / blockDimRayMarch.y);
+    blockDimLighting = dim3(BLOCKXSIZELIGHTING, BLOCKYSIZELIGHTING);
+    gridDimLighting = dim3((width + blockDimLighting.x - 1) / blockDimLighting.x, (height + blockDimLighting.y - 1) / blockDimLighting.y);
 }
 
 void Raycaster::SetupSingleHit(CSGTree& tree)
@@ -242,4 +264,11 @@ void Raycaster::CleanUpSingleHit()
         gpuErrchk(cudaFree(devBvhNodes));
         allocedSingleHitAdds = false;
     }
+}
+
+void Raycaster::CollectStats()
+{
+    collectStats = true;
+    gpuErrchk(cudaMalloc(&devStats, 2 * sizeof(int)));
+    stats = new int[2];
 }

@@ -26,6 +26,7 @@ int HandleCommandLineArguments(Application& app, int argc, char* argv[])
     std::string camera;
     int test = -1; // -1 - no test selected
     std::string resultFileName;
+    bool stats = false;
 
     cliApp.add_option("-f,--file", file, "Path to CSG tree file to load");
     cliApp.add_option("-c,--camera", camera, "Path to camera settings file to load");
@@ -33,6 +34,7 @@ int HandleCommandLineArguments(Application& app, int argc, char* argv[])
         "\n1 - Classic Algorithm\n2 - Raymarching Algorithm")
         ->check(CLI::Range(0, 2));
     cliApp.add_option("-r,--result", resultFileName, "Path to file where to save benchmark results");
+    cliApp.add_flag("-s,--stats", stats, "Collects addtional statistics");
 
     try {
         (cliApp).parse(argc, argv);
@@ -57,7 +59,8 @@ int HandleCommandLineArguments(Application& app, int argc, char* argv[])
 
     if (test != -1) {
 
-        if (file.empty()) {
+        if (file.empty()) 
+        {
             fprintf(stdout, "Option --test requires --file to be specified!");
             return EXIT_FAILURE;
         }
@@ -67,6 +70,16 @@ int HandleCommandLineArguments(Application& app, int argc, char* argv[])
     if (!resultFileName.empty())
     {
         app.SetResults(resultFileName);
+    }
+
+    if (stats)
+    {
+        if (test == -1 || resultFileName.empty())
+        {
+            fprintf(stdout, "Flag --stats requires --result and --test to be specified!");
+            return EXIT_FAILURE;
+        }
+        app.SetAdditionalStatistics();
     }
 
     return 0;

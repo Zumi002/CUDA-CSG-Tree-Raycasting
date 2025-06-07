@@ -28,6 +28,7 @@ class Application
 
 	bool quit = false;
 	bool isInTestMode = false;
+	bool collectsStatistics = false;
 
 	std::chrono::time_point<std::chrono::steady_clock> start;
 	float elapsed = 0.f;
@@ -49,10 +50,12 @@ class Application
 	CSVResults* csvResults;
 	bool saveResults = false;
 	std::vector<float> fpsSamples;
+	long long primitivesHits = 0;
+	long long pixelThatHit = 0;
 	TimePoint lastFrame;
 
 	Uint32 oldTime;
-
+	AdditionalStatistics additionalStatistics;
 	DirectionalLight light;
 
 	void Input();
@@ -68,4 +71,5 @@ class Application
 		void LoadCameraSettings(const std::string& fileName);
 		void SetTestMode(int alg);
 		void SetResults(const std::string& fileName);
+		void SetAdditionalStatistics();
 };

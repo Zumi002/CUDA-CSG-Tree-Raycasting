@@ -72,6 +72,14 @@ void Application::Run()
 		SDL_GL_SwapWindow(window);
 		if (isInTestMode)
 		{
+			if (collectsStatistics)
+			{
+				if (additionalStatistics.pixelsWithHit)
+				{
+					primitivesHits += (long long)additionalStatistics.primitivesHit;
+					pixelThatHit += (long long)additionalStatistics.pixelsWithHit;
+				}
+			}
 			elapsed = std::chrono::duration<float>(now - start).count();
 			if (elapsed > MAX_TEST_TIME)
 			{
@@ -103,7 +111,13 @@ void Application::Run()
 		result->FPS[renderer->GetRenderingAlgIndex()][0] = onePercent > 0 ? onePercentSum/onePercent : 0;
 		result->FPS[renderer->GetRenderingAlgIndex()][1] = fpsSamples.size() > 0 ? sum / fpsSamples.size() : 0;
 
-		csvResults->SaveResult(*result, renderer->GetRenderingAlgIndex());
+		if (collectsStatistics)
+		{
+
+			result->avgPrimitivesPerPixel = pixelThatHit ? (float)primitivesHits / (float)pixelThatHit : 0;
+		}
+
+		csvResults->SaveResult(*result, renderer->GetRenderingAlgIndex(), collectsStatistics);
 	}
 }
 
@@ -234,6 +248,15 @@ void Application::SetResults(const std::string& fileName)
 	{
 		saveResults = true;
 		fpsSamples.reserve(40000);
+	}
+}
+
+void Application::SetAdditionalStatistics()
+{
+	if (isInTestMode)
+	{
+		collectsStatistics = true;
+		renderer->CollectStatistics(&additionalStatistics);
 	}
 }
 

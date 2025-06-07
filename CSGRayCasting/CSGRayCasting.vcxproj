@@ -36,6 +36,7 @@
     <ClInclude Include="Graphics\RayCasting\CSGTree\BVH\BVHNode.cuh" />
     <ClInclude Include="Graphics\RayCasting\CSGTree\CSGTree.cuh" />
     <ClInclude Include="Graphics\RayCasting\CSGTree\Primitives\Primitives.h" />
+    <ClInclude Include="Graphics\RayCasting\Utils\AdditionalStatisticsKernels.cuh" />
     <ClInclude Include="Graphics\RayCasting\Kernels\ClassicRaycasting.cuh" />
     <ClInclude Include="Graphics\RayCasting\Kernels\LightingKernels.cuh" />
     <ClInclude Include="Graphics\RayCasting\Kernels\RayMarching.cuh" />
@@ -70,6 +71,7 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Utils\AdditionalStatistics.h" />
     <ClInclude Include="Utils\CSVResults.h" />
     <ClInclude Include="Utils\CyclicBuffer.h" />
   </ItemGroup>
@@ -194,7 +196,7 @@
     <CudaLink>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <DebugInformationFormat>None</DebugInformationFormat>
-      <Optimization>O1</Optimization>
+      <Optimization>O2</Optimization>
       <GPUDebugInfo>false</GPUDebugInfo>
     </CudaLink>
     <PostBuildEvent>

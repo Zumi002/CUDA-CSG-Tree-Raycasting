@@ -1,0 +1,31 @@
+Union
+	Union
+		Union
+			Difference
+				Sphere -2 -2 -2 0096FF 1
+				Sphere -1.6 -1.6 -1.6 E83304 1
+			Difference
+				Sphere 2 -2 -2 0096FF 1
+				Sphere 2.4 -1.6 -1.6 E83304 1
+		Union
+			Difference
+				Sphere -2 2 -2 0096FF 1
+				Sphere -1.6 2.4 -1.6 E83304 1
+			Difference
+				Sphere 2 2 -2 0096FF 1
+				Sphere 2.4 2.4 -1.6 E83304 1
+	Union
+		Union
+			Difference
+				Sphere -2 -2 2 0096FF 1
+				Sphere -1.6 -1.6 2.4 E83304 1
+			Difference
+				Sphere 2 -2 2 0096FF 1
+				Sphere 2.4 -1.6 2.4 E83304 1
+		Union
+			Difference
+				Sphere -2 2 2 0096FF 1
+				Sphere -1.6 2.4 2.4 E83304 1
+			Difference
+				Sphere 2 2 2 0096FF 1
+				Sphere 2.4 2.4 2.4 E83304 1
