@@ -45,6 +45,7 @@ struct CSGTree
 	};
 
 	std::string treeName;
+	int treeHeight = 0;
 
 	//node 0 is root of tree
 	std::vector<CSGNode> nodes;

@@ -1,6 +1,6 @@
 #include "CSGTree.cuh"
 
-
+int getHeight(const CSGTree& tree, int node = 0);
 
 CSGTree CSGTree::Parse(const std::string& text)
 {
@@ -13,6 +13,7 @@ CSGTree CSGTree::Parse(const std::string& text)
 
     short primitivesCount = 0;
     int nodesCount = 0;
+    int treeHeight = 0;
 
     for (int i = 0; i < splited.size(); i++)
     {
@@ -151,7 +152,7 @@ CSGTree CSGTree::Parse(const std::string& text)
         {
             throw std::invalid_argument("Cannot parse - Unrecognized keyword: " + splited[i]);
         }
-
+        treeHeight = getHeight(tree);
         nodesCount++;
     }
 
@@ -160,6 +161,23 @@ CSGTree CSGTree::Parse(const std::string& text)
 
     return tree;
 }
+
+int getHeight(const CSGTree &tree, int node)
+{
+    if(tree.nodes.size() < node) 
+    {
+        return 0;
+    }
+    if (tree.nodes[node].primitiveIdx != -1)
+    {
+        return 1;
+    }
+
+    int leftHeight = getHeight(tree, tree.nodes[node].left);
+    int rightHeight = getHeight(tree, tree.nodes[node].right);
+    return std::max(leftHeight, rightHeight) + 1;
+}
+
 
 std::vector<BVHNode> CSGTree::ConstructBVH()
 {

@@ -20,7 +20,9 @@ __global__ void PrimitivePerPixelStatistic(
 	Parameters* __restrict__ primitiveParameters,
 	float width, float height,
 	int primitiveCount,
-	int* statistics);
+	int* statistics,
+	float4* PBO,
+	int visualise);
 
 //
 // ---- code ----
@@ -33,7 +35,9 @@ __global__ void PrimitivePerPixelStatistic(
 	Parameters* __restrict__ primitiveParameters,
 	float width, float height,
 	int primitiveCount,
-	int* statistics)
+	int* statistics,
+	float4* PBO,
+	int visualise = 0)
 {
 	int x = blockIdx.x * blockDim.x + threadIdx.x;
 	int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -69,4 +73,10 @@ __global__ void PrimitivePerPixelStatistic(
 	}
 	atomicAdd(statistics, hits);
 	atomicAdd(&statistics[1], hits ? 1 : 0);
+	if (visualise == 1)
+	{
+		float h = (float)hits / 10.f;
+		h = fminf(1.f, h);
+		PBO[(int)(y * width) + (int)x] = make_float4(h, h, h, 1);
+	}
 }

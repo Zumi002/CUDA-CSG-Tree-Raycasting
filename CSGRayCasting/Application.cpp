@@ -107,13 +107,12 @@ void Application::Run()
 			sum += fpsSamples[i];
 		}
 
-		result = new BenchmarkResults(tree.treeName);
+		result = new BenchmarkResults(tree.treeName, tree.primitives.primitivePos.size(), tree.treeHeight);
 		result->FPS[renderer->GetRenderingAlgIndex()][0] = onePercent > 0 ? onePercentSum/onePercent : 0;
 		result->FPS[renderer->GetRenderingAlgIndex()][1] = fpsSamples.size() > 0 ? sum / fpsSamples.size() : 0;
 
 		if (collectsStatistics)
 		{
-
 			result->avgPrimitivesPerPixel = pixelThatHit ? (float)primitivesHits / (float)pixelThatHit : 0;
 		}
 
@@ -253,10 +252,7 @@ void Application::SetResults(const std::string& fileName)
 
 void Application::SetAdditionalStatistics()
 {
-	if (isInTestMode)
-	{
-		collectsStatistics = true;
-		renderer->CollectStatistics(&additionalStatistics);
-	}
+	collectsStatistics = true;
+	renderer->CollectStatistics(&additionalStatistics);
 }
 

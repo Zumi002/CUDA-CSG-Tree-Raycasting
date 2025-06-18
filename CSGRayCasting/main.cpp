@@ -74,11 +74,6 @@ int HandleCommandLineArguments(Application& app, int argc, char* argv[])
 
     if (stats)
     {
-        if (test == -1 || resultFileName.empty())
-        {
-            fprintf(stdout, "Flag --stats requires --result and --test to be specified!");
-            return EXIT_FAILURE;
-        }
         app.SetAdditionalStatistics();
     }
 

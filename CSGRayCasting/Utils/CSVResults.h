@@ -11,13 +11,16 @@
 struct BenchmarkResults
 {
     std::string treeName;
+    int primitvesCount, treeHeight;
     float FPS[3][2]; // fps (alg1, alg2, alg3), (1% low, avgFPS)
     float avgPrimitivesPerPixel;
     BenchmarkResults(){}
 
-    BenchmarkResults(const std::string& treeName)
+    BenchmarkResults(const std::string& treeName, int primitvesCout, int treeHeight)
     {
         this->treeName = treeName;
+        this->primitvesCount = primitvesCout;
+        this->treeHeight = treeHeight;
         for (int i = 0; i < 3; i++)
         {
             for (int j = 0; j < 2; j++)
@@ -54,7 +57,7 @@ class CSVResults
         void SaveResult(BenchmarkResults result, int alg, bool collectsStats)
         {
             std::ofstream file(filePath);
-            file << "TreeName,1%low_SingleHit,AvgFPS_SingleHit,"
+            file << "TreeName,Primitives,TreeHeight,1%low_SingleHit,AvgFPS_SingleHit,"
                 "1%low_ClassicRaycast,AvgFPS_ClassicRaycast,"
                 "1%low_Raymarch,AvgFPS_Raymarch,AvgPrimitivesPerPixel\n";
 
@@ -73,7 +76,7 @@ class CSVResults
                     }
                     updated = true;
                 }
-                file << r.treeName;
+                file << r.treeName<<","<<r.primitvesCount<<","<<r.treeHeight;
                 for (int i = 0; i < 3; i++)
                 {
                     for (int j = 0; j < 2; j++)
@@ -86,7 +89,7 @@ class CSVResults
             }
             if (!updated)
             {
-                file << result.treeName;
+                file << result.treeName << "," << result.primitvesCount << "," << result.treeHeight;
                 for (int i = 0; i < 3; i++)
                 {
                     for (int j = 0; j < 2; j++)
@@ -121,6 +124,8 @@ class CSVResults
                 BenchmarkResults result;
 
                 std::getline(ss, result.treeName, ',');
+                ss >> result.primitvesCount; ss.ignore();
+                ss >> result.treeHeight; ss.ignore();
                 ss >> result.FPS[0][0]; ss.ignore();
                 ss >> result.FPS[0][1]; ss.ignore();
                 ss >> result.FPS[1][0]; ss.ignore();

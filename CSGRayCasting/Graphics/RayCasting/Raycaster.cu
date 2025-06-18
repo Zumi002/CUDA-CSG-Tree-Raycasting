@@ -128,17 +128,19 @@ void Raycaster::Raycast(float4* devPBO, Camera cam, DirectionalLight light)
         }
     }
 
-    if (collectStats)
-    {
-        cudaMemset(devStats, 0, 2 * sizeof(int));
-        PrimitivePerPixelStatistic<<<gridDimRayMarch, blockDimRayMarch>>>(cudaCamera, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, width, height, shapeCount, devStats);
-        cudaMemcpy(stats, devStats, 2 * sizeof(int), cudaMemcpyDeviceToHost);
-    }
-
     cudaDeviceSynchronize();
     cuProfilerStop();
 
-    LightningKernel << <gridDimLighting, blockDimLighting >> > (cudaCamera, devHits, cudaTree.primitiveColor, devPBO, light.getLightDir(), width, height);
+    if (collectStats)
+    {
+        cudaMemset(devStats, 0, 2 * sizeof(int));
+        PrimitivePerPixelStatistic<<<gridDimRayMarch, blockDimRayMarch>>>(cudaCamera, cudaTree.nodes, cudaTree.primitivePos, cudaTree.primitiveParams, width, height, shapeCount, devStats, devPBO, 1);
+        cudaMemcpy(stats, devStats, 2 * sizeof(int), cudaMemcpyDeviceToHost);
+    }
+    else
+    {
+        LightningKernel << <gridDimLighting, blockDimLighting >> > (cudaCamera, devHits, cudaTree.primitiveColor, devPBO, light.getLightDir(), width, height);
+    }
     cudaDeviceSynchronize();
 }
 
