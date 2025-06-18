@@ -13,7 +13,6 @@ CSGTree CSGTree::Parse(const std::string& text)
 
     short primitivesCount = 0;
     int nodesCount = 0;
-    int treeHeight = 0;
 
     for (int i = 0; i < splited.size(); i++)
     {
@@ -152,7 +151,7 @@ CSGTree CSGTree::Parse(const std::string& text)
         {
             throw std::invalid_argument("Cannot parse - Unrecognized keyword: " + splited[i]);
         }
-        treeHeight = getHeight(tree);
+        tree.treeHeight = getHeight(tree);
         nodesCount++;
     }
 
