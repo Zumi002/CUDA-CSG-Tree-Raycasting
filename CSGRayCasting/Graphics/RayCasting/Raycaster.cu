@@ -82,7 +82,6 @@ void Raycaster::ChangeSize(int newWidth, int newHeight, CSGTree& tree)
 void Raycaster::Raycast(float4* devPBO, Camera cam, DirectionalLight light)
 {
     MapFromCamera(cam);
-    cuProfilerStart();
     if (alg == 0)
         RaycastKernel << <gridDimSingle, blockDimSingle >> > (cudaCamera, cudaTree.nodes, devBvhNodes, cudaTree.primitivePos, cudaTree.primitiveParams, devHits, width, height);
     else if (alg == 1)
@@ -129,7 +128,6 @@ void Raycaster::Raycast(float4* devPBO, Camera cam, DirectionalLight light)
     }
 
     cudaDeviceSynchronize();
-    cuProfilerStop();
 
     if (collectStats)
     {

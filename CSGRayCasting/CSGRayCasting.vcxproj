@@ -157,7 +157,8 @@
     </CudaLink>
     <CudaLink>
       <Optimization>O2</Optimization>
-      <AdditionalDependencies>cuda.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
       <AdditionalLibraryDirectories>$(CudaToolkitBinDir)/crt;$(CudaToolkitLibDir)</AdditionalLibraryDirectories>
     </CudaLink>
   </ItemDefinitionGroup>

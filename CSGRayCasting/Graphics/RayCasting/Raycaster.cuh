@@ -6,8 +6,6 @@
 #include "../RenderManager/Camera/Camera.h"
 #include "Utils/RayHit.cuh"
 #include "Utils/CudaCamera.cuh"
-#include <cudaProfiler.h>
-#include <cuda_profiler_api.h>
 
 #define BLOCKXSIZE 8
 #define BLOCKYSIZE 4
