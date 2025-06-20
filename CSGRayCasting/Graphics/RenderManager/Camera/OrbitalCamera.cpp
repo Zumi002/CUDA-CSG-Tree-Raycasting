@@ -23,8 +23,8 @@ void OrbitalCamera::HandleInput(const CameraControls& camControls, const MouseCo
 
 	if (mouseControls.pressed)
 	{
-		deltaYaw += -0.5f * (mouseControls.relativeX) * sensitivity,
-			deltaPitch += -0.5f * (mouseControls.relativeY) * sensitivity;
+		deltaYaw += -0.5f * (mouseControls.relativeX) * sensitivity;
+		deltaPitch += -0.5f * (mouseControls.relativeY) * sensitivity;
 	}
 
 	RotateOrbit(deltaPitch, deltaYaw);
@@ -52,8 +52,8 @@ void OrbitalCamera::MoveCamera()
 
 void OrbitalCamera::SetOrbitRotation(float pitch, float yaw)
 {
-	OrbitYaw = pitch;
-	OrbitPitch = yaw;
+	OrbitYaw = yaw;
+	OrbitPitch = pitch;
 
 	// Clamp pitch to avoid gimbal lock
 	OrbitPitch = std::fmax(-89.0f,
