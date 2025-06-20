@@ -1,0 +1,511 @@
+Union
+	Union
+		Union
+			Union
+				Union
+					Union
+						Union
+							Union
+								Sphere 27.80 15.12 4.07 F0F0F0 0.11
+								Sphere 19.64 34.37 36.75 F0F0F0 0.22
+							Union
+								Sphere 1.25 6.38 32.75 F0F0F0 0.28
+								Sphere 27.42 9.65 25.84 F0F0F0 0.12
+						Union
+							Union
+								Sphere 8.15 5.57 29.97 F0F0F0 0.23
+								Sphere 16.18 34.57 33.92 F0F0F0 0.13
+							Union
+								Sphere 5.23 15.78 31.86 F0F0F0 0.20
+								Sphere 9.36 23.98 32.97 F0F0F0 0.38
+					Union
+						Union
+							Union
+								Sphere 23.23 16.91 30.30 F0F0F0 0.24
+								Sphere 37.95 37.67 21.19 F0F0F0 0.33
+							Union
+								Sphere 28.44 4.95 30.71 F0F0F0 0.22
+								Sphere 19.71 22.11 7.87 F0F0F0 0.37
+						Union
+							Union
+								Sphere 7.80 13.94 36.64 F0F0F0 0.21
+								Sphere 25.90 37.37 7.38 F0F0F0 0.21
+							Union
+								Sphere 1.51 30.13 29.43 F0F0F0 0.12
+								Sphere 17.18 36.11 25.36 F0F0F0 0.35
+				Union
+					Union
+						Union
+							Union
+								Sphere 36.32 12.79 21.82 F0F0F0 0.13
+								Sphere 34.89 21.31 6.73 F0F0F0 0.32
+							Union
+								Sphere 36.52 19.61 7.83 F0F0F0 0.26
+								Sphere 37.16 18.20 23.64 F0F0F0 0.25
+						Union
+							Union
+								Sphere 28.50 10.62 12.62 F0F0F0 0.36
+								Sphere 0.48 34.13 14.98 F0F0F0 0.22
+							Union
+								Sphere 3.38 16.65 0.78 F0F0F0 0.26
+								Sphere 21.07 8.96 17.42 F0F0F0 0.13
+					Union
+						Union
+							Union
+								Sphere 18.34 14.79 35.69 F0F0F0 0.28
+								Sphere 33.06 1.47 27.80 F0F0F0 0.35
+							Union
+								Sphere 10.63 28.34 3.19 F0F0F0 0.29
+								Sphere 10.89 38.62 20.18 F0F0F0 0.33
+						Union
+							Union
+								Sphere 14.76 38.02 9.25 F0F0F0 0.13
+								Sphere 25.81 2.14 9.51 F0F0F0 0.19
+							Union
+								Sphere 14.49 22.86 22.68 F0F0F0 0.14
+								Sphere 12.66 24.81 33.28 F0F0F0 0.37
+			Union
+				Union
+					Union
+						Union
+							Union
+								Sphere 7.94 35.80 19.67 F0F0F0 0.29
+								Sphere 3.43 13.82 11.13 F0F0F0 0.36
+							Union
+								Sphere 16.53 39.73 15.09 F0F0F0 0.16
+								Sphere 20.67 30.75 18.54 F0F0F0 0.34
+						Union
+							Union
+								Sphere 21.77 27.27 14.89 F0F0F0 0.11
+								Sphere 34.65 37.84 25.61 F0F0F0 0.37
+							Union
+								Sphere 15.19 28.28 39.26 F0F0F0 0.19
+								Sphere 1.98 6.79 15.09 F0F0F0 0.33
+					Union
+						Union
+							Union
+								Sphere 33.94 27.00 30.82 F0F0F0 0.17
+								Sphere 20.32 16.51 23.09 F0F0F0 0.38
+							Union
+								Sphere 5.72 38.52 31.69 F0F0F0 0.24
+								Sphere 11.90 2.93 9.73 F0F0F0 0.27
+						Union
+							Union
+								Sphere 7.90 28.51 29.40 F0F0F0 0.24
+								Sphere 17.85 17.05 26.84 F0F0F0 0.28
+							Union
+								Sphere 28.81 38.84 33.02 F0F0F0 0.22
+								Sphere 28.80 19.22 2.35 F0F0F0 0.12
+				Union
+					Union
+						Union
+							Union
+								Sphere 0.36 37.29 21.46 F0F0F0 0.11
+								Sphere 21.82 3.72 26.06 F0F0F0 0.10
+							Union
+								Sphere 24.19 21.60 4.33 F0F0F0 0.37
+								Sphere 25.45 3.93 0.94 F0F0F0 0.14
+						Union
+							Union
+								Sphere 15.57 5.16 33.02 F0F0F0 0.13
+								Sphere 30.33 24.29 36.66 F0F0F0 0.13
+							Union
+								Sphere 8.36 0.89 14.78 F0F0F0 0.36
+								Sphere 7.60 17.29 1.08 F0F0F0 0.37
+					Union
+						Union
+							Union
+								Sphere 30.63 18.40 23.14 F0F0F0 0.37
+								Sphere 32.56 6.63 5.06 F0F0F0 0.37
+							Union
+								Sphere 10.20 24.63 29.19 F0F0F0 0.16
+								Sphere 34.56 2.27 1.05 F0F0F0 0.21
+						Union
+							Union
+								Sphere 20.39 26.02 34.23 F0F0F0 0.29
+								Sphere 32.66 26.79 22.00 F0F0F0 0.29
+							Union
+								Sphere 8.20 22.69 4.39 F0F0F0 0.12
+								Sphere 30.39 28.68 21.94 F0F0F0 0.13
+		Union
+			Union
+				Union
+					Union
+						Union
+							Union
+								Sphere 2.31 26.65 28.99 F0F0F0 0.27
+								Sphere 39.37 13.50 35.30 F0F0F0 0.14
+							Union
+								Sphere 10.32 4.31 3.44 F0F0F0 0.19
+								Sphere 3.39 38.25 24.69 F0F0F0 0.24
+						Union
+							Union
+								Sphere 6.81 32.14 3.15 F0F0F0 0.19
+								Sphere 30.72 18.44 9.77 F0F0F0 0.24
+							Union
+								Sphere 36.53 9.55 0.85 F0F0F0 0.28
+								Sphere 7.39 28.74 31.09 F0F0F0 0.20
+					Union
+						Union
+							Union
+								Sphere 39.61 9.65 12.47 F0F0F0 0.21
+								Sphere 20.26 10.77 4.91 F0F0F0 0.16
+							Union
+								Sphere 1.20 6.31 28.90 F0F0F0 0.35
+								Sphere 5.99 17.11 4.11 F0F0F0 0.23
+						Union
+							Union
+								Sphere 38.24 13.23 36.31 F0F0F0 0.38
+								Sphere 30.95 6.12 18.05 F0F0F0 0.15
+							Union
+								Sphere 11.22 27.42 36.10 F0F0F0 0.14
+								Sphere 25.24 13.62 3.07 F0F0F0 0.36
+				Union
+					Union
+						Union
+							Union
+								Sphere 8.03 18.27 5.11 F0F0F0 0.23
+								Sphere 39.26 7.78 30.65 F0F0F0 0.14
+							Union
+								Sphere 17.93 11.33 38.82 F0F0F0 0.31
+								Sphere 29.78 23.77 16.53 F0F0F0 0.29
+						Union
+							Union
+								Sphere 29.02 29.44 31.45 F0F0F0 0.15
+								Sphere 32.20 4.62 18.09 F0F0F0 0.40
+							Union
+								Sphere 14.82 36.04 19.56 F0F0F0 0.26
+								Sphere 14.78 25.41 4.85 F0F0F0 0.36
+					Union
+						Union
+							Union
+								Sphere 3.74 2.25 14.46 F0F0F0 0.26
+								Sphere 33.10 20.52 18.31 F0F0F0 0.19
+							Union
+								Sphere 8.86 30.10 25.01 F0F0F0 0.20
+								Sphere 13.71 38.70 3.79 F0F0F0 0.33
+						Union
+							Union
+								Sphere 39.45 12.42 11.73 F0F0F0 0.40
+								Sphere 25.54 22.39 17.61 F0F0F0 0.15
+							Union
+								Sphere 25.27 5.86 7.35 F0F0F0 0.33
+								Sphere 16.14 21.83 23.36 F0F0F0 0.30
+			Union
+				Union
+					Union
+						Union
+							Union
+								Sphere 38.29 33.10 2.19 F0F0F0 0.25
+								Sphere 21.64 28.02 28.07 F0F0F0 0.17
+							Union
+								Sphere 3.22 28.81 17.42 F0F0F0 0.22
+								Sphere 5.98 18.27 0.07 F0F0F0 0.12
+						Union
+							Union
+								Sphere 0.44 34.31 36.07 F0F0F0 0.17
+								Sphere 20.21 8.65 13.94 F0F0F0 0.21
+							Union
+								Sphere 6.85 30.83 4.63 F0F0F0 0.24
+								Sphere 9.73 10.07 14.27 F0F0F0 0.27
+					Union
+						Union
+							Union
+								Sphere 30.84 4.82 21.81 F0F0F0 0.15
+								Sphere 5.69 29.42 22.88 F0F0F0 0.26
+							Union
+								Sphere 17.82 28.92 37.68 F0F0F0 0.22
+								Sphere 18.58 1.87 19.99 F0F0F0 0.25
+						Union
+							Union
+								Sphere 18.17 31.84 11.24 F0F0F0 0.36
+								Sphere 37.77 10.11 37.02 F0F0F0 0.13
+							Union
+								Sphere 30.17 18.75 22.83 F0F0F0 0.27
+								Sphere 2.23 29.75 30.07 F0F0F0 0.16
+				Union
+					Union
+						Union
+							Union
+								Sphere 27.99 19.49 30.42 F0F0F0 0.28
+								Sphere 1.50 29.20 2.12 F0F0F0 0.40
+							Union
+								Sphere 22.84 3.22 38.48 F0F0F0 0.22
+								Sphere 1.73 37.52 24.56 F0F0F0 0.18
+						Union
+							Union
+								Sphere 34.36 37.43 32.01 F0F0F0 0.15
+								Sphere 33.94 15.10 30.21 F0F0F0 0.22
+							Union
+								Sphere 22.72 8.35 12.63 F0F0F0 0.37
+								Sphere 25.12 17.43 18.39 F0F0F0 0.16
+					Union
+						Union
+							Union
+								Sphere 7.81 8.84 39.71 F0F0F0 0.25
+								Sphere 7.01 19.81 28.80 F0F0F0 0.27
+							Union
+								Sphere 4.27 16.36 11.22 F0F0F0 0.38
+								Sphere 6.74 20.72 14.52 F0F0F0 0.26
+						Union
+							Union
+								Sphere 28.94 22.83 3.07 F0F0F0 0.32
+								Sphere 26.81 12.53 5.42 F0F0F0 0.40
+							Union
+								Sphere 38.40 8.12 37.10 F0F0F0 0.20
+								Sphere 21.58 0.30 17.83 F0F0F0 0.23
+	Union
+		Union
+			Union
+				Union
+					Union
+						Union
+							Union
+								Sphere 17.69 35.66 30.43 F0F0F0 0.12
+								Sphere 26.88 9.73 19.68 F0F0F0 0.39
+							Union
+								Sphere 1.70 2.90 10.38 F0F0F0 0.18
+								Sphere 25.22 15.26 32.53 F0F0F0 0.24
+						Union
+							Union
+								Sphere 3.06 30.22 38.70 F0F0F0 0.34
+								Sphere 7.73 8.57 7.71 F0F0F0 0.26
+							Union
+								Sphere 14.50 32.72 29.07 F0F0F0 0.17
+								Sphere 10.63 20.95 0.53 F0F0F0 0.24
+					Union
+						Union
+							Union
+								Sphere 21.93 25.16 9.25 F0F0F0 0.33
+								Sphere 17.08 22.39 27.49 F0F0F0 0.39
+							Union
+								Sphere 9.68 22.09 15.17 F0F0F0 0.21
+								Sphere 3.77 26.80 35.67 F0F0F0 0.12
+						Union
+							Union
+								Sphere 15.49 38.45 7.16 F0F0F0 0.12
+								Sphere 28.76 1.76 19.77 F0F0F0 0.33
+							Union
+								Sphere 18.30 22.38 20.54 F0F0F0 0.20
+								Sphere 13.32 8.32 38.23 F0F0F0 0.39
+				Union
+					Union
+						Union
+							Union
+								Sphere 11.48 29.89 10.12 F0F0F0 0.13
+								Sphere 28.36 2.96 17.82 F0F0F0 0.37
+							Union
+								Sphere 1.19 29.94 12.40 F0F0F0 0.28
+								Sphere 12.59 31.69 30.97 F0F0F0 0.20
+						Union
+							Union
+								Sphere 1.96 18.08 12.47 F0F0F0 0.35
+								Sphere 22.76 10.05 32.62 F0F0F0 0.40
+							Union
+								Sphere 0.39 8.44 12.70 F0F0F0 0.20
+								Sphere 27.37 26.64 37.98 F0F0F0 0.15
+					Union
+						Union
+							Union
+								Sphere 16.26 13.43 6.24 F0F0F0 0.15
+								Sphere 32.02 15.56 7.58 F0F0F0 0.30
+							Union
+								Sphere 28.56 8.28 2.42 F0F0F0 0.35
+								Sphere 18.33 4.34 13.87 F0F0F0 0.21
+						Union
+							Union
+								Sphere 20.29 27.12 32.59 F0F0F0 0.21
+								Sphere 27.96 8.04 28.62 F0F0F0 0.25
+							Union
+								Sphere 15.32 4.07 14.00 F0F0F0 0.11
+								Sphere 8.08 24.00 30.15 F0F0F0 0.22
+			Union
+				Union
+					Union
+						Union
+							Union
+								Sphere 38.86 1.91 35.27 F0F0F0 0.23
+								Sphere 22.06 18.99 9.97 F0F0F0 0.24
+							Union
+								Sphere 24.14 13.32 2.35 F0F0F0 0.17
+								Sphere 16.12 38.57 39.99 F0F0F0 0.34
+						Union
+							Union
+								Sphere 13.72 31.23 3.51 F0F0F0 0.19
+								Sphere 38.58 11.36 25.47 F0F0F0 0.17
+							Union
+								Sphere 27.16 1.82 7.56 F0F0F0 0.38
+								Sphere 12.15 34.06 18.38 F0F0F0 0.14
+					Union
+						Union
+							Union
+								Sphere 2.91 23.05 31.60 F0F0F0 0.31
+								Sphere 0.74 38.58 12.95 F0F0F0 0.35
+							Union
+								Sphere 9.53 37.02 9.97 F0F0F0 0.23
+								Sphere 21.33 21.23 16.38 F0F0F0 0.22
+						Union
+							Union
+								Sphere 17.37 17.26 31.91 F0F0F0 0.31
+								Sphere 34.07 7.82 4.14 F0F0F0 0.36
+							Union
+								Sphere 18.52 10.64 1.10 F0F0F0 0.27
+								Sphere 28.04 10.62 30.29 F0F0F0 0.31
+				Union
+					Union
+						Union
+							Union
+								Sphere 21.12 28.93 7.61 F0F0F0 0.29
+								Sphere 37.29 15.77 9.38 F0F0F0 0.36
+							Union
+								Sphere 22.53 19.29 0.23 F0F0F0 0.25
+								Sphere 9.35 8.59 2.72 F0F0F0 0.12
+						Union
+							Union
+								Sphere 14.56 1.30 24.82 F0F0F0 0.33
+								Sphere 6.26 29.50 13.20 F0F0F0 0.37
+							Union
+								Sphere 15.63 37.03 13.06 F0F0F0 0.13
+								Sphere 12.04 12.66 33.92 F0F0F0 0.28
+					Union
+						Union
+							Union
+								Sphere 17.56 7.44 28.49 F0F0F0 0.33
+								Sphere 37.18 13.02 18.90 F0F0F0 0.11
+							Union
+								Sphere 2.72 24.59 39.25 F0F0F0 0.39
+								Sphere 24.54 12.95 19.12 F0F0F0 0.37
+						Union
+							Union
+								Sphere 9.62 27.05 39.99 F0F0F0 0.25
+								Sphere 1.68 17.75 12.28 F0F0F0 0.34
+							Union
+								Sphere 23.57 9.26 12.41 F0F0F0 0.25
+								Sphere 38.53 26.89 39.72 F0F0F0 0.33
+		Union
+			Union
+				Union
+					Union
+						Union
+							Union
+								Sphere 33.66 32.09 4.58 F0F0F0 0.35
+								Sphere 19.54 0.50 13.64 F0F0F0 0.31
+							Union
+								Sphere 36.49 22.48 34.15 F0F0F0 0.36
+								Sphere 10.84 35.69 13.34 F0F0F0 0.34
+						Union
+							Union
+								Sphere 36.79 12.45 17.69 F0F0F0 0.31
+								Sphere 3.25 11.37 15.86 F0F0F0 0.16
+							Union
+								Sphere 25.37 11.55 8.93 F0F0F0 0.14
+								Sphere 10.15 39.80 1.19 F0F0F0 0.33
+					Union
+						Union
+							Union
+								Sphere 16.09 10.91 27.07 F0F0F0 0.29
+								Sphere 13.89 25.94 26.31 F0F0F0 0.12
+							Union
+								Sphere 3.51 7.73 27.52 F0F0F0 0.18
+								Sphere 20.17 13.86 12.96 F0F0F0 0.31
+						Union
+							Union
+								Sphere 28.91 6.28 21.98 F0F0F0 0.17
+								Sphere 0.60 12.53 9.89 F0F0F0 0.19
+							Union
+								Sphere 3.12 34.03 17.99 F0F0F0 0.30
+								Sphere 19.18 16.01 35.10 F0F0F0 0.28
+				Union
+					Union
+						Union
+							Union
+								Sphere 7.35 37.65 26.89 F0F0F0 0.22
+								Sphere 20.00 20.20 10.68 F0F0F0 0.34
+							Union
+								Sphere 2.78 38.09 34.34 F0F0F0 0.19
+								Sphere 37.53 38.89 28.15 F0F0F0 0.19
+						Union
+							Union
+								Sphere 4.00 15.00 4.33 F0F0F0 0.12
+								Sphere 13.73 3.30 33.06 F0F0F0 0.34
+							Union
+								Sphere 37.18 3.41 5.05 F0F0F0 0.17
+								Sphere 19.72 34.55 22.46 F0F0F0 0.26
+					Union
+						Union
+							Union
+								Sphere 36.69 10.06 3.68 F0F0F0 0.29
+								Sphere 6.31 37.26 12.42 F0F0F0 0.33
+							Union
+								Sphere 1.52 7.34 31.56 F0F0F0 0.33
+								Sphere 10.33 16.20 33.60 F0F0F0 0.23
+						Union
+							Union
+								Sphere 5.90 39.84 4.45 F0F0F0 0.20
+								Sphere 23.50 20.96 24.14 F0F0F0 0.36
+							Union
+								Sphere 17.15 18.09 23.59 F0F0F0 0.28
+								Sphere 27.95 32.51 6.06 F0F0F0 0.36
+			Union
+				Union
+					Union
+						Union
+							Union
+								Sphere 16.41 23.47 25.63 F0F0F0 0.20
+								Sphere 25.36 7.47 23.48 F0F0F0 0.35
+							Union
+								Sphere 34.84 4.57 25.35 F0F0F0 0.27
+								Sphere 12.59 14.95 8.74 F0F0F0 0.35
+						Union
+							Union
+								Sphere 29.65 1.43 34.37 F0F0F0 0.35
+								Sphere 6.80 10.72 26.92 F0F0F0 0.30
+							Union
+								Sphere 14.25 8.93 13.55 F0F0F0 0.21
+								Sphere 13.29 38.06 15.85 F0F0F0 0.30
+					Union
+						Union
+							Union
+								Sphere 16.87 23.24 7.54 F0F0F0 0.22
+								Sphere 22.42 24.66 19.06 F0F0F0 0.16
+							Union
+								Sphere 39.17 22.88 29.87 F0F0F0 0.27
+								Sphere 3.05 16.46 33.95 F0F0F0 0.32
+						Union
+							Union
+								Sphere 27.70 35.32 1.37 F0F0F0 0.22
+								Sphere 8.63 1.13 2.88 F0F0F0 0.20
+							Union
+								Sphere 9.27 38.27 37.37 F0F0F0 0.23
+								Sphere 38.73 35.53 25.87 F0F0F0 0.23
+				Union
+					Union
+						Union
+							Union
+								Sphere 13.70 36.09 7.79 F0F0F0 0.13
+								Sphere 14.42 12.63 26.48 F0F0F0 0.22
+							Union
+								Sphere 21.89 31.75 16.71 F0F0F0 0.39
+								Sphere 28.96 35.70 9.70 F0F0F0 0.10
+						Union
+							Union
+								Sphere 9.72 9.41 5.48 F0F0F0 0.28
+								Sphere 15.97 0.18 10.21 F0F0F0 0.19
+							Union
+								Sphere 32.22 25.55 4.92 F0F0F0 0.20
+								Sphere 12.23 5.50 8.34 F0F0F0 0.25
+					Union
+						Union
+							Union
+								Sphere 2.80 36.37 31.59 F0F0F0 0.13
+								Sphere 35.18 15.03 23.08 F0F0F0 0.11
+							Union
+								Sphere 38.59 28.04 6.46 F0F0F0 0.16
+								Sphere 15.00 21.84 0.20 F0F0F0 0.18
+						Union
+							Union
+								Sphere 7.77 13.69 14.64 F0F0F0 0.18
+								Sphere 12.51 0.50 21.67 F0F0F0 0.34
+							Union
+								Sphere 33.17 24.35 37.52 F0F0F0 0.33
+								Sphere 28.57 37.47 17.91 F0F0F0 0.38

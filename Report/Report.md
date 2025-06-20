@@ -293,10 +293,14 @@ We decided to introduce shared memory in our kernels to further squeeze out perf
 </p>
 > Memory chart for kernel **without** shared memory
 
+
+
 <p align="center">
 <img src="Images/cudaSharedCase1.png">
 </p>
 > Memory chart for kernel **with** shared memory
+
+
 
 Unfortunately, during this test, we used a relatively small tree—much smaller than the available shared memory. As a result, most global memory accesses were already hitting the **L1 cache**, so the benefits of shared memory were less visible in the memory charts.
 
@@ -316,14 +320,377 @@ When you want to use device functions across multiple `.cu` files, you are requi
 
 Since our application is not focused on scientific or high-precision calculations, we also enabled the `-use_fast_math` flag. This allows the compiler to replace standard math functions with faster, less precise versions (e.g., `__sinf` instead of `sinf`). In our case, this provided a **significant speed boost**, especially for the `SingleHit` algorithm, which saw up to a **25% performance increase** on a fairly large tree.
 
-## Tesing methodologies
+## Testing methodology
+
+To evaluate the performance of our rendering algorithms, we used a consistent and reproducible testing setup. Each test was conducted with a **fresh application launch** to avoid any caching effects or residual state. We tested **each algorithm independently**, one at a time, to isolate their performance characteristics.
+
+During the test, the camera followed a **predefined, deterministic movement pattern** around the scene, lasting **30 seconds**. This movement was **time-based**, not frame-based, to ensure identical behavior across runs regardless of frame rate.
+
+All tests were conducted in a **release mode** build with the `-O3` optimization level and `-use_fast_math` enabled for maximum performance. The rendering resolution was fixed at **800×600** for all tests to ensure comparability.
+
+We collected the following performance metrics:
+
+- **Average FPS**
+- **1% low FPS** 
+
+In addition to raw performance, we correlated the results with a simple **scene density** metric:
+
+> the average number of primitives per rendered pixel (excluding pixels where the ray missed all geometry).
+
+Tests were performed on **three different GPUs** — GTX 1050, GTX 1660, and RTX 2070 — using a variety of CSG trees stored in the `/tests` directory.
 
 ## Tests description
 
+To evaluate different properties of our rendering algorithms, we conducted a series of focused test scenarios. Each test was designed to isolate specific characteristics and stress factors of the algorithms under controlled conditions.
+
+#### Increasing number of primitives 
+In this series, we examined how the algorithms behave as the number of primitives increases.  
+We used only **spheres**, which are among the least computationally expensive primitives, and combined them using **union operations only**, which are also the simplest binary operations.
+
+Here are some screenshots of the scenes used:
+###### 16 spheres
+<p align="center">
+<img src="Images/Spheres16.png">
+</p>
+
+###### 64 spheres
+<p align="center">
+<img src="Images/Spheres64.png">
+</p>
+
+###### 256 spheres
+<p align="center">
+<img src="Images/Spheres256.png">
+</p>
+
+###### 1024 spheres
+<p align="center">
+<img src="Images/Spheres1024.png">
+</p>
+
+And a table summarizing the corresponding CSG trees:
+
+| Tree Name         | # Primitives | Tree Height | Scene Density |
+|-------------------:|-------------:|------------:|---------------:|
+| 16 Spheres | 16 | 5 | 1.39 |
+| 32 Spheres | 32 | 6 | 2.13 |
+| 64 Spheres | 64 | 7 | 2.79 |
+| 128 Spheres | 128 | 8 | 4.46 |
+| 256 Spheres | 256 | 9 | 7.37 |
+| 512 Spheres | 512 | 10 | 12.18 |
+| 1024 Spheres | 1024 | 11 | 24.84 |
+
+#### Balanced and unbalanced trees
+In this test, we investigated the impact of **tree balance** on performance.  
+We used the same scenes (unions of spheres) as in the previous test, but with two versions: one with a **perfectly balanced** tree(the same as in previous test) and one that was **heavily skewed**, which is reflected in their tree heights.
+
+Table summarizing the corresponding CSG trees:
+
+| Tree Name         | # Primitives | Tree Height | Scene Density |
+|-------------------:|-------------:|------------:|---------------:|
+| 16 Spheres Balanced | 16 | 5 | 1.39 |
+| 16 Spheres Unbalanced | 16 | 16 | 1.38 |
+| 64 Spheres Balanced | 64 | 7 | 2.79 |
+| 64 Spheres Unbalanced | 64 | 64 | 2.77 |
+
+#### Scene density
+This test focused on how the algorithms perform when primitives are either **scattered across the scene** or **clustered closely together**.  
+We used only **union operations**, but this time included a variety of primitives to check if performance varied depending on primitive type.
+
+Here are the screenshots:
+###### 256 spheres scattered
+<p align="center">
+<img src="Images/Spheres256-scattered.png">
+</p>
+
+###### 256 spheres clustered
+<p align="center">
+<img src="Images/Spheres256-onePlace.png">
+</p>
+
+###### 256 cubes scattered
+<p align="center">
+<img src="Images/Cubes256-scattered.png">
+</p>
+
+###### 256 cubes clustered
+<p align="center">
+<img src="Images/Cubes256-onePlace.png">
+</p>
+
+###### 256 cylinders scattered
+<p align="center">
+<img src="Images/Cylinders256-scattered.png">
+</p>
+
+###### 256 cylinders clustered
+<p align="center">
+<img src="Images/Cylinders256-onePlace.png">
+</p>
+
+And a table summarizing the corresponding CSG trees:
+
+| Tree Name         | # Primitives | Tree Height | Scene Density |
+|-------------------:|-------------:|------------:|---------------:|
+| 256 Spheres Scattered | 256 | 9 | 1.02 |
+| 256 Spheres Clustered | 256 | 9 | 7.75 |
+| 256 Cubes Scattered | 256 | 9 | 1.36 |
+| 256 Cubes Clustered | 256 | 9 | 25.87 |
+| 256 Cylinders Scattered | 256 | 9 | 1.65 |
+| 256 Cylinders Clustered | 256 | 9 | 39.76 |
+
+#### Binary operation test
+In this series, we explored how different **binary operations** influence performance.  
+To maximize interactions between primitives, we placed them in the same location. The only variable was the **type of operation** used in the CSG tree:
+
+- Only **unions**
+- Only **intersections**
+- Only **differences**
+- 
+All tests used the same set of primitives and spatial configuration.
+
+Screenshots of the scenes:
+###### 64 spheres union
+<p align="center">
+<img src="Images/OnlyUnion.png">
+</p>
+
+###### 64 spheres intersection
+<p align="center">
+<img src="Images/OnlyIntersections.png">
+</p>
+
+###### 64 spheres difference
+<p align="center">
+<img src="Images/OnlyDiff.png">
+</p>
+
+Table summarizing the corresponding CSG trees:
+
+| Tree Name         | # Primitives | Tree Height | Scene Density |
+|-------------------:|-------------:|------------:|---------------:|
+| Only Unions | 64 | 7 | 32.03 |
+| Only Intersection | 64 | 7 | 36.02 |
+| Only Difference | 64 | 7 | 36.47 |
+
+#### Unbalance side test
+This test examined how the **side of tree Unbalance** affects performance.  
+We hypothesized that algorithms using a stack (like **Single-Hit Traversal** and **Ray Marching**) might benefit when the tree is unbalanced in a particular direction.
+
+We used all primitive types in a consistent scene layout, modifying only the **tree structure**.
+
+Trees summary:
+
+| Tree Name         | # Primitives | Tree Height | Scene Density |
+|-------------------:|-------------:|------------:|---------------:|
+| Left Unbalanced Tree | 17 | 17 | 3.49 |
+| Right Unbalanced Tree | 17 | 17 | 3.49 |
+
+#### Usage test - cheese
+To simulate a more realistic use case, we modeled a **cube with many spherical cutouts**, resembling Swiss cheese. This scene stresses the algorithms due to the high number of **difference operations** and overlapping geometry.
+
+Scene preview:
+###### 128 spheres cheese
+<p align="center">
+<img src="Images/Cheese128.png">
+</p>
+
+###### 512 spheres cheese
+<p align="center">
+<img src="Images/Cheese512.png">
+</p>
+
+ CSG Trees summary:
+
+| Tree Name         | # Primitives | Tree Height | Scene Density |
+|-------------------:|-------------:|------------:|---------------:|
+| 128 Spheres Cheese | 129 | 9 | 4.79 |
+| 512 Spheres Cheese | 513 | 11 | 15.15 |
+
+#### Usage test - labyrinth
+Another test with more realistic use case of CSG, we designed a **labyrinth** scene on a 16×16 grid using two different modeling strategies:
+
+1. **Union of cubes** to represent the maze walls.
+2. A **single cube** with corridor paths **subtracted** using difference operations.
+
+These contrasting approaches allowed us to assess how each algorithm handles dense union trees versus difference-based structures.
+
+Screenshot:
+###### Labyrinth
+<p align="center">
+<img src="Images/maze.png">
+</p>
+
+CSG tree information:
+
+| Tree Name         | # Primitives | Tree Height | Scene Density |
+|-------------------:|-------------:|------------:|---------------:|
+| Union Labirynth | 148 | 9 | 1.92 |
+| Difference Labirynth | 109 | 9 | 1.68 |
+
 ## Description of the results
 
+#### Increasing number of primitives 
+In this test, we observed that for **traditional raycasting** and **raymarching**, doubling the number of primitives generally led to **a halving of FPS**, indicating a linear increase in rendering time with respect to scene complexity.
+
+The **single-hit** algorithm behaved slightly differently. Initially, performance degraded slowly, and only gradually dropped to **halving of FPS** when the number of primitives doubled. Notably, when moving from 512 to 1024 spheres, the drop in FPS was **less than half**.
+
+We also observed that **traditional raycasting** scaled linearly with GPU performance—roughly doubling in speed from one GPU tier to the next. However, **single-hit** showed **uneven scaling**: performance improved dramatically between the GTX 1050 and GTX 1660, especially in large trees, but not as significantly between the GTX 1660 and RTX 2070.
+
+A consistent trend across all tests was that **1% low FPS** for the single-hit algorithm was much worse than the others. This is due to the algorithm’s **angle-dependent behavior**, which can introduce instability depending on the viewpoint.
+###### Results for GTX 1050
+<p align="center">
+<img src="Images/Test1-1050.png">
+</p>
+###### Results for GTX 1660
+<p align="center">
+<img src="Images/Test1-1660.png">
+</p>
+###### Results for RTX 2070
+<p align="center">
+<img src="Images/Test1-2070.png">
+</p>
+
+#### Balanced and unbalanced trees
+
+Here, **tree balance** had the most significant impact on **traditional raycasting**, with almost no noticeable effect on **single-hit** and **raymarching**. Balanced trees performed consistently better in the traditional approach.
+
+An interesting exception appeared on the GTX 1050, where in the case of **64 unbalanced spheres**, raycasting and raymarching performed nearly identically. However, on more powerful GPUs, **raymarching consistently outperformed raycasting**.
+
+###### Results for GTX 1050
+<p align="center">
+<img src="Images/Test2-1050.png">
+</p>
+###### Results for GTX 1660
+<p align="center">
+<img src="Images/Test2-1660.png">
+</p>
+###### Results for RTX 2070
+<p align="center">
+<img src="Images/Test2-2070.png">
+</p>
+
+#### Scene density
+
+In this test, **single-hit** was the clear winner—especially in **scenes with scattered primitives**. Thanks to its BVH acceleration structure, it can efficiently skip entire subtrees, significantly reducing computation time.
+
+We also noticed that **cubes and cylinders** were more computationally expensive, with **cylinders being the most costly**. Interestingly, the **1% low FPS** remained similar across all primitive types.
+
+Raymarching struggled in scenes with **clustered cubes** and a **high number of cylinders**, showing a major performance drop.
+
+Traditional raycasting, on the other hand, was the **most stable** across all scene configurations. Its performance was barely affected by primitive types or spatial distribution.
+
+###### Results for GTX 1050
+<p align="center">
+<img src="Images/Test3-1050.png">
+</p>
+###### Results for GTX 1660
+<p align="center">
+<img src="Images/Test3-1660.png">
+</p>
+###### Results for RTX 2070
+<p align="center">
+<img src="Images/Test3-2070.png">
+</p>
+
+#### Binary operation test
+
+In this test, the choice of **binary operation** (union, intersection, difference) had **minimal effect** on all three algorithms. It appears that **individual operations** don't drastically affect performance; rather, specific **combinations or structural patterns** within the CSG tree may be more important.
+
+A small difference was observed in the **"only unions"** test, but this was caused by the camera flying **inside the tree**, which did not happen in the other two tests. This explains the **lower 1% low FPS** for single-hit in that particular case.
+
+###### Results for GTX 1050
+<p align="center">
+<img src="Images/Test4-1050.png">
+</p>
+###### Results for GTX 1660
+<p align="center">
+<img src="Images/Test4-1660.png">
+</p>
+###### Results for RTX 2070
+<p align="center">
+<img src="Images/Test4-2070.png">
+</p>
+
+#### Unbalance side test
+
+In this experiment, changing the direction in which the tree was unbalanced had **no significant impact** on performance across all algorithms. This may be due to the **small size of the trees** used in this test — or it might indicate that unbalance direction **simply doesn’t influence performance much**.
+
+###### Results for GTX 1050
+<p align="center">
+<img src="Images/Test5-1050.png">
+</p>
+###### Results for GTX 1660
+<p align="center">
+<img src="Images/Test5-1660.png">
+</p>
+###### Results for RTX 2070
+<p align="center">
+<img src="Images/Test5-2070.png">
+</p>
+
+#### Usage test - cheese
+
+This test featured a scene inspired by **Swiss cheese** — a cube with many spherical cutouts.
+
+As expected, **single-hit** was the most performant. However, in the **512-cheese** variant, its advantage was **less clear**. Due to the scene’s structure, the algorithm was forced to **re-traverse subtrees multiple times**, which significantly reduced its benefit. In this case, **1% low FPS** dropped below that of the other algorithms.
+
+###### Results for GTX 1050
+<p align="center">
+<img src="Images/Test6-1050.png">
+</p>
+###### Results for GTX 1660
+<p align="center">
+<img src="Images/Test6-1660.png">
+</p>
+###### Results for RTX 2070
+<p align="center">
+<img src="Images/Test6-2070.png">
+</p>
+
+#### Usage test - labyrinth
+
+Here, we compared two methods of modeling a maze in a 16×16 grid:
+
+- One using only **unions of cubes** (to build the walls),
+- The other using **difference operations** (cutting corridors from a solid cube).
+
+The union-based approach had **many more primitives**, which negatively affected performance — especially on the **GTX 1050**, where fewer primitives led to much better results.
+
+On the **GTX 1660**, performance of the **single-hit** algorithm became similar for both scenes, with a slight edge in 1% low FPS for the union-based version. Meanwhile, **traditional raycasting and raymarching** were still more efficient on the difference-based scene.
+
+On the **RTX 2070**, single-hit made both approaches **nearly equal** in performance, although **raycasting** and **raymarching** still preferred the **smaller difference-based tree**.
+
+###### Results for GTX 1050
+<p align="center">
+<img src="Images/Test7-1050.png">
+</p>
+###### Results for GTX 1660
+<p align="center">
+<img src="Images/Test7-1660.png">
+</p>
+###### Results for RTX 2070
+<p align="center">
+<img src="Images/Test7-2070.png">
+</p>
 ## Remarks
+
+Overall, we observed that the **Single-hit** algorithm consistently outperformed the others across all tests. It also scaled very well with increased compute power. Our results show that it can easily handle trees with up to a thousand primitives, with strong potential to go even further depending on the tree structure and scene composition.
+
+**Traditional raycasting** performed better than expected. Although it's heavily memory-bound, it showed good scaling with newer GPUs, often doubling its performance between generations. Unfortunately, it struggles significantly with unbalanced trees. This is an area worth investigating further, as there may be ways to optimize the algorithm to mitigate this issue. That said, traditional raycasting was the most stable in terms of frame rate consistency, as shown by its solid 1% low FPS.
+
+**Raymarching**, while not as precise as raycasting and sometimes prone to minor visual artifacts, generally delivered performance close to that of traditional raycasting. Its flexibility — allowing for effects such as smoothing, deformation, infinite primitive repetition, and more — makes it a very appealing choice, especially in applications where visual appeal outweighs strict accuracy, such as video games.
 
 ## Future works
 
+There is still a wide range of tests we could run, and potentially more performance metrics we could collect to better compare the algorithms and tree structures.
+
+One promising direction would be to explore the optimal tree topologies for each algorithm — discovering which structures work best and developing transformations to convert arbitrary trees into these optimal forms.
+
+Additionally, our current raymarcher lacks many of the features and optimizations it could support. Despite that, it still performed well. We would like to investigate raymarching further to give it a more balanced comparison and unlock its full potential.
+
 ## References
+- **Andrew Kensler** - [Ray Tracing CSG Objects Using Single Hit Intersections](https://xrt.wdfiles.com/local--files/doc%3Acsg/CSG.pdf)
+- **D.Y. Ulyanov**, **D.K. Bogolepov**, **V.E. Turlapov** - [Spatially Efficient Tree Layout for GPU Ray-tracing of Constructive Solid Geometry Scenes](https://ceur-ws.org/Vol-1576/090.pdf)
+- **Inigo Quilez** - https://iquilezles.org/articles/ 
+  A valuable resource with extensive articles and examples related to computer graphics, signed distance fields (SDFs), procedural rendering, and real-time shading.

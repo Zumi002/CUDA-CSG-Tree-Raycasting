@@ -1,0 +1,1023 @@
+Union
+Union
+Union
+Union
+Union
+Union
+Union
+Union
+Union
+Sphere 1.5 0.8 0.074 F0F0F0 0.21
+Sphere 0.48 0.2 0.13 F0F0F0 0.14
+Union
+Sphere 2 1.2 1.1 F0F0F0 0.087
+Sphere 0.45 1.7 0.07 F0F0F0 0.29
+Union
+Union
+Sphere 0.89 0.89 0.54 F0F0F0 0.37
+Sphere 1.4 0.39 1.1 F0F0F0 0.2
+Union
+Sphere 0.87 1.4 0.48 F0F0F0 0.18
+Sphere 1.8 0.26 0.53 F0F0F0 0.26
+Union
+Union
+Union
+Sphere 1.1 0.6 0.12 F0F0F0 0.32
+Sphere 0.8 0.25 0.061 F0F0F0 0.19
+Union
+Sphere 1.5 1.2 0.99 F0F0F0 0.39
+Sphere 0.89 1.1 1.3 F0F0F0 0.36
+Union
+Union
+Sphere 2 1.8 1.6 F0F0F0 0.29
+Sphere 0.24 0.77 0.24 F0F0F0 0.24
+Union
+Sphere 0.15 0.72 1.8 F0F0F0 0.38
+Sphere 0.97 0.36 1.1 F0F0F0 0.056
+Union
+Union
+Union
+Union
+Sphere 0.96 1.3 1.6 F0F0F0 0.36
+Sphere 1.5 1.6 0.55 F0F0F0 0.22
+Union
+Sphere 0.79 1.5 0.93 F0F0F0 0.34
+Sphere 0.61 0.23 1.5 F0F0F0 0.15
+Union
+Union
+Sphere 0.077 1.1 1.9 F0F0F0 0.1
+Sphere 1.9 0.16 1.4 F0F0F0 0.052
+Union
+Sphere 0.88 1.3 1.9 F0F0F0 0.37
+Sphere 1.6 1.1 1.9 F0F0F0 0.15
+Union
+Union
+Union
+Sphere 0.31 1.5 0.34 F0F0F0 0.37
+Sphere 1.1 0.89 0.81 F0F0F0 0.38
+Union
+Sphere 0.43 1.7 1.6 F0F0F0 0.23
+Sphere 2 1 1.6 F0F0F0 0.058
+Union
+Union
+Sphere 0.11 1.5 0.36 F0F0F0 0.39
+Sphere 1.7 1.8 2 F0F0F0 0.15
+Union
+Sphere 1 1.9 0.41 F0F0F0 0.16
+Sphere 0.96 0.3 1.2 F0F0F0 0.27
+Union
+Union
+Union
+Union
+Union
+Sphere 1.8 1.6 1.1 F0F0F0 0.2
+Sphere 0.44 1.9 0.74 F0F0F0 0.2
+Union
+Sphere 1.6 0.31 1.9 F0F0F0 0.33
+Sphere 1.3 1.5 1.7 F0F0F0 0.3
+Union
+Union
+Sphere 1 0.021 1.4 F0F0F0 0.17
+Sphere 1.8 1.4 1.3 F0F0F0 0.2
+Union
+Sphere 1.3 1.7 1.5 F0F0F0 0.096
+Sphere 2 0.69 1.5 F0F0F0 0.35
+Union
+Union
+Union
+Sphere 0.25 0.61 0.58 F0F0F0 0.17
+Sphere 0.51 1.3 1.6 F0F0F0 0.077
+Union
+Sphere 1.6 1.5 1.8 F0F0F0 0.22
+Sphere 1 1.4 0.42 F0F0F0 0.054
+Union
+Union
+Sphere 1.4 1.8 0.73 F0F0F0 0.27
+Sphere 1.2 2 0.08 F0F0F0 0.15
+Union
+Sphere 1.7 1.6 0.8 F0F0F0 0.33
+Sphere 0.24 0.33 1.3 F0F0F0 0.14
+Union
+Union
+Union
+Union
+Sphere 0.94 1.9 1.2 F0F0F0 0.31
+Sphere 1.2 0.75 1.6 F0F0F0 0.2
+Union
+Sphere 0.24 1.4 1.8 F0F0F0 0.27
+Sphere 0.81 0.26 1.3 F0F0F0 0.095
+Union
+Union
+Sphere 0.1 2 1.5 F0F0F0 0.28
+Sphere 2 1.6 1.9 F0F0F0 0.33
+Union
+Sphere 1.1 0.69 1.2 F0F0F0 0.29
+Sphere 1 0.58 1.9 F0F0F0 0.39
+Union
+Union
+Union
+Sphere 0.5 1.1 1.4 F0F0F0 0.36
+Sphere 1.8 1 0.62 F0F0F0 0.058
+Union
+Sphere 0.42 0.47 1.3 F0F0F0 0.26
+Sphere 0.73 0.53 1.5 F0F0F0 0.2
+Union
+Union
+Sphere 0.51 0.98 0.18 F0F0F0 0.13
+Sphere 0.57 0.063 0.093 F0F0F0 0.35
+Union
+Sphere 0.75 1.3 1.1 F0F0F0 0.36
+Sphere 1.9 0.96 1.7 F0F0F0 0.12
+Union
+Union
+Union
+Union
+Union
+Union
+Sphere 0.02 1.2 0.16 F0F0F0 0.37
+Sphere 0.19 0.79 1.9 F0F0F0 0.16
+Union
+Sphere 1.3 1.2 1.8 F0F0F0 0.4
+Sphere 1.7 1.3 0.82 F0F0F0 0.084
+Union
+Union
+Sphere 0.29 1 0.67 F0F0F0 0.2
+Sphere 1.1 0.76 0.56 F0F0F0 0.37
+Union
+Sphere 0.093 1.7 1.6 F0F0F0 0.051
+Sphere 0.62 1.3 0.42 F0F0F0 0.16
+Union
+Union
+Union
+Sphere 0.47 0.59 0.47 F0F0F0 0.17
+Sphere 1.4 0.34 1.3 F0F0F0 0.16
+Union
+Sphere 1.5 1.1 0.61 F0F0F0 0.26
+Sphere 0.39 1.4 1.4 F0F0F0 0.17
+Union
+Union
+Sphere 0.43 0.04 1.5 F0F0F0 0.31
+Sphere 0.8 0.1 1.3 F0F0F0 0.21
+Union
+Sphere 1.8 0.89 0.9 F0F0F0 0.12
+Sphere 0.21 1.3 1 F0F0F0 0.17
+Union
+Union
+Union
+Union
+Sphere 1.9 1.5 1.3 F0F0F0 0.27
+Sphere 1.8 0.6 1.9 F0F0F0 0.28
+Union
+Sphere 1.7 0.52 0.49 F0F0F0 0.064
+Sphere 2 1.9 0.76 F0F0F0 0.12
+Union
+Union
+Sphere 1.9 0.3 1.9 F0F0F0 0.17
+Sphere 0.4 1.2 1.6 F0F0F0 0.078
+Union
+Sphere 0.076 0.5 0.54 F0F0F0 0.099
+Sphere 1.8 1.5 0.96 F0F0F0 0.35
+Union
+Union
+Union
+Sphere 1 0.3 1 F0F0F0 0.2
+Sphere 0.89 0.93 0.16 F0F0F0 0.15
+Union
+Sphere 1.4 0.65 0.66 F0F0F0 0.3
+Sphere 0.52 1.4 1.8 F0F0F0 0.12
+Union
+Union
+Sphere 1.7 1.7 1.1 F0F0F0 0.072
+Sphere 0.86 0.74 0.29 F0F0F0 0.21
+Union
+Sphere 1.2 0.82 1.2 F0F0F0 0.24
+Sphere 0.37 0.18 0.79 F0F0F0 0.29
+Union
+Union
+Union
+Union
+Union
+Sphere 0.47 1.8 0.23 F0F0F0 0.29
+Sphere 0.74 0.39 1.9 F0F0F0 0.083
+Union
+Sphere 1 0.6 1.6 F0F0F0 0.32
+Sphere 0.02 1.4 2 F0F0F0 0.35
+Union
+Union
+Sphere 1.1 1.1 1.9 F0F0F0 0.39
+Sphere 1.9 0.15 0.85 F0F0F0 0.24
+Union
+Sphere 0.97 0.068 0.15 F0F0F0 0.28
+Sphere 0.24 0.94 0.73 F0F0F0 0.18
+Union
+Union
+Union
+Sphere 0.76 0.96 0.082 F0F0F0 0.31
+Sphere 1.3 0.027 1.7 F0F0F0 0.12
+Union
+Sphere 0.63 1.3 2 F0F0F0 0.16
+Sphere 0.66 1.9 0.39 F0F0F0 0.35
+Union
+Union
+Sphere 1.1 0.25 1.6 F0F0F0 0.21
+Sphere 0.4 0.48 0.0094 F0F0F0 0.29
+Union
+Sphere 0.55 0.16 0.7 F0F0F0 0.19
+Sphere 1.1 1.4 1.5 F0F0F0 0.38
+Union
+Union
+Union
+Union
+Sphere 0.39 1.6 1.4 F0F0F0 0.35
+Sphere 1.6 1 0.12 F0F0F0 0.093
+Union
+Sphere 0.3 0.075 0.9 F0F0F0 0.22
+Sphere 0.013 1.3 0.67 F0F0F0 0.24
+Union
+Union
+Sphere 1.5 0.3 2 F0F0F0 0.39
+Sphere 0.78 2 1.3 F0F0F0 0.28
+Union
+Sphere 0.16 2 0.13 F0F0F0 0.27
+Sphere 1.4 1.6 1.1 F0F0F0 0.37
+Union
+Union
+Union
+Sphere 1.2 0.48 1.5 F0F0F0 0.2
+Sphere 1.5 1.7 1.1 F0F0F0 0.37
+Union
+Sphere 1.7 2 0.78 F0F0F0 0.36
+Sphere 1.3 1.5 0.83 F0F0F0 0.19
+Union
+Union
+Sphere 1.8 0.82 0.74 F0F0F0 0.14
+Sphere 0.82 0.034 1.9 F0F0F0 0.22
+Union
+Sphere 0.031 0.0025 0.25 F0F0F0 0.3
+Sphere 1.6 1.4 1.3 F0F0F0 0.2
+Union
+Union
+Union
+Union
+Union
+Union
+Union
+Sphere 1.9 0.81 1.7 F0F0F0 0.29
+Sphere 0.48 0.82 1.2 F0F0F0 0.09
+Union
+Sphere 0.81 2 2 F0F0F0 0.065
+Sphere 1.4 0.82 0.9 F0F0F0 0.26
+Union
+Union
+Sphere 1.6 1.6 1.7 F0F0F0 0.13
+Sphere 1.7 1.6 1.4 F0F0F0 0.35
+Union
+Sphere 1.6 1.7 1.2 F0F0F0 0.27
+Sphere 1.1 0.42 0.11 F0F0F0 0.21
+Union
+Union
+Union
+Sphere 1.2 1.8 0.29 F0F0F0 0.35
+Sphere 0.64 1.5 1.9 F0F0F0 0.3
+Union
+Sphere 1.4 1.9 1.5 F0F0F0 0.2
+Sphere 0.75 0.43 0.042 F0F0F0 0.12
+Union
+Union
+Sphere 0.07 1.8 0.85 F0F0F0 0.35
+Sphere 1.4 0.29 1.4 F0F0F0 0.22
+Union
+Sphere 2 0.59 0.19 F0F0F0 0.23
+Sphere 1 0.3 2 F0F0F0 0.093
+Union
+Union
+Union
+Union
+Sphere 0.12 0.25 2 F0F0F0 0.18
+Sphere 1.7 1.9 0.22 F0F0F0 0.26
+Union
+Sphere 1.8 1.8 0.039 F0F0F0 0.15
+Sphere 0.19 0.08 0.96 F0F0F0 0.096
+Union
+Union
+Sphere 1.8 1.8 0.00089 F0F0F0 0.26
+Sphere 0.1 1.4 0.15 F0F0F0 0.064
+Union
+Sphere 0.03 0.34 1.1 F0F0F0 0.23
+Sphere 0.63 1.1 1.3 F0F0F0 0.18
+Union
+Union
+Union
+Sphere 1.3 1.2 1.5 F0F0F0 0.24
+Sphere 1.2 1.7 0.25 F0F0F0 0.22
+Union
+Sphere 1.5 0.29 1.6 F0F0F0 0.35
+Sphere 0.37 0.53 2 F0F0F0 0.087
+Union
+Union
+Sphere 0.34 2 1.4 F0F0F0 0.13
+Sphere 1.4 1.6 0.52 F0F0F0 0.3
+Union
+Sphere 1.9 1.6 0.47 F0F0F0 0.14
+Sphere 0.74 1.8 1.3 F0F0F0 0.065
+Union
+Union
+Union
+Union
+Union
+Sphere 1 0.8 1.2 F0F0F0 0.078
+Sphere 0.54 1.4 1.1 F0F0F0 0.056
+Union
+Sphere 1.7 0.71 1.7 F0F0F0 0.062
+Sphere 1.2 1.7 0.28 F0F0F0 0.33
+Union
+Union
+Sphere 1.6 1.7 0.029 F0F0F0 0.23
+Sphere 1.2 0.55 0.45 F0F0F0 0.25
+Union
+Sphere 0.2 0.92 1.7 F0F0F0 0.21
+Sphere 0.67 0.93 1 F0F0F0 0.34
+Union
+Union
+Union
+Sphere 1.7 0.19 1.8 F0F0F0 0.096
+Sphere 1.6 0.98 0.3 F0F0F0 0.28
+Union
+Sphere 1.7 0.023 1.4 F0F0F0 0.21
+Sphere 1.7 1.6 0.51 F0F0F0 0.28
+Union
+Union
+Sphere 1.3 0.54 0.37 F0F0F0 0.15
+Sphere 1.1 0.82 1.7 F0F0F0 0.28
+Union
+Sphere 1.7 1.4 0.24 F0F0F0 0.12
+Sphere 0.28 1.3 0.08 F0F0F0 0.051
+Union
+Union
+Union
+Union
+Sphere 1.5 1.9 0.27 F0F0F0 0.24
+Sphere 0.89 0.57 0.36 F0F0F0 0.15
+Union
+Sphere 0.59 1.7 1.5 F0F0F0 0.1
+Sphere 1.4 0.017 1.6 F0F0F0 0.17
+Union
+Union
+Sphere 0.56 0.002 1.3 F0F0F0 0.34
+Sphere 0.82 0.99 0.96 F0F0F0 0.15
+Union
+Sphere 0.34 1.2 0.96 F0F0F0 0.16
+Sphere 0.47 1 0.63 F0F0F0 0.39
+Union
+Union
+Union
+Sphere 0.96 0.9 0.99 F0F0F0 0.37
+Sphere 1.5 1.3 0.42 F0F0F0 0.061
+Union
+Sphere 1.1 1.9 0.36 F0F0F0 0.13
+Sphere 1.9 2 1.2 F0F0F0 0.14
+Union
+Union
+Sphere 2 0.44 0.15 F0F0F0 0.19
+Sphere 1.4 1.1 1.4 F0F0F0 0.36
+Union
+Sphere 0.31 0.34 0.39 F0F0F0 0.19
+Sphere 1.4 1 0.71 F0F0F0 0.11
+Union
+Union
+Union
+Union
+Union
+Union
+Sphere 1.9 1.7 0.18 F0F0F0 0.3
+Sphere 1 0.6 1.5 F0F0F0 0.071
+Union
+Sphere 0.51 1.8 0.57 F0F0F0 0.13
+Sphere 1.8 1.7 0.95 F0F0F0 0.37
+Union
+Union
+Sphere 0.17 1.1 0.62 F0F0F0 0.33
+Sphere 0.21 2 1.4 F0F0F0 0.14
+Union
+Sphere 0.33 1.8 1.3 F0F0F0 0.35
+Sphere 0.8 0.019 0.043 F0F0F0 0.18
+Union
+Union
+Union
+Sphere 1.7 0.22 0.12 F0F0F0 0.18
+Sphere 0.82 1.6 0.88 F0F0F0 0.28
+Union
+Sphere 1.4 1.5 1.8 F0F0F0 0.26
+Sphere 1.2 0.73 1 F0F0F0 0.29
+Union
+Union
+Sphere 1.8 1.6 0.96 F0F0F0 0.057
+Sphere 1.6 0.33 0.56 F0F0F0 0.39
+Union
+Sphere 0.1 1.9 1.7 F0F0F0 0.21
+Sphere 1.9 1.7 1.6 F0F0F0 0.33
+Union
+Union
+Union
+Union
+Sphere 1.9 1.7 0.37 F0F0F0 0.18
+Sphere 1.3 1.3 0.068 F0F0F0 0.18
+Union
+Sphere 0.71 1.8 2 F0F0F0 0.38
+Sphere 0.57 0.97 1.2 F0F0F0 0.12
+Union
+Union
+Sphere 0.6 0.21 0.44 F0F0F0 0.09
+Sphere 0.54 1 0.18 F0F0F0 0.16
+Union
+Sphere 0.87 1.8 1.5 F0F0F0 0.18
+Sphere 1.5 1.2 0.37 F0F0F0 0.3
+Union
+Union
+Union
+Sphere 0.9 0.74 0.18 F0F0F0 0.091
+Sphere 0.00017 0.25 0.97 F0F0F0 0.17
+Union
+Sphere 0.1 0.92 0.6 F0F0F0 0.17
+Sphere 1.9 1.8 1.1 F0F0F0 0.14
+Union
+Union
+Sphere 0.055 1.5 0.72 F0F0F0 0.15
+Sphere 0.51 0.9 1.2 F0F0F0 0.29
+Union
+Sphere 0.73 0.77 0.14 F0F0F0 0.095
+Sphere 1.9 0.51 1.7 F0F0F0 0.19
+Union
+Union
+Union
+Union
+Union
+Sphere 1.3 1.9 1.1 F0F0F0 0.27
+Sphere 0.14 0.031 2 F0F0F0 0.092
+Union
+Sphere 0.95 0.57 0.92 F0F0F0 0.2
+Sphere 0.41 2 1.3 F0F0F0 0.13
+Union
+Union
+Sphere 1.5 0.059 1.1 F0F0F0 0.051
+Sphere 0.96 0.3 1.4 F0F0F0 0.35
+Union
+Sphere 1.1 1.5 1.9 F0F0F0 0.22
+Sphere 0.038 1.6 1.8 F0F0F0 0.28
+Union
+Union
+Union
+Sphere 1.5 0.88 0.55 F0F0F0 0.34
+Sphere 0.91 0.51 1.9 F0F0F0 0.38
+Union
+Sphere 1.1 0.84 0.71 F0F0F0 0.31
+Sphere 0.82 0.046 2 F0F0F0 0.11
+Union
+Union
+Sphere 0.1 1 0.33 F0F0F0 0.24
+Sphere 1.3 1.7 0.75 F0F0F0 0.12
+Union
+Sphere 1.2 0.69 1.4 F0F0F0 0.27
+Sphere 0.34 1.2 0.57 F0F0F0 0.38
+Union
+Union
+Union
+Union
+Sphere 0.08 1.1 1.6 F0F0F0 0.22
+Sphere 1.6 1.5 0.86 F0F0F0 0.18
+Union
+Sphere 0.31 1.6 0.21 F0F0F0 0.25
+Sphere 1.6 0.18 1.5 F0F0F0 0.35
+Union
+Union
+Sphere 1.2 1.8 0.78 F0F0F0 0.14
+Sphere 1.5 1.5 0.91 F0F0F0 0.18
+Union
+Sphere 0.22 0.29 0.02 F0F0F0 0.15
+Sphere 1.5 0.59 0.44 F0F0F0 0.33
+Union
+Union
+Union
+Sphere 1.7 2 0.57 F0F0F0 0.29
+Sphere 1.5 1.4 0.068 F0F0F0 0.36
+Union
+Sphere 0.99 0.28 0.92 F0F0F0 0.16
+Sphere 0.46 0.38 0.32 F0F0F0 0.34
+Union
+Union
+Sphere 0.17 1.1 0.19 F0F0F0 0.34
+Sphere 0.63 1.1 0.41 F0F0F0 0.2
+Union
+Sphere 1.4 0.43 1.4 F0F0F0 0.2
+Sphere 1 1.8 0.46 F0F0F0 0.18
+Union
+Union
+Union
+Union
+Union
+Union
+Union
+Union
+Sphere 1.8 1 0.089 F0F0F0 0.28
+Sphere 0.45 0.16 1.1 F0F0F0 0.3
+Union
+Sphere 0.44 0.0051 0.043 F0F0F0 0.21
+Sphere 0.39 0.36 0.55 F0F0F0 0.15
+Union
+Union
+Sphere 1.5 0.74 0.23 F0F0F0 0.066
+Sphere 1.8 0.64 0.93 F0F0F0 0.27
+Union
+Sphere 1.1 0.34 0.12 F0F0F0 0.067
+Sphere 0.17 0.58 0.84 F0F0F0 0.051
+Union
+Union
+Union
+Sphere 1.6 0.93 1.3 F0F0F0 0.058
+Sphere 1.1 0.39 1.5 F0F0F0 0.32
+Union
+Sphere 0.39 1.5 0.42 F0F0F0 0.19
+Sphere 1.9 0.97 1.3 F0F0F0 0.29
+Union
+Union
+Sphere 1.7 1.6 1.4 F0F0F0 0.32
+Sphere 0.21 0.38 0.78 F0F0F0 0.27
+Union
+Sphere 0.72 0.9 1.4 F0F0F0 0.21
+Sphere 1.5 0.22 0.9 F0F0F0 0.24
+Union
+Union
+Union
+Union
+Sphere 1.2 0.2 1.1 F0F0F0 0.091
+Sphere 0.59 0.61 1.8 F0F0F0 0.22
+Union
+Sphere 0.14 0.17 1.8 F0F0F0 0.055
+Sphere 1.1 1.1 1.4 F0F0F0 0.2
+Union
+Union
+Sphere 0.67 0.84 0.41 F0F0F0 0.2
+Sphere 1.2 1.2 0.16 F0F0F0 0.39
+Union
+Sphere 0.094 1.5 0.83 F0F0F0 0.32
+Sphere 1.8 1.7 0.65 F0F0F0 0.21
+Union
+Union
+Union
+Sphere 1.9 1.8 1.1 F0F0F0 0.14
+Sphere 0.37 0.91 1.5 F0F0F0 0.14
+Union
+Sphere 1.1 1.3 0.54 F0F0F0 0.09
+Sphere 0.37 1.9 1.1 F0F0F0 0.23
+Union
+Union
+Sphere 0.76 1.5 1.9 F0F0F0 0.4
+Sphere 0.68 0.068 1.9 F0F0F0 0.19
+Union
+Sphere 1.6 0.75 0.35 F0F0F0 0.29
+Sphere 0.48 0.99 0.29 F0F0F0 0.12
+Union
+Union
+Union
+Union
+Union
+Sphere 0.76 1.4 0.94 F0F0F0 0.25
+Sphere 0.35 0.45 1.6 F0F0F0 0.3
+Union
+Sphere 1.7 0.19 1.7 F0F0F0 0.064
+Sphere 0.11 0.74 1.1 F0F0F0 0.2
+Union
+Union
+Sphere 0.23 1 0.85 F0F0F0 0.21
+Sphere 1.1 0.77 1.7 F0F0F0 0.17
+Union
+Sphere 1.5 0.044 0.079 F0F0F0 0.4
+Sphere 1 0.37 0.41 F0F0F0 0.37
+Union
+Union
+Union
+Sphere 1.8 1.4 0.94 F0F0F0 0.077
+Sphere 1.8 0.58 1.6 F0F0F0 0.31
+Union
+Sphere 0.77 1.2 1.6 F0F0F0 0.2
+Sphere 2 0.71 1.8 F0F0F0 0.088
+Union
+Union
+Sphere 1.7 0.61 1.1 F0F0F0 0.2
+Sphere 1.4 0.83 1.5 F0F0F0 0.21
+Union
+Sphere 0.87 1.6 0.89 F0F0F0 0.38
+Sphere 2 1.3 1.7 F0F0F0 0.36
+Union
+Union
+Union
+Union
+Sphere 0.65 0.65 1.9 F0F0F0 0.13
+Sphere 1.2 1.5 2 F0F0F0 0.051
+Union
+Sphere 0.77 1.6 0.89 F0F0F0 0.18
+Sphere 0.27 0.64 0.97 F0F0F0 0.051
+Union
+Union
+Sphere 1.2 0.11 0.83 F0F0F0 0.16
+Sphere 0.94 0.37 1.5 F0F0F0 0.37
+Union
+Sphere 2 0.4 1.7 F0F0F0 0.39
+Sphere 1.7 1.4 1.7 F0F0F0 0.11
+Union
+Union
+Union
+Sphere 0.09 1.7 0.81 F0F0F0 0.28
+Sphere 1.2 0.78 1.3 F0F0F0 0.4
+Union
+Sphere 0.34 0.21 0.76 F0F0F0 0.16
+Sphere 0.85 1.7 0.61 F0F0F0 0.067
+Union
+Union
+Sphere 1.8 1.4 0.72 F0F0F0 0.19
+Sphere 1.8 0.23 0.59 F0F0F0 0.36
+Union
+Sphere 0.63 0.31 1.7 F0F0F0 0.11
+Sphere 1.8 1.5 0.7 F0F0F0 0.37
+Union
+Union
+Union
+Union
+Union
+Union
+Sphere 1.2 1.5 1.2 F0F0F0 0.12
+Sphere 0.29 0.5 0.4 F0F0F0 0.16
+Union
+Sphere 0.71 1.2 1.2 F0F0F0 0.32
+Sphere 0.89 1.8 1.7 F0F0F0 0.18
+Union
+Union
+Sphere 1.3 0.38 1.5 F0F0F0 0.24
+Sphere 0.61 0.09 0.88 F0F0F0 0.27
+Union
+Sphere 0.4 0.62 1.6 F0F0F0 0.077
+Sphere 0.11 0.29 2 F0F0F0 0.28
+Union
+Union
+Union
+Sphere 1.8 1.2 1.7 F0F0F0 0.067
+Sphere 1.7 0.09 0.72 F0F0F0 0.12
+Union
+Sphere 1.2 2 1.9 F0F0F0 0.073
+Sphere 1.8 1.6 0.86 F0F0F0 0.24
+Union
+Union
+Sphere 2 0.36 0.17 F0F0F0 0.15
+Sphere 0.45 1 1.8 F0F0F0 0.2
+Union
+Sphere 1.7 1.4 1 F0F0F0 0.36
+Sphere 1.7 1 1.1 F0F0F0 0.32
+Union
+Union
+Union
+Union
+Sphere 0.17 0.75 1.6 F0F0F0 0.37
+Sphere 0.84 0.34 0.2 F0F0F0 0.064
+Union
+Sphere 0.29 0.14 0.21 F0F0F0 0.064
+Sphere 1.7 1.1 1.2 F0F0F0 0.35
+Union
+Union
+Sphere 1.4 1.3 0.31 F0F0F0 0.38
+Sphere 0.36 0.15 0.72 F0F0F0 0.054
+Union
+Sphere 1.6 1.7 1.8 F0F0F0 0.28
+Sphere 0.73 0.85 0.81 F0F0F0 0.21
+Union
+Union
+Union
+Sphere 1.6 0.43 0.72 F0F0F0 0.13
+Sphere 0.77 0.92 0.52 F0F0F0 0.24
+Union
+Sphere 1.1 0.73 1.1 F0F0F0 0.19
+Sphere 1.8 0.3 0.5 F0F0F0 0.26
+Union
+Union
+Sphere 1.6 0.81 1.1 F0F0F0 0.4
+Sphere 0.95 1.8 0.01 F0F0F0 0.14
+Union
+Sphere 1.5 1.8 1.8 F0F0F0 0.097
+Sphere 0.65 0.63 1.2 F0F0F0 0.094
+Union
+Union
+Union
+Union
+Union
+Sphere 1.1 1.9 0.68 F0F0F0 0.37
+Sphere 0.8 1.2 0.9 F0F0F0 0.37
+Union
+Sphere 1.9 0.042 0.64 F0F0F0 0.35
+Sphere 0.34 1.1 0.96 F0F0F0 0.39
+Union
+Union
+Sphere 1.9 0.052 2 F0F0F0 0.21
+Sphere 1.9 2 1.4 F0F0F0 0.3
+Union
+Sphere 1.8 1.2 1.7 F0F0F0 0.12
+Sphere 1.9 0.84 0.67 F0F0F0 0.21
+Union
+Union
+Union
+Sphere 0.72 1.4 0.76 F0F0F0 0.32
+Sphere 0.55 1.7 1.4 F0F0F0 0.13
+Union
+Sphere 1.7 0.0012 0.21 F0F0F0 0.057
+Sphere 1.1 1.2 0.0064 F0F0F0 0.24
+Union
+Union
+Sphere 1.2 2 2 F0F0F0 0.24
+Sphere 1.9 1.4 0.5 F0F0F0 0.34
+Union
+Sphere 0.62 0.18 0.1 F0F0F0 0.13
+Sphere 1 0.77 1.4 F0F0F0 0.36
+Union
+Union
+Union
+Union
+Sphere 0.13 0.17 1.3 F0F0F0 0.17
+Sphere 1.8 0.63 1.2 F0F0F0 0.32
+Union
+Sphere 0.63 1.4 1.6 F0F0F0 0.36
+Sphere 0.54 1.6 0.84 F0F0F0 0.36
+Union
+Union
+Sphere 1.5 0.81 0.85 F0F0F0 0.3
+Sphere 0.2 1.4 1.1 F0F0F0 0.19
+Union
+Sphere 1.5 1.2 1.3 F0F0F0 0.15
+Sphere 0.0071 0.7 0.3 F0F0F0 0.073
+Union
+Union
+Union
+Sphere 0.86 1.6 0.81 F0F0F0 0.17
+Sphere 0.19 2 0.21 F0F0F0 0.19
+Union
+Sphere 1.3 1.8 0.58 F0F0F0 0.38
+Sphere 1.3 1.4 1.6 F0F0F0 0.2
+Union
+Union
+Sphere 0.23 0.49 0.31 F0F0F0 0.12
+Sphere 1.8 1.4 1.2 F0F0F0 0.29
+Union
+Sphere 0.68 0.53 1.9 F0F0F0 0.17
+Sphere 1.2 0.23 0.82 F0F0F0 0.067
+Union
+Union
+Union
+Union
+Union
+Union
+Union
+Sphere 1.8 1.6 0.78 F0F0F0 0.4
+Sphere 1.6 0.99 0.8 F0F0F0 0.21
+Union
+Sphere 0.77 1.4 0.82 F0F0F0 0.069
+Sphere 0.8 0.47 0.98 F0F0F0 0.23
+Union
+Union
+Sphere 0.96 1.3 1.5 F0F0F0 0.19
+Sphere 0.74 0.69 0.17 F0F0F0 0.3
+Union
+Sphere 1.2 0.1 0.1 F0F0F0 0.13
+Sphere 0.34 0.92 0.55 F0F0F0 0.073
+Union
+Union
+Union
+Sphere 0.55 1.3 0.11 F0F0F0 0.076
+Sphere 0.33 0.91 1.1 F0F0F0 0.24
+Union
+Sphere 0.29 1.9 1.2 F0F0F0 0.24
+Sphere 0.38 0.18 0.11 F0F0F0 0.28
+Union
+Union
+Sphere 1.5 1.6 0.14 F0F0F0 0.086
+Sphere 0.25 0.31 1.6 F0F0F0 0.31
+Union
+Sphere 0.41 1.7 1.9 F0F0F0 0.18
+Sphere 0.64 0.48 0.88 F0F0F0 0.26
+Union
+Union
+Union
+Union
+Sphere 1.8 1 1.3 F0F0F0 0.075
+Sphere 1.9 0.44 1.2 F0F0F0 0.084
+Union
+Sphere 0.36 0.44 1.3 F0F0F0 0.18
+Sphere 0.61 1.4 0.077 F0F0F0 0.064
+Union
+Union
+Sphere 0.95 0.21 0.29 F0F0F0 0.26
+Sphere 0.52 1.9 0.67 F0F0F0 0.21
+Union
+Sphere 1.6 0.6 1.7 F0F0F0 0.098
+Sphere 1.1 0.57 1.5 F0F0F0 0.21
+Union
+Union
+Union
+Sphere 1.6 0.82 1 F0F0F0 0.31
+Sphere 1.3 0.27 1.7 F0F0F0 0.33
+Union
+Sphere 0.71 0.95 0.35 F0F0F0 0.28
+Sphere 0.34 0.43 1.4 F0F0F0 0.27
+Union
+Union
+Sphere 0.64 1.7 0.48 F0F0F0 0.25
+Sphere 1.6 1.2 0.098 F0F0F0 0.26
+Union
+Sphere 1.8 1.8 1.5 F0F0F0 0.2
+Sphere 0.35 0.97 1.7 F0F0F0 0.39
+Union
+Union
+Union
+Union
+Union
+Sphere 1.8 0.76 1.4 F0F0F0 0.23
+Sphere 1 1.1 0.65 F0F0F0 0.35
+Union
+Sphere 0.0084 1 1.1 F0F0F0 0.11
+Sphere 1.4 0.47 1.6 F0F0F0 0.062
+Union
+Union
+Sphere 0.16 0.11 1.2 F0F0F0 0.36
+Sphere 1.3 1.3 0.98 F0F0F0 0.23
+Union
+Sphere 1.1 0.48 1.9 F0F0F0 0.31
+Sphere 1.5 1.6 1.4 F0F0F0 0.27
+Union
+Union
+Union
+Sphere 0.35 0.77 0.28 F0F0F0 0.29
+Sphere 1.8 0.93 1.1 F0F0F0 0.37
+Union
+Sphere 1.9 0.19 0.18 F0F0F0 0.29
+Sphere 0.66 1.8 1.4 F0F0F0 0.19
+Union
+Union
+Sphere 1.9 0.66 0.58 F0F0F0 0.26
+Sphere 2 1.6 0.22 F0F0F0 0.24
+Union
+Sphere 0.043 0.077 0.57 F0F0F0 0.31
+Sphere 1.7 2 0.73 F0F0F0 0.053
+Union
+Union
+Union
+Union
+Sphere 0.73 1 1.4 F0F0F0 0.15
+Sphere 1.9 0.54 0.39 F0F0F0 0.38
+Union
+Sphere 0.73 0.57 1.2 F0F0F0 0.29
+Sphere 0.39 0.65 0.21 F0F0F0 0.1
+Union
+Union
+Sphere 1.3 0.79 1.5 F0F0F0 0.28
+Sphere 0.35 1.7 0.42 F0F0F0 0.12
+Union
+Sphere 1.8 0.99 1.9 F0F0F0 0.31
+Sphere 0.95 0.61 1.5 F0F0F0 0.34
+Union
+Union
+Union
+Sphere 1.6 0.89 0.23 F0F0F0 0.32
+Sphere 1.4 0.62 1.4 F0F0F0 0.077
+Union
+Sphere 1.2 0.64 1.5 F0F0F0 0.33
+Sphere 1.3 1.7 1.9 F0F0F0 0.16
+Union
+Union
+Sphere 0.54 1.4 1.9 F0F0F0 0.2
+Sphere 1.1 0.34 1.3 F0F0F0 0.21
+Union
+Sphere 1.3 1.2 0.38 F0F0F0 0.1
+Sphere 1.8 1.9 2 F0F0F0 0.29
+Union
+Union
+Union
+Union
+Union
+Union
+Sphere 0.76 0.19 0.94 F0F0F0 0.082
+Sphere 0.81 0.35 0.34 F0F0F0 0.052
+Union
+Sphere 0.99 1.9 1.6 F0F0F0 0.099
+Sphere 1.6 1.5 0.89 F0F0F0 0.079
+Union
+Union
+Sphere 0.89 0.81 1 F0F0F0 0.051
+Sphere 1.2 0.32 0.92 F0F0F0 0.14
+Union
+Sphere 1.5 1.3 0.77 F0F0F0 0.27
+Sphere 1.2 0.73 0.63 F0F0F0 0.39
+Union
+Union
+Union
+Sphere 0.92 1.6 0.11 F0F0F0 0.35
+Sphere 1.9 0.45 1.7 F0F0F0 0.21
+Union
+Sphere 0.33 1.3 1.2 F0F0F0 0.39
+Sphere 0.83 0.077 0.12 F0F0F0 0.35
+Union
+Union
+Sphere 0.89 1.2 1.7 F0F0F0 0.057
+Sphere 1.5 0.64 0.53 F0F0F0 0.22
+Union
+Sphere 1.9 1.3 0.2 F0F0F0 0.24
+Sphere 0.032 0.83 1 F0F0F0 0.22
+Union
+Union
+Union
+Union
+Sphere 0.39 1.1 0.69 F0F0F0 0.1
+Sphere 1.6 0.44 1.2 F0F0F0 0.38
+Union
+Sphere 1.8 0.39 1.9 F0F0F0 0.16
+Sphere 0.47 2 0.32 F0F0F0 0.29
+Union
+Union
+Sphere 1.2 0.036 1.4 F0F0F0 0.16
+Sphere 0.67 1.9 1.6 F0F0F0 0.16
+Union
+Sphere 1.2 1.8 1.7 F0F0F0 0.27
+Sphere 0.63 0.75 0.21 F0F0F0 0.23
+Union
+Union
+Union
+Sphere 1.9 0.91 1.3 F0F0F0 0.31
+Sphere 1.3 0.53 1.4 F0F0F0 0.25
+Union
+Sphere 0.93 1.2 1.7 F0F0F0 0.29
+Sphere 1.2 0.054 0.75 F0F0F0 0.12
+Union
+Union
+Sphere 0.09 0.15 1 F0F0F0 0.18
+Sphere 0.076 0.62 1.4 F0F0F0 0.28
+Union
+Sphere 0.43 1.1 0.56 F0F0F0 0.24
+Sphere 1.8 0.77 0.081 F0F0F0 0.35
+Union
+Union
+Union
+Union
+Union
+Sphere 1.7 1.4 1.2 F0F0F0 0.23
+Sphere 1.9 0.57 0.14 F0F0F0 0.2
+Union
+Sphere 1.8 1.9 0.26 F0F0F0 0.23
+Sphere 1.9 1 1.4 F0F0F0 0.054
+Union
+Union
+Sphere 1.2 0.45 0.78 F0F0F0 0.27
+Sphere 1.1 0.16 0.54 F0F0F0 0.31
+Union
+Sphere 1.2 1.1 0.56 F0F0F0 0.24
+Sphere 1.9 0.64 0.79 F0F0F0 0.32
+Union
+Union
+Union
+Sphere 0.046 2 0.56 F0F0F0 0.4
+Sphere 0.55 0.7 0.86 F0F0F0 0.11
+Union
+Sphere 0.58 1.1 1.4 F0F0F0 0.14
+Sphere 0.14 0.84 0.54 F0F0F0 0.28
+Union
+Union
+Sphere 1.3 1.3 0.55 F0F0F0 0.11
+Sphere 1.5 1.1 1.9 F0F0F0 0.18
+Union
+Sphere 0.19 0.42 1.8 F0F0F0 0.06
+Sphere 1.1 0.58 1.6 F0F0F0 0.24
+Union
+Union
+Union
+Union
+Sphere 0.56 0.16 1.1 F0F0F0 0.24
+Sphere 0.86 1.9 1.5 F0F0F0 0.3
+Union
+Sphere 1.1 0.88 2 F0F0F0 0.26
+Sphere 1.7 0.49 0.51 F0F0F0 0.23
+Union
+Union
+Sphere 1.8 1.1 1.4 F0F0F0 0.27
+Sphere 0.14 1.2 0.0025 F0F0F0 0.11
+Union
+Sphere 1.7 1.8 0.39 F0F0F0 0.18
+Sphere 0.38 2 1.8 F0F0F0 0.21
+Union
+Union
+Union
+Sphere 0.15 0.93 0.053 F0F0F0 0.23
+Sphere 0.88 1.5 0.45 F0F0F0 0.39
+Union
+Sphere 0.41 0.41 1.1 F0F0F0 0.074
+Sphere 0.9 1.7 1.2 F0F0F0 0.17
+Union
+Union
+Sphere 0.7 0.53 2 F0F0F0 0.2
+Sphere 1.8 2 1.2 F0F0F0 0.3
+Union
+Sphere 1.8 1.6 0.18 F0F0F0 0.08
+Sphere 1.6 0.017 1.1 F0F0F0 0.35

@@ -1,0 +1,63 @@
+Union
+	Union
+		Union
+			Union
+				Union
+					Sphere 0.00 -4.00 -3.00 FFFFFF 8.00
+					Sphere 0.00 0.00 0.00 FFFFFF 10.00
+				Union
+					Sphere -4.00 4.00 -9.00 0000FF 2.00
+					Sphere 4.00 4.00 -9.00 0000FF 2.00
+			Union
+				Union
+					Sphere -4.00 3.50 -8.70 FF0000 1.50
+					Sphere 4.00 3.50 -8.70 FF0000 1.50
+				Sphere 0.00 -4.00 -8.00 FFFF00 6.00
+		Union
+			Union
+				Union
+					Cube 0.00 1.00 -9.50 FF8040 1.00
+					Cube -2.00 1.00 -9.50 0080C0 1.00
+				Union
+					Cube 2.00 1.00 8.50 0080FF 1.00
+					Cylinder 0.00 0.00 0.00 000000 1.00 12.00 0.00 45.00 0.00
+			Union
+				Intersection
+					Sphere 0.00 0.00 0.00 FEFF64 28.00
+					Cube -20.00 -20.00 -20.00 FF8040 40.00
+				Union
+					Union
+						Cube -10.00 -10.00 -30.00 0080FF 20.00
+						Cube -30.00 -10.00 -10.00 0000FF 20.00
+					Cube -10.00 -30.00 -10.00 FF0000 20.00
+	Union
+		Union
+			Union
+				Union
+					Sphere 0.00 -4.00 -3.00 FFFFFF 8.00
+					Sphere 0.00 0.00 0.00 FFFFFF 10.00
+				Union
+					Sphere -4.00 4.00 -9.00 0000FF 2.00
+					Sphere 4.00 4.00 -9.00 0000FF 2.00
+			Union
+				Union
+					Sphere -4.00 3.50 -8.70 FF0000 1.50
+					Sphere 4.00 3.50 -8.70 FF0000 1.50
+				Sphere 0.00 -4.00 -8.00 FFFF00 6.00
+		Union
+			Union
+				Union
+					Cube 0.00 1.00 -9.50 FF8040 1.00
+					Cube -2.00 1.00 -9.50 0080C0 1.00
+				Union
+					Cube 2.00 1.00 8.50 0080FF 1.00
+					Cylinder 0.00 0.00 0.00 000000 1.00 12.00 0.00 45.00 0.00
+			Union
+				Intersection
+					Sphere 0.00 0.00 0.00 FEFF64 28.00
+					Cube -20.00 -20.00 -20.00 FF8040 40.00
+				Union
+					Union
+						Cube -10.00 -10.00 -30.00 0080FF 20.00
+						Cube -30.00 -10.00 -10.00 0000FF 20.00
+					Cube -10.00 -30.00 -10.00 FF0000 20.00
