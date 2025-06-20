@@ -350,7 +350,7 @@ We used only **spheres**, which are among the least computationally expensive pr
 Here are some screenshots of the scenes used:
 ###### 16 spheres
 <p align="center">
-<img src="Images/Spheres16.png">
+<img src="Images/Spheres16.PNG">
 </p>
 
 ###### 64 spheres
