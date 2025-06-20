@@ -348,22 +348,22 @@ In this series, we examined how the algorithms behave as the number of primitive
 We used only **spheres**, which are among the least computationally expensive primitives, and combined them using **union operations only**, which are also the simplest binary operations.
 
 Here are some screenshots of the scenes used:
-###### 16 spheres
+##### 16 spheres
 <p align="center">
 <img src="Images/Spheres16.PNG">
 </p>
 
-###### 64 spheres
+##### 64 spheres
 <p align="center">
 <img src="Images/Spheres64.png">
 </p>
 
-###### 256 spheres
+##### 256 spheres
 <p align="center">
 <img src="Images/Spheres256.png">
 </p>
 
-###### 1024 spheres
+##### 1024 spheres
 <p align="center">
 <img src="Images/Spheres1024.png">
 </p>
@@ -398,32 +398,33 @@ This test focused on how the algorithms perform when primitives are either **sca
 We used only **union operations**, but this time included a variety of primitives to check if performance varied depending on primitive type.
 
 Here are the screenshots:
-###### 256 spheres scattered
+
+##### 256 spheres scattered
 <p align="center">
 <img src="Images/Spheres256-scattered.png">
 </p>
 
-###### 256 spheres clustered
+##### 256 spheres clustered
 <p align="center">
 <img src="Images/Spheres256-onePlace.png">
 </p>
 
-###### 256 cubes scattered
+##### 256 cubes scattered
 <p align="center">
 <img src="Images/Cubes256-scattered.png">
 </p>
 
-###### 256 cubes clustered
+##### 256 cubes clustered
 <p align="center">
 <img src="Images/Cubes256-onePlace.png">
 </p>
 
-###### 256 cylinders scattered
+##### 256 cylinders scattered
 <p align="center">
 <img src="Images/Cylinders256-scattered.png">
 </p>
 
-###### 256 cylinders clustered
+##### 256 cylinders clustered
 <p align="center">
 <img src="Images/Cylinders256-onePlace.png">
 </p>
@@ -450,17 +451,18 @@ To maximize interactions between primitives, we placed them in the same location
 All tests used the same set of primitives and spatial configuration.
 
 Screenshots of the scenes:
-###### 64 spheres union
+
+##### 64 spheres union
 <p align="center">
 <img src="Images/OnlyUnion.png">
 </p>
 
-###### 64 spheres intersection
+##### 64 spheres intersection
 <p align="center">
 <img src="Images/OnlyIntersections.png">
 </p>
 
-###### 64 spheres difference
+##### 64 spheres difference
 <p align="center">
 <img src="Images/OnlyDiff.png">
 </p>
@@ -490,12 +492,13 @@ Trees summary:
 To simulate a more realistic use case, we modeled a **cube with many spherical cutouts**, resembling Swiss cheese. This scene stresses the algorithms due to the high number of **difference operations** and overlapping geometry.
 
 Scene preview:
-###### 128 spheres cheese
+
+##### 128 spheres cheese
 <p align="center">
 <img src="Images/Cheese128.png">
 </p>
 
-###### 512 spheres cheese
+##### 512 spheres cheese
 <p align="center">
 <img src="Images/Cheese512.png">
 </p>
@@ -516,7 +519,8 @@ Another test with more realistic use case of CSG, we designed a **labyrinth** sc
 These contrasting approaches allowed us to assess how each algorithm handles dense union trees versus difference-based structures.
 
 Screenshot:
-###### Labyrinth
+
+##### Labyrinth
 <p align="center">
 <img src="Images/maze.png">
 </p>
@@ -538,15 +542,18 @@ The **single-hit** algorithm behaved slightly differently. Initially, performanc
 We also observed that **traditional raycasting** scaled linearly with GPU performance—roughly doubling in speed from one GPU tier to the next. However, **single-hit** showed **uneven scaling**: performance improved dramatically between the GTX 1050 and GTX 1660, especially in large trees, but not as significantly between the GTX 1660 and RTX 2070.
 
 A consistent trend across all tests was that **1% low FPS** for the single-hit algorithm was much worse than the others. This is due to the algorithm’s **angle-dependent behavior**, which can introduce instability depending on the viewpoint.
-###### Results for GTX 1050
+
+##### Results for GTX 1050
 <p align="center">
 <img src="Images/Test1-1050.png">
 </p>
-###### Results for GTX 1660
+
+##### Results for GTX 1660
 <p align="center">
 <img src="Images/Test1-1660.png">
 </p>
-###### Results for RTX 2070
+
+##### Results for RTX 2070
 <p align="center">
 <img src="Images/Test1-2070.png">
 </p>
@@ -557,15 +564,17 @@ Here, **tree balance** had the most significant impact on **traditional raycasti
 
 An interesting exception appeared on the GTX 1050, where in the case of **64 unbalanced spheres**, raycasting and raymarching performed nearly identically. However, on more powerful GPUs, **raymarching consistently outperformed raycasting**.
 
-###### Results for GTX 1050
+##### Results for GTX 1050
 <p align="center">
 <img src="Images/Test2-1050.png">
 </p>
-###### Results for GTX 1660
+
+##### Results for GTX 1660
 <p align="center">
 <img src="Images/Test2-1660.png">
 </p>
-###### Results for RTX 2070
+
+##### Results for RTX 2070
 <p align="center">
 <img src="Images/Test2-2070.png">
 </p>
@@ -580,15 +589,17 @@ Raymarching struggled in scenes with **clustered cubes** and a **high number of 
 
 Traditional raycasting, on the other hand, was the **most stable** across all scene configurations. Its performance was barely affected by primitive types or spatial distribution.
 
-###### Results for GTX 1050
+##### Results for GTX 1050
 <p align="center">
 <img src="Images/Test3-1050.png">
 </p>
-###### Results for GTX 1660
+
+##### Results for GTX 1660
 <p align="center">
 <img src="Images/Test3-1660.png">
 </p>
-###### Results for RTX 2070
+
+##### Results for RTX 2070
 <p align="center">
 <img src="Images/Test3-2070.png">
 </p>
@@ -599,15 +610,17 @@ In this test, the choice of **binary operation** (union, intersection, differenc
 
 A small difference was observed in the **"only unions"** test, but this was caused by the camera flying **inside the tree**, which did not happen in the other two tests. This explains the **lower 1% low FPS** for single-hit in that particular case.
 
-###### Results for GTX 1050
+##### Results for GTX 1050
 <p align="center">
 <img src="Images/Test4-1050.png">
 </p>
-###### Results for GTX 1660
+
+##### Results for GTX 1660
 <p align="center">
 <img src="Images/Test4-1660.png">
 </p>
-###### Results for RTX 2070
+
+##### Results for RTX 2070
 <p align="center">
 <img src="Images/Test4-2070.png">
 </p>
@@ -635,15 +648,17 @@ This test featured a scene inspired by **Swiss cheese** — a cube with many sph
 
 As expected, **single-hit** was the most performant. However, in the **512-cheese** variant, its advantage was **less clear**. Due to the scene’s structure, the algorithm was forced to **re-traverse subtrees multiple times**, which significantly reduced its benefit. In this case, **1% low FPS** dropped below that of the other algorithms.
 
-###### Results for GTX 1050
+##### Results for GTX 1050
 <p align="center">
 <img src="Images/Test6-1050.png">
 </p>
-###### Results for GTX 1660
+
+##### Results for GTX 1660
 <p align="center">
 <img src="Images/Test6-1660.png">
 </p>
-###### Results for RTX 2070
+
+##### Results for RTX 2070
 <p align="center">
 <img src="Images/Test6-2070.png">
 </p>
@@ -661,18 +676,21 @@ On the **GTX 1660**, performance of the **single-hit** algorithm became similar 
 
 On the **RTX 2070**, single-hit made both approaches **nearly equal** in performance, although **raycasting** and **raymarching** still preferred the **smaller difference-based tree**.
 
-###### Results for GTX 1050
+##### Results for GTX 1050
 <p align="center">
 <img src="Images/Test7-1050.png">
 </p>
-###### Results for GTX 1660
+
+##### Results for GTX 1660
 <p align="center">
 <img src="Images/Test7-1660.png">
 </p>
-###### Results for RTX 2070
+
+##### Results for RTX 2070
 <p align="center">
 <img src="Images/Test7-2070.png">
 </p>
+
 ## Remarks
 
 Overall, we observed that the **Single-hit** algorithm consistently outperformed the others across all tests. It also scaled very well with increased compute power. Our results show that it can easily handle trees with up to a thousand primitives, with strong potential to go even further depending on the tree structure and scene composition.
